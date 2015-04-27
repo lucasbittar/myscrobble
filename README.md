@@ -1,5 +1,5 @@
 # myscrobble.fm
-MyScrobble.FM is my final project for the GA's Front-End Web Development course.
+MyScrobble.FM is my GA's Front-End Web Development course final project.
 
 ## Description
 Based on a Lasf.fm username the app creates a full detailed one page site containing things like:
