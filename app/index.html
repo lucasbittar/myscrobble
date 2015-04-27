@@ -1,0 +1,170 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>MyScrobble.fm</title>
+
+    <script src="https://www.google.com/jsapi" type="text/javascript"></script>
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- <link rel="shortcut icon" href="favicon.ico?v=2"> -->
+
+    <link href='http://fonts.googleapis.com/css?family=Oswald:400,700|Merriweather:300,700' rel='stylesheet' type='text/css'>
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+    <!-- build:js scripts/vendor/modernizr.js -->
+    <script src="bower_components/modernizr/modernizr.js"></script>
+    <!-- endbuild -->
+
+  </head>
+  <body>
+    <!--[if lt IE 10]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <div class="loader">
+      
+      <div class="loader-label"><img src="images/ajax-loader.gif">Fetching Info...</div>
+
+    </div>
+
+    <input type="checkbox" id="info-toggle">
+
+    <div class="page-wrap">
+
+      <header>
+
+        <div class="bg-artist-fade"></div>
+        <div class="bg-artist"></div>
+
+        <div class="container">
+
+          <nav class="navbar navbar-fixed-top" id="main-nav">
+            <div class="container">
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <label class="navbar-brand" for="info-toggle">MyScrobble.fm</label>
+              </div>
+
+              <div class="collapse navbar-collapse pull-right" id="main-nav">
+                <ul class="nav navbar-nav">
+                  <li><a href="#">About</a></li>
+                </ul>
+              </div><!-- /.navbar-collapse -->
+            </div>
+          </nav>
+
+          <!-- <div class="fade"></div> -->
+
+          <section class="last-scrobble-wrap">
+
+          </section>
+
+        </div>
+
+      </header>
+
+      <section class="user-info">
+        
+        <h1 class="username"></h1>
+        <div class="avatar"></div>
+        <span class="playcount"></span>
+        <h4>Popular tags</h4>
+        <div class="tags"></div>
+
+      </section>
+
+    </div>
+
+    <section class="recent-tracks">
+
+      <div class="more-button"></div>
+
+      <div class="container" id="recent-tracks">
+
+        <h1>Recent tracks</h1>
+
+        <div class="scrobbles-list"></div>
+
+      </div>
+      
+    </section>
+
+    <section class="new-releases">
+      
+      <div class="container" id="new-releases">
+
+        <h1>New Releases</h1>
+
+        <div class="releases-list"></div>
+
+      </div>
+
+    </section>
+
+    <footer>
+
+      <div class="container">
+        
+        <p>&copy;2015 MyScrobble.fm - Created by <a href="http://lucasbittar.com" target="_blank">Lucas Bittar</a>.</p>
+
+      </div>
+      
+    </footer>
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/mustache/mustache.js"></script>
+    <script src="bower_components/jquery.scrollTo/jquery.scrollTo.js"></script>
+    <script src="bower_components/jquery-easing/jquery.easing.js"></script>
+    <script src="bower_components/jquery-easing/jquery.easing.min.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID.
+    <script>
+      (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+      function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+      e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+      e.src='//www.google-analytics.com/analytics.js';
+      r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+      ga('create','UA-XXXXX-X');ga('send','pageview');
+    </script>
+    -->
+
+        <!-- build:js(.) scripts/plugins.js -->
+        <script src="bower_components/bootstrap/js/affix.js"></script>
+        <script src="bower_components/bootstrap/js/alert.js"></script>
+        <script src="bower_components/bootstrap/js/dropdown.js"></script>
+        <script src="bower_components/bootstrap/js/tooltip.js"></script>
+        <script src="bower_components/bootstrap/js/modal.js"></script>
+        <script src="bower_components/bootstrap/js/transition.js"></script>
+        <script src="bower_components/bootstrap/js/button.js"></script>
+        <script src="bower_components/bootstrap/js/popover.js"></script>
+        <script src="bower_components/bootstrap/js/carousel.js"></script>
+        <script src="bower_components/bootstrap/js/scrollspy.js"></script>
+        <script src="bower_components/bootstrap/js/collapse.js"></script>
+        <script src="bower_components/bootstrap/js/tab.js"></script>
+        <!-- endbuild -->
+
+        <!-- build:js({app,.tmp}) scripts/main.js -->
+        <script src="scripts/functions.js"></script>
+        <script src="scripts/main.js"></script>
+        <!-- endbuild -->
+</body>
+</html>
