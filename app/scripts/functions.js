@@ -47,15 +47,19 @@
 
  	  	var tags = data.toptags.tag;
 
- 	  	for (var i = 0; i < tags.length; i++) {
+ 	  	if ( tags ) {
 
- 	  		var tag = tags[i];
- 	  		var tagName = tag.name;
- 	  		var tagUrl = tag.url;
+ 	  		for (var i = 0; i < tags.length; i++) {
 
- 	  		$('.user-info .tags').append('<span><a href="http://' + tagUrl + '" target="_blank">' + tagName + '</a></span>');
+ 	  			var tag = tags[i];
+ 	  			var tagName = tag.name;
+ 	  			var tagUrl = tag.url;
 
- 	  	};
+ 	  			$('.user-info .tags').append('<span><a href="http://' + tagUrl + '" target="_blank">' + tagName + '</a></span>');
+
+ 	  		};
+
+ 	  	}
 
  	  },
  	  error: function () {
@@ -184,6 +188,7 @@
  		    var imageToLoad = images[randomNumber].url;
 
  		    $('.bg-artist').css('background', 'url(' + imageToLoad + ') no-repeat 50% center');
+ 		    // $('body').css('background', 'url(' + imageToLoad + ') no-repeat 50% center');
 
  		}
 
