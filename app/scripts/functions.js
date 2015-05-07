@@ -8,6 +8,113 @@
  *
  */
 
+ // Starts project
+ function getScrobble(event) {
+
+ 	event.preventDefault();
+
+	console.log('lets get it started!');
+
+	var username = $('.username-input').val();
+
+	var url = "/myscrobble.html?username=" + username;
+
+	$('.loader').animate({
+		left: "0"
+		}, 800, "easeOutCubic", function() {
+			window.location.href = url;
+		}
+	);
+
+ }
+
+ // Call Last.fm API Recent Tracks
+ function getTracks() {
+
+ 	$.ajax({
+ 	  url:"http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=" + username + "&api_key=" + apikey + "&format=json&limit=10",
+ 	  crossDomain: true,
+ 	  dataType: "json",
+ 	  success: function (data) {
+
+ 	    var results = data.recenttracks.track;
+ 	    var lastScrobble = results[0];
+
+ 	    artistName = lastScrobble.artist["#text"];
+
+ 	    artwork = lastScrobble.image[3]["#text"];
+ 	    artist = lastScrobble.artist["#text"];
+ 	    song = lastScrobble.name;
+ 	    songURL = lastScrobble.url;
+ 	    album = lastScrobble.album["#text"];
+
+ 	    artworkHTML = "<img src='" + artwork + "' alt='" + album + "'>";
+ 	    artistHTML = "<h1><a href='" + songURL + "'>" + artist + "</h1>";
+ 	    songHTML = "<h2>" + song + "</a></h2>";
+
+ 	    nowPlaying = lastScrobble["@attr"];
+
+ 	    if (nowPlaying == undefined) {
+
+ 	    	console.log('scrobbled');
+ 	    	date = lastScrobble.date["#text"];
+ 	    	dateHTML = "<span class='date'>" + date + "</span>";
+
+ 	        var link = document.createElement('link');
+ 	        link.rel = 'shortcut icon';
+ 	        link.href = '/favicon.ico?v=2.2';
+ 	        document.getElementsByTagName('head')[0].appendChild(link);
+
+ 	    } else {
+
+ 	    	console.log('nowplaying');
+ 	    	dateHTML = "<img src='../images/eq.gif' style='display:block; width: 75px; margin: 0 auto'><span class='listening'>Now Listening!</span>";
+
+ 	        var link = document.createElement('link');
+ 	        link.rel = 'shortcut icon';
+ 	        link.href = '/favicon-playing.ico?v=1';
+ 	        link.type = 'image/x-icon';
+ 	        document.getElementsByTagName('head')[0].appendChild(link);
+
+ 	    }
+ 	    
+ 	    $('.last-scrobble-wrap').append("<div class='last-scrobble'>" + artworkHTML + artistHTML + songHTML + dateHTML +"</div>");
+
+ 	    // Assemble recent tracks HTML
+ 	    for (var i = 1; i < results.length; ++i) {
+
+ 	        var scrobble = results[i];
+
+ 	        artwork = scrobble.image[2]["#text"];
+ 	        artist = scrobble.artist["#text"];
+ 	        song = scrobble.name;
+ 	        songURL = scrobble.url;
+ 	        album = scrobble.album["#text"];
+ 	        date = scrobble.date["#text"];
+
+ 	        artworkHTML = "<img src='" + artwork + "' alt='" + album + "'>";
+ 	        artistHTML = "<div class='track-info'><h1><a href='" + songURL + "'>" + artist + " - " + song + "</a></h1>";
+ 	        dateHTML = "<p>" + date + "</p></div>";
+
+ 	        $('.recent-tracks .scrobbles-list').append("<div class='scrobble'>" + artworkHTML + artistHTML + dateHTML + "</div>");
+
+ 	    }
+
+ 	    // Fetch image for the background
+ 	    searchImage(artistName);
+
+ 	    // Fetch user's info
+ 	    fetchUserInfo();
+
+ 	  },
+ 	  error: function () {
+ 	    alert('Error loading data. Reload the page.');
+ 	  }
+
+ 	});
+
+ }
+
  // Function to get user's info
  function fetchUserInfo() {
 
@@ -102,22 +209,31 @@
 
  	  	var releases = data.albums.album;
 
- 	  	for (var i = 0; i < releases.length; i++) {
+ 	  	if ( releases ) {
 
- 	  		var release = releases[i];
- 	  		var name = release.name;
- 	  		var url = release.url;
- 	  		var artist = release.artist.name;
- 	  		var artwork = release.image[3]["#text"];
+  		  	for (var i = 0; i < releases.length; i++) {
 
- 	  		artworkHTML = "<a href='" + url + "' target='_blank'><img src='" + artwork + "' alt='" + name + "'>";
- 	  		artistHTML = "<div class='release-info'><h1>" + name + "</h1><h2>" + artist +"</h2></a>";
+  		  		var release = releases[i];
+  		  		var name = release.name;
+  		  		var url = release.url;
+  		  		var artist = release.artist.name;
+  		  		var artwork = release.image[3]["#text"];
 
- 	  		$('.new-releases .releases-list').append("<div class='release'>" + artworkHTML + artistHTML + "</div>");
+  		  		artworkHTML = "<a href='" + url + "' target='_blank'><img src='" + artwork + "' alt='" + name + "'>";
+  		  		artistHTML = "<div class='release-info'><h1>" + name + "</h1><h2>" + artist +"</h2></a>";
 
- 	  	};
+  		  		$('.new-releases .releases-list').append("<div class='release'>" + artworkHTML + artistHTML + "</div>");
 
- 		fetchArtistInfo();
+  		  	};
+
+  			fetchArtistInfo();
+
+ 	  	} else {
+
+ 	  		$('.new-releases').css('display', 'none');
+ 	  		fetchArtistInfo();
+
+ 	  	}
 
  	  },
  	  error: function () {
@@ -187,8 +303,8 @@
  		    var randomNumber = Math.floor(Math.random()*(max-min+1)+min);
  		    var imageToLoad = images[randomNumber].url;
 
- 		    $('.bg-artist').css('background', 'url(' + imageToLoad + ') no-repeat 50% center');
- 		    // $('body').css('background', 'url(' + imageToLoad + ') no-repeat 50% center');
+ 		    // $('.bg-artist').css('background', 'url(' + imageToLoad + ') no-repeat 50% center');
+ 		    $('.page-wrap').css('background', 'url(' + imageToLoad + ') no-repeat 50% center');
 
  		}
 

@@ -8,7 +8,6 @@
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-    <!-- <link rel="shortcut icon" href="favicon.ico?v=2"> -->
 
     <link href='http://fonts.googleapis.com/css?family=Oswald:400,700|Merriweather:300,700' rel='stylesheet' type='text/css'>
 
@@ -31,20 +30,15 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <div class="loader">
+    <div class="loader" style="left:-100%">
       
       <div class="loader-label"><img src="images/ajax-loader.gif">Fetching Info...</div>
 
     </div>
 
-    <input type="checkbox" id="info-toggle">
-
-    <div class="page-wrap">
+    <div class="page-wrap home">
 
       <header>
-
-        <div class="bg-artist-fade"></div>
-        <div class="bg-artist"></div>
 
         <div class="container">
 
@@ -68,53 +62,29 @@
             </div>
           </nav>
 
-          <!-- <div class="fade"></div> -->
-
-          <section class="last-scrobble-wrap">
-
-          </section>
-
         </div>
 
       </header>
 
-      <section class="user-info">
-        
-        <h1 class="username"></h1>
-        <div class="avatar"></div>
-        <span class="playcount"></span>
-        <h4>Popular tags</h4>
-        <div class="tags"></div>
+      <section class="username">
+
+        <h1>Welcome to MyScrobble.fm!</h1>
+        <p>Type in your Last.fm username below</p>
+
+        <form id="username">
+
+            <div class="form-container">
+                
+                <input type="text" class="username-input" placeholder="Last.fm username">
+                <input type="submit" value="♫" class="username-submit">
+
+            </div>
+
+        </form>
 
       </section>
 
     </div>
-
-    <section class="recent-tracks">
-
-      <div class="more-button"></div>
-
-      <div class="container" id="recent-tracks">
-
-        <h1>Recent tracks</h1>
-
-        <div class="scrobbles-list"></div>
-
-      </div>
-      
-    </section>
-
-    <section class="new-releases">
-      
-      <div class="container" id="new-releases">
-
-        <h1>New Releases</h1>
-
-        <div class="releases-list"></div>
-
-      </div>
-
-    </section>
 
     <footer>
 
