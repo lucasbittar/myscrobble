@@ -46,7 +46,7 @@ $(window).scroll(function () {
 	$('.bg-artist-fade').css('opacity', (scrollPos / 800));
 	$('.last-scrobble').css('-webkit-transform', 'translateY(' + (scrollPos * -.2) + 'px)');
 
-    if ( scrollPos > 80 ) {
+    if ( scrollPos > 30 ) {
 
         $('#main-nav').css('-webkit-transform', 'translateY(-80px)');
 
