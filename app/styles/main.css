@@ -124,6 +124,15 @@ header .fade {
   color: #FFF;
 }
 
+.navbar-brand a.username {
+  color: rgba(255,255,255,1);
+  transition: all .3s ease-in-out;
+}
+
+.navbar-brand a.username:hover {
+  color: rgba(255,255,255,.5);
+}
+
 /* Home */
 
 .home {

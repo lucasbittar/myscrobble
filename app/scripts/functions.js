@@ -38,6 +38,13 @@
  	  success: function (data) {
 
  	    var results = data.recenttracks.track;
+
+ 	    if ( results ) {
+
+ 	    } else {
+ 	    	$('.loader-label').html('You haven\'t scrobbled anything yet. Get into it!' );
+ 	    }
+
  	    var lastScrobble = results[0];
 
  	    artistName = lastScrobble.artist["#text"];
@@ -131,7 +138,7 @@
  	  	var playcount = data.user.playcount;
 
  	  	$('.more-button').append("Check out " + name + "'s recent tracks");
- 	  	$('.navbar-brand').append('<a title="View user\'s info">/' + uname + '</a>');
+ 	  	$('.navbar-brand').append('<a title="View user\'s info" class="username">/' + uname + '</a>');
 
  	  	$('.user-info .username').append(name);
  	  	$('.user-info .avatar').css('background', 'url(' + avatar + ') no-repeat center center');
