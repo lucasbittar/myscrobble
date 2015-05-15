@@ -17,7 +17,7 @@
 
 	var username = $('.username-input').val();
 
-	var url = "/myscrobble.html?username=" + username;
+	var url = currUrl + "myscrobble.html?username=" + username;
 
 	$('.loader').animate({
 		left: "0"
@@ -62,17 +62,17 @@
 
  	        var link = document.createElement('link');
  	        link.rel = 'shortcut icon';
- 	        link.href = '/favicon.ico?v=2.2';
+ 	        link.href = 'favicon.ico?v=2.2';
  	        document.getElementsByTagName('head')[0].appendChild(link);
 
  	    } else {
 
  	    	console.log('nowplaying');
- 	    	dateHTML = "<img src='../images/eq.gif' style='display:block; width: 75px; margin: 0 auto'><span class='listening'>Now Listening!</span>";
+ 	    	dateHTML = "<img src='images/eq.gif' style='display:block; width: 75px; margin: 0 auto'><span class='listening'>Now Listening!</span>";
 
  	        var link = document.createElement('link');
  	        link.rel = 'shortcut icon';
- 	        link.href = '/favicon-playing.ico?v=1';
+ 	        link.href = 'favicon-playing.ico?v=1';
  	        link.type = 'image/x-icon';
  	        document.getElementsByTagName('head')[0].appendChild(link);
 
@@ -131,7 +131,7 @@
  	  	var playcount = data.user.playcount;
 
  	  	$('.more-button').append("Check out " + name + "'s recent tracks");
- 	  	$('.navbar-brand').append('/' + uname);
+ 	  	$('.navbar-brand').append('<a title="View user\'s info">/' + uname + '</a>');
 
  	  	$('.user-info .username').append(name);
  	  	$('.user-info .avatar').css('background', 'url(' + avatar + ') no-repeat center center');
@@ -156,7 +156,7 @@
 
  	  	if ( tags ) {
 
- 	  		for (var i = 0; i < tags.length; i++) {
+ 	  		for (var i = 0; i < 10; i++) {
 
  	  			var tag = tags[i];
  	  			var tagName = tag.name;
@@ -182,9 +182,24 @@
  	  dataType: "json",
  	  success: function (data) {
 
- 	  	var lovedTracks = data.lovedtracks["@attr"].total;
+ 	  	var lovedTracks = data.lovedtracks.track;
+ 	  	var numLovedTracks = data.lovedtracks["@attr"].total;
 
- 	  	$('.user-info .playcount').append('<span class="glyphicon glyphicon-heart" aria-hidden="true"></span> ' + lovedTracks + ' Loved Tracks<br>');
+ 	  	$('.user-info .playcount').append('<span class="glyphicon glyphicon-heart" aria-hidden="true"></span> ' + numLovedTracks + ' Loved Tracks<br>');
+
+ 	  	if ( lovedTracks ) {
+
+ 	  		for (var i = 0; i < 5; i++) {
+
+ 	  			var lovedTrack = lovedTracks[i];
+ 	  			var name = lovedTrack.name;
+ 	  			var artist = lovedTrack.artist.name;
+
+ 	  			$('.user-info .loved').append('<div class="track"><span class="name">' + name + '</span><span class="artist">' + artist + '</span></div>');
+
+ 	  		};
+
+ 	  	}
 
  	  },
  	  error: function () {

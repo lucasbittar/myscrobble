@@ -26,6 +26,7 @@ var nowPlaying;
 // Custom variables
 var username = GetUrlValue('username');
 var apikey = "6ddc045f7d3cc33ab23feb89fc5e2e2a";
+var currUrl = window.location.href;
 
 // On click scroll to scrobble list
 $('.more-button').on('click', function() {
@@ -83,6 +84,25 @@ $(window).scroll(function () {
         })
 
     }
+
+});
+
+$('.fb-icon').on('click', function() {
+
+    var t = 'MyScrobble.fm';
+    window.open('http://www.facebook.com/sharer.php?u='+encodeURIComponent(currUrl)+'&t='+encodeURIComponent(t),'sharer','toolbar=0,status=0,width=626,height=352');
+
+});
+
+$('.gp-icon').on('click', function() {
+
+    window.open('https://plus.google.com/share?url='+encodeURIComponent(currUrl),'sharer','toolbar=0,status=0,width=626,height=352');
+
+});
+
+$('.tw-icon').on('click', function() {
+
+    window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(currUrl) + '&text=Check out MyScrobble.','sharer','toolbar=0,status=0,width=626,height=352');
 
 });
 

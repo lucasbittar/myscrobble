@@ -45,7 +45,7 @@ footer {
   background: #111;
   color: #777;
   font-size: 1em;
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid #333;
 }
 
 footer .container p a {
@@ -78,6 +78,7 @@ footer .container p a {
 
 .page-wrap {
   background-size: cover !important;
+  transition: all 500ms ease-in-out;
 }
 
 /* Header */
@@ -119,10 +120,15 @@ header .fade {
   border: 4px solid rgba(0,0,0,.8);
 }
 
+.navbar-brand a {
+  color: #FFF;
+}
+
 /* Home */
 
 .home {
   color: #FFF;
+  height: calc(100vh - 43px);
 }
 
 .home .username {
@@ -134,7 +140,7 @@ header .fade {
 }
 
 .home .username h1 {
-  margin-top: -30px;
+  margin-top: -80px;
   font-weight: 800;
   font-size: 3em;
 }
@@ -304,6 +310,7 @@ header .fade {
 
 .scrobble {
   display: flex;
+  align-items: center;
   opacity: 0;
   transform: translateY(40px);
   background-color: #111;
@@ -329,6 +336,10 @@ header .fade {
   transition: all 300ms ease-in-out;
 }
 
+.scrobble h1 {
+  margin: 0px 0px 10px 0px;
+}
+
 .scrobble p {
   opacity: 0.4;
 }
@@ -340,6 +351,7 @@ header .fade {
 
 .scrobble .track-info {
   flex: 1;
+  padding-right: 20px;
 }
 
 .scrobble img {
@@ -388,7 +400,7 @@ header .fade {
   display: block;
   color: rgba(255,255,255,0.7);
   border-bottom: 1px solid #111;
-  padding-bottom: 10px;
+  padding-bottom: 20px;
 }
 
 .user-info .playcount .glyphicon-music,
@@ -401,7 +413,32 @@ header .fade {
   font-family: 'Oswald', sans-serif;
   font-weight: 400;
   margin-bottom: 10px;
-  color: rgba(255,255,255,0.8);
+  margin-top: 30px;
+  color: rgba(255,255,255,1);
+}
+
+.user-info .loved {
+  padding: 0px 30px;
+  margin-top: 20px;
+}
+
+.user-info .loved .track {
+  display: block;
+  color: #FFF;
+  margin-bottom: 8px;
+}
+
+.user-info .loved .track .name {
+  display: block;
+  font-weight: 800;
+  font-size: 1.2em;
+  opacity: .8;
+}
+
+.user-info .loved .track .artist {
+  display: block;
+  font-size: 0.9em;
+  opacity: .6;
 }
 
 .user-info .tags {
@@ -413,6 +450,10 @@ header .fade {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+}
+
+.user-info .tags span {
+  margin-bottom: 5px;
 }
 
 .user-info .tags span a {
@@ -454,7 +495,8 @@ header .fade {
   opacity: 0;
 }
 
-.releases-list {
+.releases-list,
+.share-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
@@ -495,12 +537,51 @@ header .fade {
 
 .share {
   background: #FFF;
+  padding-bottom: 70px;
 }
 
 .share h1 {
   color: #111;
   margin: 60px 0px 30px 0px;
   font-weight: 400;
+}
+
+.share-icon {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background-position: 50% 50%;
+  transition: all .3s ease-in-out;
+}
+
+.share-icon:hover {
+  cursor: pointer;
+  animation: animate-share-icon .5s ease-in-out;
+}
+
+@keyframes animate-share-icon { 
+    0%{background-position:50% 50%}
+    50%{background-position:50% -200%}
+    51%{background-position:50% 250%}
+    100%{background-position:50% 50%}
+}
+
+.fb-icon {
+  background-color: #2d4486;
+  background-image: url(../images/ico-fb.png);
+  background-repeat: no-repeat;
+}
+
+.gp-icon {
+  background-color: #d13f2d;
+  background-image: url(../images/ico-gplus.png);
+  background-repeat: no-repeat;
+}
+
+.tw-icon {
+  background-color: #44ccf6;
+  background-image: url(../images/ico-tw.png);
+  background-repeat: no-repeat;
 }
 
 /* Classes to make the user-info work */
@@ -510,8 +591,7 @@ header .fade {
 }
 
 #info-toggle:checked + .page-wrap {
-  background-position: 80% 50% !important;
-  transition: all 500ms ease-in-out;
+  background-position: 10% 50% !important;
 }
 
 #info-toggle:checked + .page-wrap .user-info {
@@ -592,12 +672,19 @@ header .fade {
   }
 
   .last-scrobble h2 {
-      margin-top: 10px;
+      /*margin-top: 10px;*/
   }
 
   .last-scrobble h2 a {
     font-size: 0.6em;
-    padding: 10px 20px 5px 20px;
+    padding: 10px 5px 5px 0px;
+    line-height: 2.35em;
+    box-shadow: 10px 0 0 rgba(255,255,255,.8), -10px 0 0 rgba(255,255,255,.8);
+  }
+
+  .last-scrobble-wrap {
+    opacity: 1;
+    transition: all .2s ease-in-out;
   }
 
   header,
@@ -626,13 +713,64 @@ header .fade {
     font-size: 0.35em;
   }
 
+  .track-info h1 {
+    line-height: .35em;
+    margin-top: 7px;
+  }
+
   .scrobble img {
-    width: 85px;
-    height: 85px;
+    width: 90px;
+    height: 90px;
+    margin: 0px 15px 5px 0px;
+  }
+
+  .scrobble p {
+    font-size: 0.8em; 
+  }
+
+  .releases-list .release a img {
+    width: 150px;
+    height: 150px;
+    min-width: 150px;
+  }
+
+  .releases-list .release .release-info {
+    width: 150px;
+  }
+
+  .share-icon {
+    width: 100px;
+    height: 100px;
+    background-size: 50%;
   }
 
   footer {
     text-align: center;
+  }
+
+  .user-info {
+    height: calc(100vh - 45px);
+  }
+
+  #info-toggle:checked + .page-wrap header {
+    padding-left: 430px;
+  }
+
+  #info-toggle:checked + .page-wrap header .bg-artist-fade,
+  #info-toggle:checked + .page-wrap header .bg-artist {
+      width: calc(100vw - 430px);
+  }
+
+  #info-toggle:checked + .page-wrap header .bg-artist {
+    padding-left: 230px;
+  }
+
+  #info-toggle:checked + .page-wrap header .container .navbar-fixed-top {
+    padding-left: 320px;
+  }
+
+  #info-toggle:checked + .page-wrap header .container .last-scrobble-wrap {
+    opacity: 0;
   }
 
 }
