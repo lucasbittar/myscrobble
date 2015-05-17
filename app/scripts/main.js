@@ -28,6 +28,9 @@ var username = GetUrlValue('username');
 var apikey = "6ddc045f7d3cc33ab23feb89fc5e2e2a";
 var currUrl = window.location.href;
 
+// Elements to animate
+var elements = ["username-h1", "username-p", "username-form"];
+
 // On click scroll to scrobble list
 $('.more-button').on('click', function() {
 

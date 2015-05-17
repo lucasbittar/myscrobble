@@ -7,7 +7,18 @@
     <script src="https://www.google.com/jsapi" type="text/javascript"></script>
 
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, maximum-scale=1">
+
+    <meta property="og:title" content="MyScrobble.fm" />
+    <meta property="og:locale" content="en_US"/>
+    <meta property="og:description" content="Scrobble your songs in a visual way."/>
+    <meta property="og:url" content="http://myscrobblefm.lucasbittar.rocks/" />
+    <meta property="og:image" content="http://myscrobblefm.lucasbittar.rocks/images/fb-defaulf.jpg" />
+    <meta property="og:site_name" content="MyScrobble.fm" />
+    <meta property="fb:admins" content="1057076290" />
+    <meta property="og:description" content="" />
+
+    <link rel="image_src" href="http://myscrobblefm.lucasbittar.rocks/images/fb-defaulf.jpg" />
 
     <link href='http://fonts.googleapis.com/css?family=Oswald:400,700|Merriweather:300,700' rel='stylesheet' type='text/css'>
 
@@ -26,14 +37,15 @@
     <!-- endbuild -->
 
   </head>
-  <body>
+  <body onload="init()">
     <!--[if lt IE 10]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <div class="loader" style="left:-100%">
+    <div class="loader">
       
-      <div class="loader-label"><img src="images/ajax-loader.gif">Fetching Info...</div>
+      <!-- <div class="loader-label"><img src="images/ajax-loader.gif">Fetching Info...</div> -->
+      <div class="loader-label"></div>
 
     </div>
 
@@ -69,14 +81,14 @@
 
       <section class="username">
 
-        <h1>Welcome to MyScrobble.fm!</h1>
-        <p>Type in your Last.fm username below</p>
+        <h1 class="username-h1 elements-hidden">Welcome to MyScrobble.fm!</h1>
+        <p class="username-p elements-hidden">Type in your Last.fm username below</p>
 
-        <form id="username">
+        <form id="username" class="username-form elements-hidden">
 
             <div class="form-container">
                 
-                <input type="text" class="username-input" placeholder="Last.fm username" autofocus="autofocus">
+                <input type="text" class="username-input" placeholder="Last.fm username">
                 <input type="submit" value="♫" class="username-submit">
 
             </div>

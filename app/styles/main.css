@@ -78,7 +78,7 @@ footer .container p a {
 
 .page-wrap {
   background-size: cover !important;
-  transition: all 500ms ease-in-out;
+  /*transition: all 500ms ease-in-out;*/
 }
 
 /* Header */
@@ -622,6 +622,18 @@ header .fade {
 
 #info-toggle:checked + .page-wrap header .container .navbar-fixed-top {
   padding-left: 320px;
+}
+
+/* Intro animation */
+.elements-hidden {
+  transform: translateY(20px);
+  opacity: 0;
+}
+
+.elements-show {
+  transform: translateY(0px);
+  opacity: 1;
+  transition: all 500ms ease-in-out;
 }
 
 /* Responsive: Portrait tablets and up */

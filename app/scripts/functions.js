@@ -9,6 +9,38 @@
  */
 
  // Starts project
+ function init() {
+
+ 	$('.loader').delay(1000).animate({
+ 		opacity: "0"
+ 		}, 100, "easeOutCubic", function() {
+ 			$('.loader-label').html('<img src="images/ajax-loader.gif">Fetching Info...');
+ 			$('.loader').css({
+ 				"opacity": 1,
+ 				"left": "-100%"
+ 			});
+
+ 			$('.elements-hidden').each(function(i) {
+
+ 				var toAnimate = $('.' + elements[i]);
+
+ 				setTimeout(function() {
+ 					toAnimate.removeClass('elements-hidden');
+ 					toAnimate.addClass('elements-show');
+ 				}, 120 * (i + 1));
+
+ 			});
+
+ 			setTimeout(function() {
+ 				$('input.username-input').focus();
+ 			}, 1000);
+
+ 		}
+ 	);
+
+ }
+
+ // Fetches username and redirect to scrobble page
  function getScrobble(event) {
 
  	event.preventDefault();
@@ -63,7 +95,7 @@
 
  	    if (nowPlaying == undefined) {
 
- 	    	console.log('scrobbled');
+ 	    	// console.log('scrobbled');
  	    	date = lastScrobble.date["#text"];
  	    	dateHTML = "<span class='date'>" + date + "</span>";
 
@@ -160,10 +192,21 @@
  	  success: function (data) {
 
  	  	var tags = data.toptags.tag;
+ 	  	var numTags;
+
+ 	  	if( tags.length < 10 ) {
+
+ 	  		numTags = tags.length;
+
+ 	  	} else {
+
+ 	  		numTags = 10;
+ 	  	}
+
 
  	  	if ( tags ) {
 
- 	  		for (var i = 0; i < 10; i++) {
+ 	  		for (var i = 0; i < numTags; i++) {
 
  	  			var tag = tags[i];
  	  			var tagName = tag.name;
@@ -304,7 +347,7 @@
  // Function to fill with background image
  function searchImage(searchQuery) {
 
- 	console.log('fetching image for: ' + searchQuery);
+ 	// console.log('fetching image for: ' + searchQuery);
 
  	// Call Google Image API
  	$.ajax({
@@ -313,7 +356,7 @@
  	  dataType: "jsonp",
  	  success: function (data) {
 
- 	  	console.log('search complete!');
+ 	  	// console.log('search complete!');
 
  	  	var images = data.responseData.results;
 
