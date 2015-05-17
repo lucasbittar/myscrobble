@@ -9,6 +9,6 @@ Based on a Lasf.fm username the app creates a full detailed one page site contai
 * Suggests new releases based on the user's information
 
 ### Project link ###
-[link]
+[Launch Project]
 
-[link]: http://myscrobblefm.lucasbittar.rocks/ "MyScrobble.fm"
+[Launch Project]: http://myscrobblefm.lucasbittar.rocks/ "MyScrobble.fm"
