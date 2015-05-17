@@ -7,3 +7,8 @@ Based on a Lasf.fm username the app creates a full detailed one page site contai
 * Featured last scrobbled song (with "on tour" status)
 * Top listened songs (fetching all details including artwork)
 * Suggests new releases based on the user's information
+
+### Project link ###
+[link]
+
+[link]: http://myscrobblefm.lucasbittar.rocks/ "MyScrobble.fm"
