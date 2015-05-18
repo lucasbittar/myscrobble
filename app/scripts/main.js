@@ -46,8 +46,8 @@ $(window).scroll(function () {
 
 	scrollPos = $(window).scrollTop();
 
-	$('.page-wrap').css('background-position-y', (50 + (scrollPos / 25)) + '%');
-	$('.bg-artist-fade').css('opacity', (scrollPos / 800));
+	$('.page-wrap').css('background-position-y', Math.min(75, (50 + (scrollPos / 25))) + '%');
+	$('.bg-artist-fade').css('opacity', Math.min(1, (scrollPos / 800)));
 	$('.last-scrobble').css('-webkit-transform', 'translateY(' + (scrollPos * -.2) + 'px)');
 
     if ( scrollPos > 30 ) {
