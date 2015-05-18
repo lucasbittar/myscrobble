@@ -13,7 +13,7 @@
 
  	$('.loader').delay(1000).animate({
  		opacity: "0"
- 		}, 100, "easeOutCubic", function() {
+ 		}, 1000, "easeOutCubic", function() {
  			$('.loader-label').html('<img src="images/ajax-loader.gif">Fetching Info...');
  			$('.loader').css({
  				"opacity": 1,
