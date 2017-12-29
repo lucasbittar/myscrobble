@@ -72,7 +72,7 @@ function getScrobble(event) {
 function getTracks() {
   $.ajax({
     url:
-      'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=' +
+      'https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=' +
       username +
       '&api_key=' +
       apikey +
@@ -183,7 +183,7 @@ function fetchUserInfo() {
   // Call Last.fm API Recent Tracks
   $.ajax({
     url:
-      'http://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=' +
+      'https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=' +
       username +
       '&api_key=' +
       apikey +
@@ -220,7 +220,7 @@ function fetchUserInfo() {
   // Call Last.fm API Tags
   $.ajax({
     url:
-      'http://ws.audioscrobbler.com/2.0/?method=user.gettoptags&user=' +
+      'https://ws.audioscrobbler.com/2.0/?method=user.gettoptags&user=' +
       username +
       '&api_key=' +
       apikey +
@@ -244,7 +244,7 @@ function fetchUserInfo() {
           var tagUrl = tag.url;
 
           $('.user-info .tags').append(
-            '<span><a href="http://' +
+            '<span><a href="https://' +
               tagUrl +
               '" target="_blank">' +
               tagName +
@@ -261,7 +261,7 @@ function fetchUserInfo() {
   // Call Last.fm API Loved Tracks
   $.ajax({
     url:
-      'http://ws.audioscrobbler.com/2.0/?method=user.getlovedtracks&user=' +
+      'https://ws.audioscrobbler.com/2.0/?method=user.getlovedtracks&user=' +
       username +
       '&api_key=' +
       apikey +
@@ -307,7 +307,7 @@ function fetchLovedTracks() {
   // Call Last.fm API Loved Tracks
   $.ajax({
     url:
-      'http://ws.audioscrobbler.com/2.0/?method=user.getlovedtracks&user=' +
+      'https://ws.audioscrobbler.com/2.0/?method=user.getlovedtracks&user=' +
       username +
       '&api_key=' +
       apikey +
@@ -363,7 +363,7 @@ function fetchArtistInfo() {
   // Call Last.fm API Artist Info
   $.ajax({
     url:
-      'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' +
+      'https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=' +
       artistName +
       '&api_key=' +
       apikey +
