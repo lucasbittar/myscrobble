@@ -6,14 +6,14 @@
 
 html {
   box-sizing: border-box;
-  text-rendering: optimizeLegibility!important;
-  -webkit-font-smoothing: antialiased!important;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
 }
 
 body {
   color: #111;
   font-size: 1.2em;
-  background: rgba(0,0,0,1);
+  background: rgba(0, 0, 0, 1);
   font-family: 'Merriweather', serif;
   background: url(../images/bg.jpg) no-repeat center center;
   background-size: cover;
@@ -34,10 +34,10 @@ a:hover {
   text-decoration: none;
   color: #111;
 }
- 
+
 a:focus {
   color: transparent;
-  text-decoration: underline; 
+  text-decoration: underline;
 }
 
 footer {
@@ -49,7 +49,7 @@ footer {
 }
 
 footer .container p a {
-  color: #FFF;
+  color: #fff;
 }
 
 .browsehappy {
@@ -62,13 +62,13 @@ footer .container p a {
 .loader {
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,1);
+  background: rgba(0, 0, 0, 1);
   position: fixed;
   z-index: 99999;
 }
 
 .loader .loader-label {
-  color: #FFF;
+  color: #fff;
   padding: 20px 25px;
 }
 
@@ -104,39 +104,39 @@ header .fade {
   font-family: 'Oswald', sans-serif;
   font-weight: 700;
   text-transform: uppercase;
-  border: 4px solid #FFF;
-  color: #FFF;
+  border: 4px solid #fff;
+  color: #fff;
   padding: 10px 25px 10px 10px;
   height: auto;
   cursor: pointer;
-  box-shadow: 2px 2px 0px rgba(0,0,0,.2);
-  text-shadow: 2px 2px 0px rgba(0,0,0,.2);
-  transition: all .3s ease-in-out;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
 }
 
 .navbar-brand:hover {
-  color: #FFF;
-  background: rgba(0,0,0,.8);
-  border: 4px solid rgba(0,0,0,.8);
+  color: #fff;
+  background: rgba(0, 0, 0, 0.8);
+  border: 4px solid rgba(0, 0, 0, 0.8);
 }
 
 .navbar-brand a {
-  color: #FFF;
+  color: #fff;
 }
 
 .navbar-brand a.username {
-  color: rgba(255,255,255,1);
-  transition: all .3s ease-in-out;
+  color: rgba(255, 255, 255, 1);
+  transition: all 0.3s ease-in-out;
 }
 
 .navbar-brand a.username:hover {
-  color: rgba(255,255,255,.5);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Home */
 
 .home {
-  color: #FFF;
+  color: #fff;
   height: calc(100vh - 43px);
 }
 
@@ -165,7 +165,7 @@ header .fade {
   padding: 10px 25px;
   border: 10px solid #111;
   color: #111;
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .home .username input:focus {
@@ -177,7 +177,7 @@ header .fade {
   background: #111;
   color: #333;
   border: 10px solid #111;
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .home .username .username-submit:hover {
@@ -195,14 +195,14 @@ header .fade {
   width: 100vw;
   position: absolute;
   z-index: -1;
-  box-shadow: inset 0px 70px 205px 0px rgba(0,0,0,0.5);
+  box-shadow: inset 0px 70px 205px 0px rgba(0, 0, 0, 0.5);
 }
 
 .bg-artist-fade {
   height: calc(100vh - 60px);
   width: 100vw;
   position: absolute;
-  background: rgba(0,0,0,1);
+  background: rgba(0, 0, 0, 1);
   opacity: 0;
 }
 
@@ -234,39 +234,40 @@ header .fade {
 .last-scrobble h1 a {
   text-transform: uppercase;
   font-size: 2em;
-  color: #FFF;
-  background: rgba(0,0,0,.8);
+  color: #fff;
+  background: rgba(0, 0, 0, 0.8);
   padding: 10px 0px 0px 10px;
   font-weight: 300;
   line-height: 102px;
-  box-shadow: 15px 0 0 rgba(0,0,0,.8), -12px 0 0 rgba(0,0,0,.8);
-  transition: all .3s ease-in-out;
+  box-shadow: 15px 0 0 rgba(0, 0, 0, 0.8), -12px 0 0 rgba(0, 0, 0, 0.8);
+  transition: all 0.3s ease-in-out;
 }
 
 .last-scrobble h1 a:hover {
   color: #111;
-  background: rgba(255,255,255,.8);
-  box-shadow: 20px 0 0 rgba(255,255,255,.8), -12px 0 0 rgba(255,255,255,.8);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 20px 0 0 rgba(255, 255, 255, 0.8),
+    -12px 0 0 rgba(255, 255, 255, 0.8);
 }
 
 .last-scrobble h2 a {
   font-size: 1em;
-  background: rgba(255,255,255,.8);
+  background: rgba(255, 255, 255, 0.8);
   padding: 15px 20px 5px 20px;
   font-weight: 300;
   line-height: 58px;
 }
 
 .last-scrobble h1 a {
-  color: #FFF;
+  color: #fff;
 }
 
 .last-scrobble .date,
 .last-scrobble .listening {
   font-family: 'Oswald', sans-serif;
   font-weight: 400;
-  background: #FFF;
-  color: rgba(0,0,0,.8);
+  background: #fff;
+  color: rgba(0, 0, 0, 0.8);
   text-transform: uppercase;
   font-size: 1em;
   padding: 0px 5px;
@@ -276,8 +277,8 @@ header .fade {
   display: inline-block;
   font-family: 'Oswald', sans-serif;
   font-weight: 400;
-  background: #FF0000;
-  color: rgba(255,255,255,1);
+  background: #ff0000;
+  color: rgba(255, 255, 255, 1);
   text-transform: uppercase;
   font-size: 1em;
   padding: 1px 7px 0px 5px;
@@ -285,11 +286,11 @@ header .fade {
 }
 
 .more-button {
-  width: 100%; 
+  width: 100%;
   height: 60px;
   margin-bottom: 80px;
   background-color: #111;
-  color: #FFF;
+  color: #fff;
   text-transform: uppercase;
   cursor: pointer;
   display: flex;
@@ -297,7 +298,7 @@ header .fade {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .more-button:hover {
@@ -323,11 +324,11 @@ header .fade {
   opacity: 0;
   transform: translateY(40px);
   background-color: #111;
-  color: #FFF;
+  color: #fff;
   cursor: pointer;
   margin-bottom: 5px;
   padding: 10px 0px 0px 10px;
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .scrobble.is-showing-tracks {
@@ -341,7 +342,7 @@ header .fade {
 }
 
 .scrobble:hover > img {
-  border: 5px solid rgba(255,255,255,1);
+  border: 5px solid rgba(255, 255, 255, 1);
   transition: all 300ms ease-in-out;
 }
 
@@ -354,7 +355,7 @@ header .fade {
 }
 
 .scrobble a {
-  color: #FFF;
+  color: #fff;
   font-size: 0.74em;
 }
 
@@ -367,7 +368,7 @@ header .fade {
   margin: 0px 20px 10px 0px;
   width: 110px;
   height: 110px;
-  border: 1px solid rgba(255,255,255,0);
+  border: 1px solid rgba(255, 255, 255, 0);
   transition: all 300ms ease-in-out;
 }
 
@@ -389,7 +390,7 @@ header .fade {
 }
 
 .user-info .username {
-  color: #FFF;
+  color: #fff;
   text-align: center;
   font-size: 2em;
 }
@@ -407,14 +408,14 @@ header .fade {
   width: 80%;
   margin: 15px auto 20px auto;
   display: block;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
   border-bottom: 1px solid #111;
   padding-bottom: 20px;
 }
 
 .user-info .playcount .glyphicon-music,
 .user-info .playcount .glyphicon-heart {
-  color: rgba(255,255,255,1);
+  color: rgba(255, 255, 255, 1);
 }
 
 .user-info h4 {
@@ -423,7 +424,7 @@ header .fade {
   font-weight: 400;
   margin-bottom: 10px;
   margin-top: 30px;
-  color: rgba(255,255,255,1);
+  color: rgba(255, 255, 255, 1);
 }
 
 .user-info .loved {
@@ -433,7 +434,7 @@ header .fade {
 
 .user-info .loved .track {
   display: block;
-  color: #FFF;
+  color: #fff;
   margin-bottom: 8px;
 }
 
@@ -441,13 +442,13 @@ header .fade {
   display: block;
   font-weight: 800;
   font-size: 1.2em;
-  opacity: .8;
+  opacity: 0.8;
 }
 
 .user-info .loved .track .artist {
   display: block;
   font-size: 0.9em;
-  opacity: .6;
+  opacity: 0.6;
 }
 
 .user-info .tags {
@@ -467,7 +468,7 @@ header .fade {
 
 .user-info .tags span a {
   padding: 4px 6px;
-  background: rgba(255,255,255,0.7);
+  background: rgba(255, 255, 255, 0.7);
   margin-right: 5px;
   border-radius: 5px;
   font-size: 0.85em;
@@ -478,17 +479,17 @@ header .fade {
 }
 
 .user-info .tags span a:hover {
-  background: rgba(255,255,255,1);
+  background: rgba(255, 255, 255, 1);
 }
 
- /* New Releases */
+/* New Releases */
 
 .new-releases {
   background: #111;
 }
 
 .new-releases h1 {
-  color: rgba(255,255,255,1);
+  color: rgba(255, 255, 255, 1);
   margin: 60px 0px 30px 0px;
   font-weight: 400;
 }
@@ -513,17 +514,17 @@ header .fade {
 
 .releases-list .release a img {
   width: 100%;
-  min-width: 400px;
-  border: 1px solid rgba(255,255,255,0);
+  min-width: 360px;
+  border: 1px solid rgba(255, 255, 255, 0);
   transition: all 100ms ease-in-out;
 }
 
 .releases-list .release a img:hover {
-  border: 10px solid rgba(255,255,255,1);
+  border: 10px solid rgba(255, 255, 255, 1);
 }
 
 .releases-list .release a:hover + .release-info {
-  opacity: .2;
+  opacity: 0.2;
 }
 
 .releases-list .release .release-info {
@@ -531,13 +532,13 @@ header .fade {
 }
 
 .releases-list .release .release-info h1 {
-  color: rgba(255,255,255,.8);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 1.3em;
   margin: 15px 10px 10px 0px;
 }
 
 .releases-list .release .release-info h2 {
-  color: rgba(255,255,255,.3);
+  color: rgba(255, 255, 255, 0.3);
   font-size: 0.95em;
   margin: 0px 0px 40px 0px;
 }
@@ -545,7 +546,7 @@ header .fade {
 /* Share */
 
 .share {
-  background: #FFF;
+  background: #fff;
   padding-bottom: 70px;
 }
 
@@ -560,19 +561,27 @@ header .fade {
   height: 250px;
   border-radius: 50%;
   background-position: 50% 50%;
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .share-icon:hover {
   cursor: pointer;
-  animation: animate-share-icon .5s ease-in-out;
+  animation: animate-share-icon 0.5s ease-in-out;
 }
 
-@keyframes animate-share-icon { 
-    0%{background-position:50% 50%}
-    50%{background-position:50% -200%}
-    51%{background-position:50% 250%}
-    100%{background-position:50% 50%}
+@keyframes animate-share-icon {
+  0% {
+    background-position: 50% 50%;
+  }
+  50% {
+    background-position: 50% -200%;
+  }
+  51% {
+    background-position: 50% 250%;
+  }
+  100% {
+    background-position: 50% 50%;
+  }
 }
 
 .fb-icon {
@@ -613,7 +622,7 @@ header .fade {
 
 #info-toggle:checked + .page-wrap header .bg-artist-fade,
 #info-toggle:checked + .page-wrap header .bg-artist {
-    width: calc(100vw - 230px);
+  width: calc(100vw - 230px);
 }
 
 #info-toggle:checked + .page-wrap header .bg-artist {
@@ -674,7 +683,7 @@ header .fade {
     font-size: 2.8em;
   }
 
-  .home .username .username-submit, 
+  .home .username .username-submit,
   .home .username .username-submit:focus {
     border: 5px solid #111;
   }
@@ -693,19 +702,20 @@ header .fade {
   }
 
   .last-scrobble h2 {
-      /*margin-top: 10px;*/
+    /*margin-top: 10px;*/
   }
 
   .last-scrobble h2 a {
     font-size: 0.6em;
     padding: 10px 5px 5px 0px;
     line-height: 2.35em;
-    box-shadow: 10px 0 0 rgba(255,255,255,.8), -10px 0 0 rgba(255,255,255,.8);
+    box-shadow: 10px 0 0 rgba(255, 255, 255, 0.8),
+      -10px 0 0 rgba(255, 255, 255, 0.8);
   }
 
   .last-scrobble-wrap {
     opacity: 1;
-    transition: all .2s ease-in-out;
+    transition: all 0.2s ease-in-out;
   }
 
   header,
@@ -723,7 +733,7 @@ header .fade {
   }
 
   .scrobble {
-      padding: 5px 0px 0px 5px;
+    padding: 5px 0px 0px 5px;
   }
 
   .scrobble img {
@@ -735,7 +745,7 @@ header .fade {
   }
 
   .track-info h1 {
-    line-height: .35em;
+    line-height: 0.35em;
     margin-top: 7px;
   }
 
@@ -746,7 +756,7 @@ header .fade {
   }
 
   .scrobble p {
-    font-size: 0.8em; 
+    font-size: 0.8em;
   }
 
   .releases-list .release a img {
@@ -779,7 +789,7 @@ header .fade {
 
   #info-toggle:checked + .page-wrap header .bg-artist-fade,
   #info-toggle:checked + .page-wrap header .bg-artist {
-      width: calc(100vw - 430px);
+    width: calc(100vw - 430px);
   }
 
   #info-toggle:checked + .page-wrap header .bg-artist {
@@ -793,5 +803,4 @@ header .fade {
   #info-toggle:checked + .page-wrap header .container .last-scrobble-wrap {
     opacity: 0;
   }
-
 }
