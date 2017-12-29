@@ -11,4 +11,4 @@ Based on a Lasf.fm username the app creates a full detailed one page site contai
 ### Project link ###
 [Launch Project]
 
-[Launch Project]: http://myscrobblefm.lucasbittar.rocks/ "MyScrobble.fm"
+[Launch Project]: https://lucasbittar.github.io/myscrobble "MyScrobble.fm"
