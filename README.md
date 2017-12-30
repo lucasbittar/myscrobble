@@ -1,4 +1,4 @@
-# myscrobble.fm #
+# myscrobble.fm (v1.0 - jQuery) #
 MyScrobble.FM is my GA's Front-End Web Development course final project.
 
 ### Description ###
@@ -6,7 +6,6 @@ Based on a Lasf.fm username the app creates a full detailed one page site contai
 
 * Featured last scrobbled song (with "on tour" status)
 * Top listened songs (fetching all details including artwork)
-* Suggests new releases based on the user's information
 
 ### Project link ###
 [Launch Project]
