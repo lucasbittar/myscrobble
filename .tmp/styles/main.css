@@ -142,10 +142,14 @@ header .fade {
 
 .home .username {
   height: calc(100vh - 138px);
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex-pack: center;
+      justify-content: center;
+  -ms-flex-align: center;
+      align-items: center;
 }
 
 .home .username h1 {
@@ -209,12 +213,16 @@ header .fade {
 .last-scrobble-wrap {
   width: 100%;
   height: 100vh;
+  display: -ms-flexbox;
   display: flex;
   text-align: center;
   position: relative;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex-pack: center;
+      justify-content: center;
+  -ms-flex-align: center;
+      align-items: center;
 }
 
 .last-scrobble {
@@ -293,11 +301,15 @@ header .fade {
   color: #fff;
   text-transform: uppercase;
   cursor: pointer;
+  display: -ms-flexbox;
   display: flex;
   text-align: center;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex-pack: center;
+      justify-content: center;
+  -ms-flex-align: center;
+      align-items: center;
   transition: all 0.3s ease-in-out;
 }
 
@@ -319,10 +331,13 @@ header .fade {
 }
 
 .scrobble {
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -ms-flex-align: center;
+      align-items: center;
   opacity: 0;
-  transform: translateY(40px);
+  -webkit-transform: translateY(40px);
+          transform: translateY(40px);
   background-color: #111;
   color: #fff;
   cursor: pointer;
@@ -333,7 +348,8 @@ header .fade {
 
 .scrobble.is-showing-tracks {
   opacity: 1;
-  transform: translateY(0px);
+  -webkit-transform: translateY(0px);
+          transform: translateY(0px);
 }
 
 .scrobble:hover {
@@ -360,7 +376,8 @@ header .fade {
 }
 
 .scrobble .track-info {
-  flex: 1;
+  -ms-flex: 1;
+      flex: 1;
   padding-right: 20px;
 }
 
@@ -457,9 +474,12 @@ header .fade {
   display: block;
   max-width: 250px;
   padding-bottom: 30px;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  -ms-flex-direction: row;
+      flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 
 .user-info .tags span {
@@ -495,21 +515,26 @@ header .fade {
 }
 
 .release.is-showing-releases {
-  transform: translateY(0px);
+  -webkit-transform: translateY(0px);
+          transform: translateY(0px);
   opacity: 1;
   transition: all 300ms ease-in-out;
 }
 
 .release {
-  transform: translateY(40px);
+  -webkit-transform: translateY(40px);
+          transform: translateY(40px);
   opacity: 0;
 }
 
 .releases-list,
 .share-list {
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
 }
 
 .releases-list .release a img {
@@ -566,7 +591,23 @@ header .fade {
 
 .share-icon:hover {
   cursor: pointer;
-  animation: animate-share-icon 0.5s ease-in-out;
+  -webkit-animation: animate-share-icon 0.5s ease-in-out;
+          animation: animate-share-icon 0.5s ease-in-out;
+}
+
+@-webkit-keyframes animate-share-icon {
+  0% {
+    background-position: 50% 50%;
+  }
+  50% {
+    background-position: 50% -200%;
+  }
+  51% {
+    background-position: 50% 250%;
+  }
+  100% {
+    background-position: 50% 50%;
+  }
 }
 
 @keyframes animate-share-icon {
@@ -635,12 +676,14 @@ header .fade {
 
 /* Intro animation */
 .elements-hidden {
-  transform: translateY(20px);
+  -webkit-transform: translateY(20px);
+          transform: translateY(20px);
   opacity: 0;
 }
 
 .elements-show {
-  transform: translateY(0px);
+  -webkit-transform: translateY(0px);
+          transform: translateY(0px);
   opacity: 1;
   transition: all 500ms ease-in-out;
 }
@@ -653,8 +696,10 @@ header .fade {
   }
 
   .navbar-header {
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: column-reverse;
+    -ms-flex-direction: column-reverse;
+        flex-direction: column-reverse;
     text-align: center;
     margin: 0;
   }
