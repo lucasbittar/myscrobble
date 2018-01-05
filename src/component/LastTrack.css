@@ -1,0 +1,77 @@
+.last-track-wrap {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  text-align: center;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.last-track {
+  z-index: 2;
+}
+
+.last-track h1 {
+  max-width: 900px;
+  margin: 20px 0px -20px 0px;
+}
+
+.last-track h2 {
+  max-width: 900px;
+}
+
+.last-track h1 a {
+  text-transform: uppercase;
+  font-size: 2em;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 10px 0px 0px 10px;
+  font-weight: 300;
+  line-height: 102px;
+  box-shadow: 15px 0 0 rgba(0, 0, 0, 0.8), -12px 0 0 rgba(0, 0, 0, 0.8);
+  transition: all 0.3s ease-in-out;
+}
+
+.last-track h1 a:hover {
+  color: #111;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 20px 0 0 rgba(255, 255, 255, 0.8),
+    -12px 0 0 rgba(255, 255, 255, 0.8);
+}
+
+.last-track h2 a {
+  font-size: 1em;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 15px 20px 5px 20px;
+  font-weight: 300;
+  line-height: 58px;
+}
+
+.last-track h1 a {
+  color: #fff;
+}
+
+.last-track .date,
+.last-track .listening {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 400;
+  background: #fff;
+  color: rgba(0, 0, 0, 0.8);
+  text-transform: uppercase;
+  font-size: 1em;
+  padding: 0px 5px;
+}
+
+.last-track .ontour {
+  display: inline-block;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 400;
+  background: #ff0000;
+  color: rgba(255, 255, 255, 1);
+  text-transform: uppercase;
+  font-size: 1em;
+  padding: 1px 7px 0px 5px;
+  margin-bottom: 10px;
+}

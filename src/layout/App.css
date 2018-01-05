@@ -1,0 +1,29 @@
+/*
+ * MyScrobble.css
+ */
+
+/* Global */
+
+.App {
+  text-align: center;
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+html {
+  box-sizing: border-box;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
+body {
+  color: #fff;
+  font-size: 1.2em;
+  background: rgba(0, 0, 0, 1);
+  font-family: 'Merriweather', serif;
+  background: url(../images/bg.jpg) no-repeat center center;
+  background-size: cover;
+}
