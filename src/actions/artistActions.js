@@ -3,7 +3,7 @@ import GoogleImages from 'google-images';
 
 const APIKEY = '02f64007fda57f97ec5088a624c873c2';
 const CSEID = '015322544866411100232:i941ndyid74';
-const GOOGLE_IMAGES_APIKEY = 'AIzaSyDcuiakLRK_ou8J42V1t-ABvnKWNsg_wRo';
+const GOOGLE_IMAGES_APIKEY = 'AIzaSyCT67A6Ate7Pfdm5cJ39Ya3oYHhKOhNT_A';
 const client = new GoogleImages(CSEID, GOOGLE_IMAGES_APIKEY);
 
 const endpoint = 'https://ws.audioscrobbler.com/2.0/?method=';

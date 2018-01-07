@@ -4,7 +4,7 @@ export default function reducer(
     recenttracks: [],
     lovedtracks: [],
     fetching: false,
-    fetchingLabel: 'Fetching info...',
+    fetchingLabel: 'Fetching user info...',
     error: null,
   },
   action
@@ -29,22 +29,24 @@ export default function reducer(
         user: action.payload,
       };
     }
-    case 'FETCH_USER_RECENT_TRACKS_FULFILLED': {
-      return {
-        ...state,
-        recenttracks: action.payload,
-      };
-    }
     case 'FETCH_USER_LOVED_TRACKS_FULFILLED': {
       return {
         ...state,
-        fetching: false,
         lovedtracks: action.payload,
+      };
+    }
+    case 'FETCH_USER_RECENT_TRACKS_FULFILLED': {
+      return {
+        ...state,
+        fetching: false,
+        fetchingLabel: 'Fetching user info... done!',
+        recenttracks: action.payload,
       };
     }
     default:
       return state;
   }
 
+  // eslint-disable-next-line
   return state;
 }

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
 import './RecentTracks.css';
 
@@ -9,6 +10,18 @@ class RecentTracks extends Component {
   }
   renderDate(date) {
     return <span className="date">{date['#text']}</span>;
+  }
+  componentDidMount() {
+    window.addEventListener('scroll', (event) => {
+      let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
+      let scrollTop = window.pageYOffset;
+      let windowHeight = window.innerHeight;
+      if (scrollTop > rect.y - windowHeight / 2) {
+        console.error('Reveal Recent Tracks!');
+      }
+      // console.log('Window scrolling', scrollTop);
+      // console.log('Element position', rect);
+    });
   }
   renderRecentTrack() {
     return this.props.tracks.map((track, i) => (
@@ -29,8 +42,8 @@ class RecentTracks extends Component {
     ));
   }
   render() {
-    if (this.props.fetching) {
-      return <div>Loading...</div>;
+    if (this.props.tracks === undefined) {
+      return <div>Fetching your last track info...</div>;
     } else {
       return (
         <section className="recent-tracks">

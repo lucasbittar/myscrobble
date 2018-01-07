@@ -14,12 +14,13 @@
 }
 
 .last-track h1 {
-  max-width: 900px;
-  margin: 20px 0px -20px 0px;
+  max-width: 60%;
+  margin: 10px auto -25px;
 }
 
 .last-track h2 {
-  max-width: 900px;
+  max-width: 80%;
+  margin: 25px auto 20px;
 }
 
 .last-track h1 a {
@@ -29,13 +30,14 @@
   background: rgba(0, 0, 0, 0.8);
   padding: 10px 0px 0px 10px;
   font-weight: 300;
-  line-height: 102px;
+  line-height: 67px;
   box-shadow: 15px 0 0 rgba(0, 0, 0, 0.8), -12px 0 0 rgba(0, 0, 0, 0.8);
   transition: all 0.3s ease-in-out;
 }
 
 .last-track h1 a:hover {
   color: #111;
+  padding: 10px 0px 0px 10px;
   background: rgba(255, 255, 255, 0.8);
   box-shadow: 20px 0 0 rgba(255, 255, 255, 0.8),
     -12px 0 0 rgba(255, 255, 255, 0.8);

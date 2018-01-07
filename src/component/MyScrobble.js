@@ -12,40 +12,31 @@ import {
 
 import LastTrack from './LastTrack';
 import RecentTracks from './RecentTracks';
+import LovedTracks from './LovedTracks';
 
 class MyScrobble extends Component {
-  componentWillMount() {
-    if (!this.props.user.user.name) {
-      console.log('Need to fetch user!');
-      this.props.dispatch(fetchUser(this.props.username));
-    }
+  componentDidMount() {
+    const username = this.props.username;
+    this.props.dispatch(fetchUser(username));
+    this.props.dispatch(fetchUserLovedTracks(username, { limit: 9 }));
     this.props
-      .dispatch(fetchUserRecentTracks(this.props.username, { limit: 10 }))
+      .dispatch(fetchUserRecentTracks(username, { limit: 10 }))
       .then(() => {
-        this.props.dispatch(
-          fetchArtist(this.props.user.recenttracks[0].artist['#text'])
-        );
-        this.props.dispatch(
-          fetchArtistImage(this.props.user.recenttracks[0].artist['#text'])
-        );
+        const artist = this.props.user.recenttracks[0].artist['#text'];
+        this.props.dispatch(fetchArtist(artist));
+        this.props.dispatch(fetchArtistImage(artist));
       });
-    this.props.dispatch(
-      fetchUserLovedTracks(this.props.username, { limit: 9 })
-    );
   }
   render() {
     return (
       <section className="my-scrobble">
         <LastTrack
           imageUrl={this.props.artist.image}
-          fetching={this.props.artist.fetching}
           artist={this.props.artist.artist}
           track={this.props.user.recenttracks[0]}
         />
-        <RecentTracks
-          fetching={this.props.artist.fetching}
-          tracks={this.props.user.recenttracks}
-        />
+        <RecentTracks tracks={this.props.user.recenttracks} />
+        <LovedTracks tracks={this.props.user.lovedtracks} />
       </section>
     );
   }

@@ -15,11 +15,7 @@ class App extends Component {
     console.log('App props:', this.props);
     return (
       <div className="App">
-        <Loader
-          label={this.props.user.fetchingLabel}
-          fetchingUser={this.props.user.fetching}
-          fetchingArtist={this.props.artist.fetching}
-        />
+        <Loader />
         <Header username={this.props.user} />
         <Route exact path="/" component={UserName} />
         <Route

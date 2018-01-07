@@ -47,8 +47,14 @@ class LastTrack extends Component {
     );
   }
   render() {
-    if (this.props.fetching) {
-      return <div>Loading...</div>;
+    if (this.props.track === undefined) {
+      return (
+        <section className="last-track-wrap">
+          <div className="last-track">
+            <div>Fetching your last track info...</div>
+          </div>
+        </section>
+      );
     } else {
       const { image, name, artist, date, album } = this.props.track;
       const { ontour } = this.props.artist;
