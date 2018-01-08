@@ -9,19 +9,15 @@
   font-weight: 400;
 }
 
-.loved-track.is-showing-loved-track {
+.loved-track.is-showing {
   transform: translateY(0px);
   opacity: 1;
   transition: all 300ms ease-in-out;
 }
 
-.loved-track {
+.loved-track.not-showing {
   transform: translateY(40px);
   opacity: 0;
-}
-
-.loved-tracks-list {
-  margin-top: 25px;
 }
 
 .loved-tracks-list,
@@ -31,24 +27,30 @@
   justify-content: space-around;
 }
 
+.loved-tracks-list {
+  margin-top: 25px;
+  justify-content: center;
+}
+
 .loved-tracks-list .loved-track a img {
   width: 100%;
   max-width: 360px;
   min-width: 360px;
   border: 1px solid rgba(255, 255, 255, 0);
-  transition: all 100ms ease-in-out;
+  transition: all 200ms ease-in-out;
 }
 
 .loved-tracks-list .loved-track a img:hover {
-  border: 10px solid rgba(255, 255, 255, 1);
+  border: 10px solid #111;
 }
 
 .loved-tracks-list .loved-track a:hover + .loved-track-info {
-  opacity: 0.2;
+  opacity: 1;
 }
 
 .loved-tracks-list .loved-track .loved-track-info {
-  transition: all 100ms ease-in-out;
+  transition: all 300ms ease-in-out;
+  opacity: 0.4;
 }
 
 .loved-tracks-list .loved-track .loved-track-info h1 {

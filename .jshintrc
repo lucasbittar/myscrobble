@@ -1,3 +1,4 @@
 {
-  "moz": true
+  "moz": true,
+  "esnext": true,
 }

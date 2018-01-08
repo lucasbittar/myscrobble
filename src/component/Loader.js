@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import './Loader.css';
 import ajaxLoader from '../images/ajax-loader.gif';
+import './Loader.css';
 
 class Loader extends Component {
   handleLoader() {
@@ -31,11 +30,4 @@ class Loader extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    user: state.user,
-    artist: state.artist,
-  };
-}
-
-export default connect(mapStateToProps)(Loader);
+export default Loader;

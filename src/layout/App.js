@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router';
 
@@ -10,25 +10,20 @@ import Footer from './Footer';
 import UserName from '../component/UserName';
 import MyScrobble from '../component/MyScrobble';
 
-class App extends Component {
-  render() {
-    console.log('App props:', this.props);
-    return (
-      <div className="App">
-        <Loader />
-        <Header username={this.props.user} />
-        <Route exact path="/" component={UserName} />
-        <Route
-          path="/scrobble/:username"
-          render={({ match }) => (
-            <MyScrobble username={match.params.username} />
-          )}
-        />
-        <Footer />
-      </div>
-    );
-  }
-}
+const App = (props) => {
+  return (
+    <div className="App">
+      <Loader user={props.user} artist={props.artist} />
+      <Header username={props.user} />
+      <Route exact path="/" component={UserName} />
+      <Route
+        path="/scrobble/:username"
+        render={({ match }) => <MyScrobble username={match.params.username} />}
+      />
+      <Footer />
+    </div>
+  );
+};
 
 function mapStateToProps(state) {
   return {

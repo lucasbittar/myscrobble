@@ -11,36 +11,43 @@
 }
 
 .recent-tracks .recent-tracks-list {
-  padding: 0px 80px;
   margin-top: 25px;
 }
 
 .track {
   display: flex;
   align-items: center;
-  opacity: 0;
-  transform: translateY(40px);
   background-color: #111;
+  opacity: 1;
+  transform: translateY(0px);
   color: #fff;
   cursor: pointer;
   margin-bottom: 5px;
-  padding: 10px 0px 0px 10px;
-  transition: all 0.3s ease-in-out;
+  padding: 10px;
+  transition: all 300ms ease-in-out;
+  transition-delay: 0;
 }
 
-.track.is-showing-tracks {
+.track.not-showing {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 300ms ease-in-out;
+}
+
+.track.is-showing {
   opacity: 1;
   transform: translateY(0px);
+  transition: all 300ms ease-in-out;
 }
 
 .track:hover {
   background-color: #222;
-  transition: all 100ms ease-in-out;
+  transition: all 300ms ease-in-out;
 }
 
 .track:hover > img {
   border: 5px solid rgba(255, 255, 255, 1);
-  transition: all 300ms ease-in-out;
+  transition: all 500ms ease-in-out;
 }
 
 .track h1 {
@@ -58,11 +65,12 @@
 
 .track .track-info {
   flex: 1;
+  text-align: left;
   padding-right: 20px;
 }
 
 .track img {
-  margin: 0px 20px 10px 0px;
+  margin: 0px 20px 0px 0px;
   width: 110px;
   height: 110px;
   border: 1px solid rgba(255, 255, 255, 0);

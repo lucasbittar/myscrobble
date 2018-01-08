@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import InViewMonitor from 'react-inview-monitor';
 
 import './RecentTracks.css';
 
@@ -11,21 +11,14 @@ class RecentTracks extends Component {
   renderDate(date) {
     return <span className="date">{date['#text']}</span>;
   }
-  componentDidMount() {
-    window.addEventListener('scroll', (event) => {
-      let rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
-      let scrollTop = window.pageYOffset;
-      let windowHeight = window.innerHeight;
-      if (scrollTop > rect.y - windowHeight / 2) {
-        console.error('Reveal Recent Tracks!');
-      }
-      // console.log('Window scrolling', scrollTop);
-      // console.log('Element position', rect);
-    });
-  }
   renderRecentTrack() {
     return this.props.tracks.map((track, i) => (
-      <div className="track is-showing-tracks" key={i}>
+      <InViewMonitor
+        className="track"
+        classNameNotInView="track not-showing"
+        classNameInView="track is-showing"
+        key={i}
+      >
         <img
           src={this.extractAlbumCover(track.image)}
           alt={track.album['#text']}
@@ -38,7 +31,7 @@ class RecentTracks extends Component {
           </h1>
           {track.date ? this.renderDate(track.date) : 'Now Playing!'}
         </div>
-      </div>
+      </InViewMonitor>
     ));
   }
   render() {
@@ -47,8 +40,10 @@ class RecentTracks extends Component {
     } else {
       return (
         <section className="recent-tracks">
-          <h1>Recent Tracks</h1>
-          <div className="recent-tracks-list">{this.renderRecentTrack()}</div>
+          <div className="container">
+            <h1>Recent Tracks</h1>
+            <div className="recent-tracks-list">{this.renderRecentTrack()}</div>
+          </div>
         </section>
       );
     }

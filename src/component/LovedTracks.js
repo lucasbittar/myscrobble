@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import InViewMonitor from 'react-inview-monitor';
 
 import './LovedTracks.css';
 
@@ -9,7 +10,12 @@ class LovedTracks extends Component {
   }
   renderLovedTrack() {
     return this.props.tracks.map((track, i) => (
-      <div className="loved-track is-showing-loved-track" key={i}>
+      <InViewMonitor
+        className="loved-track"
+        classNameNotInView="loved-track not-showing"
+        classNameInView="loved-track is-showing"
+        key={i}
+      >
         <a href={track.url}>
           <img src={this.extractAlbumCover(track.image)} alt={track.name} />
         </a>
@@ -19,7 +25,7 @@ class LovedTracks extends Component {
             <h2>{track.artist.name}</h2>
           </a>
         </div>
-      </div>
+      </InViewMonitor>
     ));
   }
   render() {
@@ -28,8 +34,10 @@ class LovedTracks extends Component {
     } else {
       return (
         <section className="loved-tracks">
-          <h1>Loved Tracks</h1>
-          <div className="loved-tracks-list">{this.renderLovedTrack()}</div>
+          <div className="container">
+            <h1>Loved Tracks</h1>
+            <div className="loved-tracks-list">{this.renderLovedTrack()}</div>
+          </div>
         </section>
       );
     }
