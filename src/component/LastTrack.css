@@ -9,6 +9,20 @@
   align-items: center;
 }
 
+.last-track-wrap:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: '';
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+}
+
 .last-track {
   z-index: 2;
 }
