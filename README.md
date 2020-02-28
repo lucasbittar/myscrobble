@@ -12,7 +12,7 @@ Based on a Lasf.fm username the app creates a full detailed one page site contai
 * Suggests new releases based on the user's information
 
 ### Project link ###
-You can use my lasf.fm username if you don't have one: lucasbittar
+You can use my last.fm username if you don't have one: lucasbittar
 
 [Launch Project]
 
