@@ -16,10 +16,10 @@ interface GlowTextProps {
 }
 
 const colorClasses: Record<GlowColor, string> = {
-  phosphor: 'text-[#00ff41]',
-  cyan: 'text-[#00f5ff]',
-  magenta: 'text-[#ff00ff]',
-  amber: 'text-[#ffb000]',
+  phosphor: 'text-primary',
+  cyan: 'text-accent',
+  magenta: 'text-[var(--crt-magenta)]',
+  amber: 'text-[var(--crt-amber)]',
 };
 
 const sizeClasses: Record<GlowSize, string> = {

@@ -23,7 +23,7 @@ export function CRTWrapper({
   return (
     <div
       className={cn(
-        'relative min-h-screen bg-[#0a0a0a] overflow-hidden',
+        'relative min-h-screen bg-background overflow-hidden',
         scanlines && 'crt-scanlines',
         flicker && 'crt-flicker',
         noise && 'crt-noise',

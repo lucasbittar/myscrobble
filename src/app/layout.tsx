@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { IBM_Plex_Mono, VT323 } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
+import { ThemeProvider } from '@/lib/theme';
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: '--font-ibm-plex-mono',
@@ -45,11 +46,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
       <body
-        className={`${ibmPlexMono.variable} ${vt323.variable} font-mono antialiased bg-[#0a0a0a] text-[#e0e0e0] min-h-screen`}
+        className={`${ibmPlexMono.variable} ${vt323.variable} font-mono antialiased bg-background text-foreground min-h-screen`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <ThemeProvider>{children}</ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

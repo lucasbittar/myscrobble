@@ -110,7 +110,7 @@ export default function DashboardPage() {
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl border border-[rgba(0,255,65,0.15)] bg-gradient-to-br from-[#0d0d0d] via-[#0a0a0a] to-[#080808]"
+        className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-card via-background to-background"
       >
         {/* Background glow effect */}
         {nowPlaying?.track?.albumArt && (
@@ -134,7 +134,7 @@ export default function DashboardPage() {
                   animate={{ scale: 1, opacity: 1 }}
                   className="relative"
                 >
-                  <div className="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-xl overflow-hidden border-2 border-[rgba(0,255,65,0.3)] shadow-[0_0_40px_rgba(0,255,65,0.15)]">
+                  <div className="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-xl overflow-hidden border-2 border-primary/30 shadow-[0_0_40px_var(--primary)/15]">
                     <Image
                       src={nowPlaying.track.albumArt}
                       alt={nowPlaying.track.album}
@@ -143,25 +143,25 @@ export default function DashboardPage() {
                     />
                   </div>
                   {/* Playing indicator */}
-                  <div className="absolute -bottom-2 -right-2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a0a0a] border border-[#00ff41]">
+                  <div className="absolute -bottom-2 -right-2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-background border border-primary">
                     <span className="flex gap-0.5">
                       {[1, 2, 3].map((i) => (
                         <motion.span
                           key={i}
-                          className="w-1 bg-[#00ff41] rounded-full"
+                          className="w-1 bg-primary rounded-full"
                           animate={{ height: ['8px', '16px', '8px'] }}
                           transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
                         />
                       ))}
                     </span>
-                    <span className="font-terminal text-xs text-[#00ff41] uppercase">Live</span>
+                    <span className="font-terminal text-xs text-primary uppercase">Live</span>
                   </div>
                 </motion.div>
               ) : (
-                <div className="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-xl border-2 border-dashed border-[rgba(0,255,65,0.2)] flex items-center justify-center bg-[rgba(0,255,65,0.02)]">
+                <div className="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-xl border-2 border-dashed border-primary/20 flex items-center justify-center bg-primary/5">
                   <div className="text-center">
                     <span className="text-4xl opacity-30">♪</span>
-                    <p className="mt-2 font-terminal text-xs text-[#555555]">Not playing</p>
+                    <p className="mt-2 font-terminal text-xs text-muted-foreground">Not playing</p>
                   </div>
                 </div>
               )}
@@ -169,36 +169,36 @@ export default function DashboardPage() {
 
             {/* Track Info */}
             <div className="flex-1 min-w-0">
-              <p className="font-mono text-sm text-[#666666] uppercase tracking-wider mb-2">
+              <p className="font-mono text-sm text-muted-foreground uppercase tracking-wider mb-2">
                 {nowPlaying?.isPlaying ? 'Now Playing' : 'Nothing Playing'}
               </p>
               {nowPlaying?.isPlaying && nowPlaying.track ? (
                 <>
-                  <h1 className="font-terminal text-2xl sm:text-3xl lg:text-4xl text-[#e0e0e0] truncate mb-2">
+                  <h1 className="font-terminal text-2xl sm:text-3xl lg:text-4xl text-foreground truncate mb-2">
                     {nowPlaying.track.name}
                   </h1>
-                  <p className="font-mono text-xl text-[#00ff41] truncate mb-1">
+                  <p className="font-mono text-xl text-primary truncate mb-1">
                     {nowPlaying.track.artists}
                   </p>
-                  <p className="font-mono text-base text-[#666666] truncate mb-6">
+                  <p className="font-mono text-base text-muted-foreground truncate mb-6">
                     {nowPlaying.track.album}
                   </p>
 
                   {/* Progress bar */}
                   <div className="max-w-md">
-                    <div className="h-1 bg-[rgba(0,255,65,0.1)] rounded-full overflow-hidden">
+                    <div className="h-1 bg-primary/10 rounded-full overflow-hidden">
                       <motion.div
-                        className="h-full bg-[#00ff41] rounded-full"
+                        className="h-full bg-primary rounded-full"
                         initial={{ width: 0 }}
                         animate={{ width: `${(nowPlaying.track.progress / nowPlaying.track.duration) * 100}%` }}
                         transition={{ duration: 0.5 }}
                       />
                     </div>
                     <div className="flex justify-between mt-2">
-                      <span className="font-mono text-xs text-[#555555]">
+                      <span className="font-mono text-xs text-muted-foreground">
                         {formatTime(nowPlaying.track.progress)}
                       </span>
-                      <span className="font-mono text-xs text-[#555555]">
+                      <span className="font-mono text-xs text-muted-foreground">
                         {formatTime(nowPlaying.track.duration)}
                       </span>
                     </div>
@@ -206,10 +206,10 @@ export default function DashboardPage() {
                 </>
               ) : (
                 <div>
-                  <h2 className="font-terminal text-3xl sm:text-4xl text-[#e0e0e0] mb-2">
+                  <h2 className="font-terminal text-3xl sm:text-4xl text-foreground mb-2">
                     {greeting}{userName && `, ${userName}`}
                   </h2>
-                  <p className="font-mono text-base text-[#666666]">
+                  <p className="font-mono text-base text-muted-foreground">
                     Play something on Spotify to see it here
                   </p>
                 </div>
@@ -265,12 +265,12 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-terminal text-xl">
               <GlowText color="phosphor" size="sm">
-                <span className="text-[#666666]">◎</span> Recent Activity
+                <span className="text-muted-foreground">◎</span> Recent Activity
               </GlowText>
             </h2>
             <Link
               href="/dashboard/history"
-              className="font-mono text-sm text-[#666666] hover:text-[#00ff41] transition-colors"
+              className="font-mono text-sm text-muted-foreground hover:text-primary transition-colors"
             >
               View all →
             </Link>
@@ -278,7 +278,7 @@ export default function DashboardPage() {
 
           <TerminalCard animate={false}>
             {recentTracks && recentTracks.length > 0 ? (
-              <div className="divide-y divide-[rgba(0,255,65,0.08)]">
+              <div className="divide-y divide-border">
                 {recentTracks.map((track, index) => (
                   <motion.div
                     key={`${track.id}-${track.playedAt}`}
@@ -287,7 +287,7 @@ export default function DashboardPage() {
                     transition={{ delay: index * 0.05 }}
                     className="flex items-center gap-4 py-3 group"
                   >
-                    <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-[rgba(0,255,65,0.1)]">
+                    <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-border">
                       {track.albumArt ? (
                         <Image
                           src={track.albumArt}
@@ -296,20 +296,20 @@ export default function DashboardPage() {
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       ) : (
-                        <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center text-[#555555]">
+                        <div className="w-full h-full bg-secondary flex items-center justify-center text-muted-foreground">
                           ♪
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-terminal text-base text-[#e0e0e0] truncate group-hover:text-[#00ff41] transition-colors">
+                      <p className="font-terminal text-base text-foreground truncate group-hover:text-primary transition-colors">
                         {track.name}
                       </p>
-                      <p className="font-mono text-sm text-[#666666] truncate">
+                      <p className="font-mono text-sm text-muted-foreground truncate">
                         {track.artist}
                       </p>
                     </div>
-                    <span className="font-mono text-xs text-[#444444] flex-shrink-0">
+                    <span className="font-mono text-xs text-muted-foreground/70 flex-shrink-0">
                       {formatRelativeTime(track.playedAt)}
                     </span>
                   </motion.div>
@@ -317,7 +317,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="py-8 text-center">
-                <p className="font-mono text-base text-[#555555]">No recent tracks</p>
+                <p className="font-mono text-base text-muted-foreground">No recent tracks</p>
               </div>
             )}
           </TerminalCard>
@@ -332,12 +332,12 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-terminal text-xl">
               <GlowText color="cyan" size="sm">
-                <span className="text-[#666666]">▲</span> Top Artists
+                <span className="text-muted-foreground">▲</span> Top Artists
               </GlowText>
             </h2>
             <Link
               href="/dashboard/top"
-              className="font-mono text-sm text-[#666666] hover:text-[#00f5ff] transition-colors"
+              className="font-mono text-sm text-muted-foreground hover:text-accent transition-colors"
             >
               View all →
             </Link>
@@ -354,10 +354,10 @@ export default function DashboardPage() {
                     transition={{ delay: index * 0.05 }}
                     className="flex items-center gap-3 group"
                   >
-                    <span className="font-terminal text-lg text-[#333333] w-5 text-right">
+                    <span className="font-terminal text-lg text-muted-foreground/50 w-5 text-right">
                       {index + 1}
                     </span>
-                    <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-[rgba(0,245,255,0.2)]">
+                    <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-accent/20">
                       {artist.image ? (
                         <Image
                           src={artist.image}
@@ -366,17 +366,17 @@ export default function DashboardPage() {
                           className="object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center text-[#555555] text-xs">
+                        <div className="w-full h-full bg-secondary flex items-center justify-center text-muted-foreground text-xs">
                           ?
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-terminal text-base text-[#e0e0e0] truncate group-hover:text-[#00f5ff] transition-colors">
+                      <p className="font-terminal text-base text-foreground truncate group-hover:text-accent transition-colors">
                         {artist.name}
                       </p>
                       {artist.genres.length > 0 && (
-                        <p className="font-mono text-xs text-[#555555] truncate">
+                        <p className="font-mono text-xs text-muted-foreground truncate">
                           {artist.genres.join(' • ')}
                         </p>
                       )}
@@ -386,7 +386,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="py-8 text-center">
-                <p className="font-mono text-base text-[#555555]">No data yet</p>
+                <p className="font-mono text-base text-muted-foreground">No data yet</p>
               </div>
             )}
           </TerminalCard>
@@ -415,7 +415,7 @@ function FeatureCard({
   return (
     <Link href={href} className="group block">
       <div
-        className="relative h-full rounded-xl border border-[rgba(255,255,255,0.06)] bg-[#0d0d0d] p-6 overflow-hidden transition-all duration-300 hover:border-[rgba(255,255,255,0.1)] hover:shadow-lg"
+        className="relative h-full rounded-xl border border-border bg-card p-6 overflow-hidden transition-all duration-300 hover:border-foreground/10 hover:shadow-lg"
         style={{
           boxShadow: `0 0 0 0 ${accentColor}00`,
         }}
@@ -441,10 +441,10 @@ function FeatureCard({
           >
             {icon}
           </div>
-          <h3 className="font-terminal text-lg text-[#e0e0e0] mb-1 group-hover:text-white transition-colors">
+          <h3 className="font-terminal text-lg text-foreground mb-1 group-hover:brightness-125 transition-colors">
             {title}
           </h3>
-          <p className="font-mono text-sm text-[#666666] leading-relaxed">
+          <p className="font-mono text-sm text-muted-foreground leading-relaxed">
             {description}
           </p>
         </div>

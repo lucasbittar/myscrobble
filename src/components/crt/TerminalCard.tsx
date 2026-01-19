@@ -21,21 +21,21 @@ export function TerminalCard({
   const content = (
     <div
       className={cn(
-        'relative overflow-hidden rounded-lg border border-[rgba(0,255,65,0.3)] bg-[#0d0d0d]',
+        'relative overflow-hidden rounded-lg border border-primary/30 bg-card',
         glow && 'box-glow',
         className
       )}
     >
       {/* Terminal header */}
       {title && (
-        <div className="flex items-center gap-2 border-b border-[rgba(0,255,65,0.2)] px-4 py-2">
+        <div className="flex items-center gap-2 border-b border-border px-4 py-2">
           {/* Terminal dots */}
           <div className="flex gap-1.5">
-            <div className="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
-            <div className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
-            <div className="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
+            <div className="h-2.5 w-2.5 rounded-full bg-destructive" />
+            <div className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+            <div className="h-2.5 w-2.5 rounded-full bg-primary" />
           </div>
-          <span className="ml-2 font-terminal text-sm text-[#888888]">
+          <span className="ml-2 font-terminal text-sm text-muted-foreground">
             {title}
           </span>
         </div>
@@ -45,7 +45,7 @@ export function TerminalCard({
       <div className="p-4">{children}</div>
 
       {/* Subtle gradient overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[rgba(0,0,0,0.3)]" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/30" />
     </div>
   );
 

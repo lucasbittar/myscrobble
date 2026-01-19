@@ -6,6 +6,37 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CRTWrapper, GlowText } from '@/components/crt';
+import { useTheme } from '@/lib/theme';
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="hidden sm:flex items-center justify-center w-9 h-9 rounded-md border border-border hover:bg-secondary transition-colors"
+      title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+    >
+      <span className="font-terminal text-sm text-primary">
+        {theme === 'dark' ? '☀' : '☾'}
+      </span>
+    </button>
+  );
+}
+
+function MobileThemeToggle() {
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="flex w-full items-center gap-3 rounded-md px-4 py-3 font-terminal text-base text-muted-foreground hover:bg-secondary transition-colors"
+    >
+      <span>{theme === 'dark' ? '☀' : '☾'}</span>
+      {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+    </button>
+  );
+}
 
 interface SessionUser {
   id: string;
@@ -73,7 +104,7 @@ export default function DashboardLayout({
           <motion.div
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="font-terminal text-2xl text-[#00ff41]"
+            className="font-terminal text-2xl text-primary"
           >
             LOADING...
           </motion.div>
@@ -90,16 +121,16 @@ export default function DashboardLayout({
     <CRTWrapper scanlines flicker={false}>
       <div className="min-h-screen">
         {/* Top Navigation Bar */}
-        <header className="fixed top-0 left-0 right-0 z-50 border-b border-[rgba(0,255,65,0.1)] bg-[rgba(10,10,10,0.9)] backdrop-blur-md">
+        <header className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="flex h-16 items-center justify-between">
               {/* Logo */}
               <Link href="/dashboard" className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[rgba(0,255,65,0.3)] bg-[rgba(0,255,65,0.1)]">
-                  <span className="font-terminal text-sm text-[#00ff41]">M</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/30 bg-primary/10">
+                  <span className="font-terminal text-sm text-primary">M</span>
                 </div>
                 <span className="hidden font-terminal text-lg sm:block">
-                  <GlowText color="phosphor" size="sm">MyScrobble</GlowText>
+                  <GlowText color="phosphor" size="sm">MyScrobble.fm</GlowText>
                 </span>
               </Link>
 
@@ -113,15 +144,15 @@ export default function DashboardLayout({
                       href={item.href}
                       className={`relative px-4 py-2 font-terminal text-base transition-all duration-200 ${
                         isActive
-                          ? 'text-[#00ff41]'
-                          : 'text-[#666666] hover:text-[#e0e0e0]'
+                          ? 'text-primary'
+                          : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
                       <span className="relative z-10">{item.label}</span>
                       {isActive && (
                         <motion.div
                           layoutId="nav-indicator"
-                          className="absolute inset-0 rounded-md bg-[rgba(0,255,65,0.1)] border border-[rgba(0,255,65,0.2)]"
+                          className="absolute inset-0 rounded-md bg-primary/10 border border-primary/20"
                           transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                         />
                       )}
@@ -134,7 +165,7 @@ export default function DashboardLayout({
               <div className="flex items-center gap-4">
                 {session.user?.image && (
                   <div className="hidden sm:flex items-center gap-3">
-                    <span className="font-mono text-sm text-[#666666]">
+                    <span className="font-mono text-sm text-muted-foreground">
                       {session.user?.name?.split(' ')[0]}
                     </span>
                     <Image
@@ -142,13 +173,14 @@ export default function DashboardLayout({
                       alt={session.user.name || 'User'}
                       width={32}
                       height={32}
-                      className="rounded-full border border-[rgba(0,255,65,0.2)]"
+                      className="rounded-full border border-border"
                     />
                   </div>
                 )}
+                <ThemeToggle />
                 <button
                   onClick={handleSignOut}
-                  className="hidden sm:flex items-center gap-2 px-3 py-1.5 font-terminal text-xs text-[#666666] hover:text-[#ff4444] transition-colors"
+                  className="hidden sm:flex items-center gap-2 px-3 py-1.5 font-terminal text-xs text-muted-foreground hover:text-destructive transition-colors"
                 >
                   <span>⏻</span>
                 </button>
@@ -156,9 +188,9 @@ export default function DashboardLayout({
                 {/* Mobile menu button */}
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="md:hidden flex items-center justify-center w-10 h-10 rounded-md border border-[rgba(0,255,65,0.2)]"
+                  className="md:hidden flex items-center justify-center w-10 h-10 rounded-md border border-border"
                 >
-                  <span className="font-terminal text-[#00ff41]">
+                  <span className="font-terminal text-primary">
                     {mobileMenuOpen ? '✕' : '☰'}
                   </span>
                 </button>
@@ -182,7 +214,7 @@ export default function DashboardLayout({
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="fixed top-16 left-0 right-0 z-40 border-b border-[rgba(0,255,65,0.2)] bg-[#0a0a0a] p-4 md:hidden"
+                className="fixed top-16 left-0 right-0 z-40 border-b border-border bg-background p-4 md:hidden"
               >
                 <nav className="flex flex-col gap-2">
                   {navItems.map((item) => {
@@ -194,18 +226,18 @@ export default function DashboardLayout({
                         onClick={() => setMobileMenuOpen(false)}
                         className={`flex items-center gap-3 rounded-md px-4 py-3 font-terminal text-base transition-all ${
                           isActive
-                            ? 'bg-[rgba(0,255,65,0.1)] text-[#00ff41]'
-                            : 'text-[#888888] hover:bg-[rgba(0,255,65,0.05)] hover:text-[#e0e0e0]'
+                            ? 'bg-primary/10 text-primary'
+                            : 'text-muted-foreground hover:bg-primary/5 hover:text-foreground'
                         }`}
                       >
-                        <span className={isActive ? 'text-[#00ff41]' : 'text-[#555555]'}>
+                        <span className={isActive ? 'text-primary' : 'text-muted-foreground'}>
                           {item.icon}
                         </span>
                         {item.label}
                       </Link>
                     );
                   })}
-                  <div className="mt-2 pt-2 border-t border-[rgba(0,255,65,0.1)]">
+                  <div className="mt-2 pt-2 border-t border-border">
                     <div className="flex items-center gap-3 px-4 py-2">
                       {session.user?.image && (
                         <Image
@@ -213,16 +245,17 @@ export default function DashboardLayout({
                           alt={session.user.name || 'User'}
                           width={32}
                           height={32}
-                          className="rounded-full border border-[rgba(0,255,65,0.2)]"
+                          className="rounded-full border border-border"
                         />
                       )}
                       <div className="flex-1">
-                        <p className="font-terminal text-base text-[#e0e0e0]">{session.user?.name}</p>
+                        <p className="font-terminal text-base text-foreground">{session.user?.name}</p>
                       </div>
                     </div>
+                    <MobileThemeToggle />
                     <button
                       onClick={handleSignOut}
-                      className="flex w-full items-center gap-3 rounded-md px-4 py-3 font-terminal text-base text-[#ff4444] hover:bg-[rgba(255,68,68,0.1)]"
+                      className="flex w-full items-center gap-3 rounded-md px-4 py-3 font-terminal text-base text-destructive hover:bg-destructive/10"
                     >
                       <span>⏻</span>
                       Sign Out
@@ -242,9 +275,9 @@ export default function DashboardLayout({
         </main>
 
         {/* Subtle footer status */}
-        <div className="fixed bottom-4 right-4 hidden lg:flex items-center gap-4 font-mono text-[10px] text-[#333333]">
+        <div className="fixed bottom-4 right-4 hidden lg:flex items-center gap-4 font-mono text-[10px] text-muted-foreground/50">
           <span>SYS: ONLINE</span>
-          <span className="h-1.5 w-1.5 rounded-full bg-[#00ff41] animate-pulse" />
+          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
         </div>
       </div>
     </CRTWrapper>

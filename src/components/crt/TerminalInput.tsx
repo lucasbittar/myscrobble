@@ -15,33 +15,33 @@ export const TerminalInput = forwardRef<HTMLInputElement, TerminalInputProps>(
     return (
       <div className="space-y-1.5">
         {label && (
-          <label className="block font-terminal text-sm text-[#888888]">
-            <span className="text-[#00ff41]">&gt;</span> {label}
+          <label className="block font-terminal text-sm text-muted-foreground">
+            <span className="text-primary">&gt;</span> {label}
           </label>
         )}
         <div className="relative">
           {icon && (
-            <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#00ff41]">
+            <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-primary">
               {icon}
             </div>
           )}
           <input
             ref={ref}
             className={cn(
-              'w-full rounded-md border border-[rgba(0,255,65,0.3)] bg-[#0a0a0a] px-4 py-2.5 font-terminal text-[#e0e0e0] placeholder:text-[#555555]',
+              'w-full rounded-md border border-primary/30 bg-background px-4 py-2.5 font-terminal text-foreground placeholder:text-muted-foreground',
               'transition-all duration-200',
-              'hover:border-[rgba(0,255,65,0.5)]',
-              'focus:border-[#00ff41] focus:outline-none focus:ring-2 focus:ring-[rgba(0,255,65,0.2)]',
+              'hover:border-primary/50',
+              'focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20',
               icon && 'pl-10',
-              error && 'border-[#ff4444] focus:border-[#ff4444] focus:ring-[rgba(255,68,68,0.2)]',
+              error && 'border-destructive focus:border-destructive focus:ring-destructive/20',
               className
             )}
             {...props}
           />
         </div>
         {error && (
-          <p className="font-terminal text-sm text-[#ff4444]">
-            <span className="text-[#ff4444]">!</span> {error}
+          <p className="font-terminal text-sm text-destructive">
+            <span className="text-destructive">!</span> {error}
           </p>
         )}
       </div>

@@ -18,13 +18,13 @@ interface TerminalButtonProps
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-[#00ff41] text-[#0a0a0a] hover:bg-[#00cc33] border-[#00ff41] hover:shadow-[0_0_20px_rgba(0,255,65,0.5)]',
+    'bg-primary text-primary-foreground hover:brightness-90 border-primary hover:shadow-[0_0_20px_var(--primary)/50]',
   secondary:
-    'bg-transparent text-[#00f5ff] border-[#00f5ff] hover:bg-[rgba(0,245,255,0.1)] hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]',
+    'bg-transparent text-accent border-accent hover:bg-accent/10 hover:shadow-[0_0_20px_var(--accent)/30]',
   ghost:
-    'bg-transparent text-[#e0e0e0] border-transparent hover:border-[rgba(0,255,65,0.3)] hover:text-[#00ff41]',
+    'bg-transparent text-foreground border-transparent hover:border-primary/30 hover:text-primary',
   danger:
-    'bg-transparent text-[#ff4444] border-[#ff4444] hover:bg-[rgba(255,68,68,0.1)] hover:shadow-[0_0_20px_rgba(255,68,68,0.3)]',
+    'bg-transparent text-destructive border-destructive hover:bg-destructive/10 hover:shadow-[0_0_20px_var(--destructive)/30]',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -50,11 +50,11 @@ export function TerminalButton({
       whileTap={{ scale: disabled ? 1 : 0.98 }}
       className={cn(
         'relative inline-flex items-center justify-center gap-2 rounded-md border font-terminal font-medium transition-all duration-200',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00ff41] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         'disabled:cursor-not-allowed disabled:opacity-50',
         variantClasses[variant],
         sizeClasses[size],
-        glow && variant === 'primary' && 'shadow-[0_0_15px_rgba(0,255,65,0.4)]',
+        glow && variant === 'primary' && 'shadow-[0_0_15px_var(--primary)/40]',
         className
       )}
       disabled={disabled || loading}

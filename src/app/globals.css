@@ -107,10 +107,95 @@
   --sidebar-ring: #00ff41;
 }
 
-/* Light mode - still CRT-like but brighter */
-.light {
-  --background: #0d0d0d;
-  --foreground: #e0e0e0;
+/* Light mode - Paper Terminal theme */
+[data-theme="light"] {
+  /* Paper Terminal Color Palette */
+  --phosphor: #00994d;
+  --crt-cyan: #0088a3;
+  --crt-magenta: #bb00bb;
+  --crt-amber: #cc7700;
+  --terminal-bg: #f8f8f5;
+  --terminal-text: #1a1a18;
+
+  /* Core colors */
+  --background: #f8f8f5;
+  --foreground: #1a1a18;
+  --card: #f0f0eb;
+  --card-foreground: #1a1a18;
+  --popover: #f0f0eb;
+  --popover-foreground: #1a1a18;
+  --primary: #00994d;
+  --primary-foreground: #ffffff;
+  --secondary: #e8e8e3;
+  --secondary-foreground: #1a1a18;
+  --muted: #e8e8e3;
+  --muted-foreground: #5a5a58;
+  --accent: #0088a3;
+  --accent-foreground: #ffffff;
+  --destructive: #cc3333;
+  --border: rgba(0, 153, 77, 0.25);
+  --input: rgba(0, 153, 77, 0.1);
+  --ring: #00994d;
+
+  /* Chart colors adjusted for light */
+  --chart-1: #00994d;
+  --chart-2: #0088a3;
+  --chart-3: #bb00bb;
+  --chart-4: #cc7700;
+  --chart-5: #cc3333;
+
+  /* Sidebar */
+  --sidebar: #f0f0eb;
+  --sidebar-foreground: #1a1a18;
+  --sidebar-primary: #00994d;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e8e8e3;
+  --sidebar-accent-foreground: #1a1a18;
+  --sidebar-border: rgba(0, 153, 77, 0.2);
+  --sidebar-ring: #00994d;
+}
+
+/* Light mode scrollbar */
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #f0f0eb;
+  border-left: 1px solid rgba(0, 153, 77, 0.2);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #00994d;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: #0088a3;
+}
+
+/* Light mode selection */
+[data-theme="light"] ::selection {
+  background: #00994d;
+  color: #ffffff;
+}
+
+/* Light mode CRT effects adjustments */
+[data-theme="light"] .crt-scanlines::before {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.03),
+    rgba(0, 0, 0, 0.03) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+}
+
+[data-theme="light"] .text-glow,
+[data-theme="light"] .text-glow-sm,
+[data-theme="light"] .text-glow-lg {
+  text-shadow: none;
+}
+
+[data-theme="light"] .box-glow,
+[data-theme="light"] .box-glow-cyan,
+[data-theme="light"] .box-glow-magenta {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 @layer base {
