@@ -268,17 +268,34 @@ export default function DashboardLayout({
         </AnimatePresence>
 
         {/* Main content */}
-        <main className="pt-16">
+        <main className="pt-16 pb-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8">
             {children}
           </div>
         </main>
 
-        {/* Subtle footer status */}
-        <div className="fixed bottom-4 right-4 hidden lg:flex items-center gap-4 font-mono text-[10px] text-muted-foreground/50">
-          <span>SYS: ONLINE</span>
-          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-        </div>
+        {/* Footer */}
+        <footer className="border-t border-border bg-background/80 backdrop-blur-sm">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+              <p className="font-mono text-xs text-muted-foreground">
+                Built by{' '}
+                <a
+                  href="https://lucasbittar.dev"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:text-accent transition-colors"
+                >
+                  Lucas Bittar
+                </a>
+              </p>
+              <div className="flex items-center gap-4 font-mono text-xs text-muted-foreground/50">
+                <span>SYS: ONLINE</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </CRTWrapper>
   );

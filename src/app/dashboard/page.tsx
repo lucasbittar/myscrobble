@@ -143,55 +143,72 @@ export default function DashboardPage() {
         )}
 
         <div className="relative z-10 p-6 sm:p-8 lg:p-10">
-          <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-10">
-            {/* Album Art */}
-            <div className="relative flex-shrink-0">
-              {nowPlaying?.isPlaying && nowPlaying.track?.albumArt ? (
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="relative"
-                >
-                  <div className="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-xl overflow-hidden border-2 border-primary/30 shadow-[0_0_40px_var(--primary)/15]">
-                    <Image
-                      src={nowPlaying.track.albumArt}
-                      alt={nowPlaying.track.album}
-                      fill
-                      className="object-cover"
+          {nowPlaying?.isPlaying && nowPlaying.track ? (
+            <>
+              {/* Terminal Header - Greeting + Status (only when playing) */}
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-primary/10">
+                <div className="flex items-center gap-2">
+                  <span className="text-primary font-terminal">&gt;</span>
+                  <h2 className="font-terminal text-lg sm:text-xl text-foreground">
+                    {greeting}{userName && `, ${userName}`}
+                    <motion.span
+                      className="inline-block w-2 h-5 bg-primary ml-1 align-middle"
+                      animate={{ opacity: [1, 1, 0, 0] }}
+                      transition={{ duration: 1, repeat: Infinity, times: [0, 0.5, 0.5, 1] }}
                     />
-                  </div>
-                  {/* Playing indicator */}
-                  <div className="absolute -bottom-2 -right-2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-background border border-primary">
-                    <span className="flex gap-0.5">
-                      {[1, 2, 3].map((i) => (
-                        <motion.span
-                          key={i}
-                          className="w-1 bg-primary rounded-full"
-                          animate={{ height: ['8px', '16px', '8px'] }}
-                          transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
-                        />
-                      ))}
-                    </span>
-                    <span className="font-terminal text-xs text-primary uppercase">Live</span>
-                  </div>
-                </motion.div>
-              ) : (
-                <div className="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-xl border-2 border-dashed border-primary/20 flex items-center justify-center bg-primary/5">
-                  <div className="text-center">
-                    <span className="text-4xl opacity-30">♪</span>
-                    <p className="mt-2 font-terminal text-xs text-muted-foreground">Not playing</p>
-                  </div>
+                  </h2>
                 </div>
-              )}
-            </div>
+                <motion.div
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="flex items-center gap-2"
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+                  </span>
+                  <span className="font-terminal text-xs text-primary uppercase tracking-wider">Now Live</span>
+                </motion.div>
+              </div>
 
-            {/* Track Info */}
-            <div className="flex-1 min-w-0">
-              <p className="font-mono text-sm text-muted-foreground uppercase tracking-wider mb-2">
-                {nowPlaying?.isPlaying ? 'Now Playing' : 'Nothing Playing'}
-              </p>
-              {nowPlaying?.isPlaying && nowPlaying.track ? (
-                <>
+              {/* Now Playing Content */}
+              <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-10">
+                {/* Album Art */}
+                <div className="relative flex-shrink-0">
+                  <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="relative"
+                  >
+                    <div className="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-xl overflow-hidden border-2 border-primary/30 shadow-[0_0_40px_var(--primary)/15]">
+                      {nowPlaying.track.albumArt && (
+                        <Image
+                          src={nowPlaying.track.albumArt}
+                          alt={nowPlaying.track.album}
+                          fill
+                          className="object-cover"
+                        />
+                      )}
+                    </div>
+                    {/* Playing indicator */}
+                    <div className="absolute -bottom-2 -right-2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-background border border-primary">
+                      <span className="flex gap-0.5">
+                        {[1, 2, 3].map((i) => (
+                          <motion.span
+                            key={i}
+                            className="w-1 bg-primary rounded-full"
+                            animate={{ height: ['8px', '16px', '8px'] }}
+                            transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
+                          />
+                        ))}
+                      </span>
+                      <span className="font-terminal text-xs text-primary uppercase">Live</span>
+                    </div>
+                  </motion.div>
+                </div>
+
+                {/* Track Info */}
+                <div className="flex-1 min-w-0">
                   <h1 className="font-terminal text-2xl sm:text-3xl lg:text-4xl text-foreground truncate mb-2">
                     {nowPlaying.track.name}
                   </h1>
@@ -221,19 +238,36 @@ export default function DashboardPage() {
                       </span>
                     </div>
                   </div>
-                </>
-              ) : (
-                <div>
-                  <h2 className="font-terminal text-3xl sm:text-4xl text-foreground mb-2">
-                    {greeting}{userName && `, ${userName}`}
-                  </h2>
-                  <p className="font-mono text-base text-muted-foreground">
-                    Play something on Spotify to see it here
-                  </p>
                 </div>
-              )}
+              </div>
+            </>
+          ) : (
+            /* Not Playing State - Original Layout */
+            <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-10">
+              <div className="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-xl border-2 border-dashed border-primary/20 flex items-center justify-center bg-primary/5 flex-shrink-0">
+                <div className="text-center">
+                  <span className="text-4xl opacity-30">♪</span>
+                  <p className="mt-2 font-terminal text-xs text-muted-foreground">Not playing</p>
+                </div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-mono text-sm text-muted-foreground uppercase tracking-wider mb-2">
+                  Nothing Playing
+                </p>
+                <h2 className="font-terminal text-3xl sm:text-4xl text-foreground mb-2">
+                  <span className="text-primary">&gt;</span> {greeting}{userName && `, ${userName}`}
+                  <motion.span
+                    className="inline-block w-3 h-8 bg-primary ml-2 align-middle"
+                    animate={{ opacity: [1, 1, 0, 0] }}
+                    transition={{ duration: 1, repeat: Infinity, times: [0, 0.5, 0.5, 1] }}
+                  />
+                </h2>
+                <p className="font-mono text-base text-muted-foreground">
+                  Play something on Spotify to see it here
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </motion.section>
 
