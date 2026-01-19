@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
+import { useTranslations } from 'next-intl';
 
 interface HistoryItem {
   id: string;
@@ -61,6 +62,8 @@ export default function HistoryPage() {
   const [dateRange, setDateRange] = useState<'all' | 'today' | 'week' | 'month'>('all');
   const [offset, setOffset] = useState(0);
   const limit = 50;
+  const t = useTranslations('history');
+  const tCommon = useTranslations('common');
 
   // Calculate date filter
   const getDateFilter = () => {
@@ -131,14 +134,14 @@ export default function HistoryPage() {
         <div>
           <h1 className="font-terminal text-3xl">
             <GlowText color="phosphor" size="sm">
-              <span className="text-[#888888]">◎</span> Listening History
+              <span className="text-[#888888]">◎</span> {t('title')}
             </GlowText>
           </h1>
           <p className="mt-1 font-mono text-sm text-[#888888]">
-            {syncStatus?.history_count || 0} tracks synced
+            {t('tracksSynced', { count: syncStatus?.history_count || 0 })}
             {syncStatus?.user?.last_synced_at && (
               <span className="ml-2 text-[#555555]">
-                • Last sync: {new Date(syncStatus.user.last_synced_at).toLocaleString()}
+                • {t('lastSync', { date: new Date(syncStatus.user.last_synced_at).toLocaleString() })}
               </span>
             )}
           </p>
@@ -149,7 +152,7 @@ export default function HistoryPage() {
           disabled={syncMutation.isPending}
           glow
         >
-          {syncMutation.isPending ? 'SYNCING...' : 'SYNC NOW'}
+          {syncMutation.isPending ? tCommon('syncing') : tCommon('syncNow')}
         </TerminalButton>
       </motion.div>
 
@@ -173,7 +176,7 @@ export default function HistoryPage() {
                 : 'border-[rgba(0,255,65,0.2)] text-[#888888] hover:border-[#00ff41] hover:text-[#e0e0e0]'
             }`}
           >
-            {range === 'all' ? 'ALL TIME' : range.toUpperCase()}
+            {t(`filters.${range}`)}
           </button>
         ))}
       </motion.div>
@@ -185,14 +188,13 @@ export default function HistoryPage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <TerminalCard title="sync.required">
+          <TerminalCard title={t('sync.required')}>
             <div className="space-y-4 text-center">
               <p className="font-mono text-sm text-[#888888]">
-                Sync your listening history to view and filter your tracks.
+                {t('sync.description')}
               </p>
               <p className="font-mono text-xs text-[#555555]">
-                This will save your last 50 played tracks to the database.
-                Run it periodically to build your complete history.
+                {t('sync.hint')}
               </p>
               <TerminalButton
                 onClick={() => syncMutation.mutate()}
@@ -200,7 +202,7 @@ export default function HistoryPage() {
                 glow
                 size="lg"
               >
-                {syncMutation.isPending ? 'SYNCING...' : 'START SYNC'}
+                {syncMutation.isPending ? tCommon('syncing') : tCommon('startSync')}
               </TerminalButton>
             </div>
           </TerminalCard>
@@ -215,7 +217,7 @@ export default function HistoryPage() {
             transition={{ duration: 1.5, repeat: Infinity }}
             className="font-terminal text-[#00ff41]"
           >
-            LOADING HISTORY...
+            {t('loading')}
           </motion.div>
         </div>
       )}
@@ -230,7 +232,7 @@ export default function HistoryPage() {
           <TerminalCard title="listening_history.log">
             {history.items.length === 0 ? (
               <p className="py-8 text-center font-mono text-sm text-[#888888]">
-                No tracks found for this period
+                {t('noTracks')}
               </p>
             ) : (
               <div className="divide-y divide-[rgba(0,255,65,0.1)]">
@@ -290,17 +292,17 @@ export default function HistoryPage() {
                   disabled={offset === 0}
                   className="font-terminal text-xs text-[#00ff41] disabled:opacity-30"
                 >
-                  ← PREV
+                  {tCommon('prev')}
                 </button>
                 <span className="font-mono text-xs text-[#888888]">
-                  Page {currentPage} of {totalPages}
+                  {tCommon('page', { current: currentPage, total: totalPages })}
                 </span>
                 <button
                   onClick={() => setOffset(offset + limit)}
                   disabled={currentPage >= totalPages}
                   className="font-terminal text-xs text-[#00ff41] disabled:opacity-30"
                 >
-                  NEXT →
+                  {tCommon('next')}
                 </button>
               </div>
             )}
@@ -316,7 +318,7 @@ export default function HistoryPage() {
           className="rounded-lg border border-[rgba(0,255,65,0.3)] bg-[rgba(0,255,65,0.05)] p-3"
         >
           <p className="font-mono text-xs text-[#00ff41]">
-            ✓ Synced {syncMutation.data?.synced || 0} new tracks
+            {tCommon('synced', { count: syncMutation.data?.synced || 0 })}
           </p>
         </motion.div>
       )}

@@ -1,0 +1,288 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "loadingSystem": "LOADING SYSTEM...",
+    "error": "Error",
+    "viewAll": "View all →",
+    "tryAgain": "Try Again",
+    "goHome": "Go Home",
+    "prev": "← PREV",
+    "next": "NEXT →",
+    "page": "Page {current} of {total}",
+    "syncing": "SYNCING...",
+    "syncNow": "SYNC NOW",
+    "startSync": "START SYNC",
+    "synced": "✓ Synced {count} new tracks",
+    "loading_hint": "This may take a few seconds",
+    "notPlaying": "Not playing",
+    "openInSpotify": "Open in Spotify →",
+    "previous": "← Previous",
+    "finish": "Finish",
+    "track": "track",
+    "tracks": "tracks",
+    "onTour": "ON TOUR",
+    "tickets": "Tickets",
+    "with": "With:",
+    "timeAgo": {
+      "justNow": "Just now",
+      "minutes": "{count}m ago",
+      "hours": "{count}h ago",
+      "days": "{count}d ago"
+    }
+  },
+  "landing": {
+    "title": "MyScrobble.fm",
+    "subtitle": "Spotify Dashboard",
+    "version": "v2.0",
+    "login": "CONNECT WITH SPOTIFY",
+    "privacy": "Your listening history stays private. We only analyze your data to provide insights.",
+    "init": {
+      "loading": "Initializing MyScrobble...",
+      "spotify": "Loading Spotify API module",
+      "ai": "Loading AI recommendations",
+      "concerts": "Loading concert discovery",
+      "auth": "Awaiting authentication..."
+    },
+    "features": {
+      "stats": "Listening Stats",
+      "ai": "AI Discover",
+      "concerts": "Concerts",
+      "share": "Share"
+    },
+    "system": {
+      "ready": "SYS: READY",
+      "memory": "MEM: 64KB FREE",
+      "build": "BUILD: 2024.01",
+      "node": "NODE: ACTIVE"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "LOGIN",
+      "subtitle": "Connect your Spotify account to continue",
+      "button": "CONNECT SPOTIFY",
+      "permissions": "Permissions requested:",
+      "permissionsList": {
+        "recentlyPlayed": "View your recently played tracks",
+        "topItems": "View your top artists and tracks",
+        "library": "View your saved library",
+        "nowPlaying": "View your currently playing track"
+      },
+      "disclaimer": "We never modify your Spotify data or playlists."
+    },
+    "errors": {
+      "title": "ERROR",
+      "configuration": "There is a problem with the server configuration.",
+      "accessDenied": "Access was denied. You may have declined the permissions.",
+      "verification": "The verification token has expired or has already been used.",
+      "default": "An unexpected error occurred during authentication.",
+      "troubleshooting": "Troubleshooting:",
+      "tips": {
+        "account": "Make sure you have a Spotify account",
+        "cookies": "Check that cookies are enabled",
+        "cache": "Try clearing your browser cache",
+        "wait": "Try again in a few minutes"
+      }
+    }
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "nowPlaying": {
+      "title": "Now Playing",
+      "live": "Now Live",
+      "liveShort": "Live",
+      "notPlaying": "Nothing Playing",
+      "hint": "Play something on Spotify to see it here"
+    },
+    "navigation": {
+      "home": "Home",
+      "history": "History",
+      "charts": "Charts",
+      "discover": "Discover",
+      "wrapped": "Wrapped",
+      "share": "Share",
+      "concerts": "Concerts",
+      "signOut": "Sign Out",
+      "lightMode": "Light Mode",
+      "darkMode": "Dark Mode"
+    },
+    "sections": {
+      "recentActivity": "Recent Activity",
+      "topCharts": "Your Top Charts",
+      "topArtists": "Top Artists",
+      "topTracks": "Top Tracks",
+      "topAlbums": "Top Albums",
+      "peakTime": "Peak Listening Time"
+    },
+    "stats": {
+      "minutesListened": "Minutes Listened",
+      "tracksPlayed": "Tracks Played",
+      "mostActive": "Most active time",
+      "peakHour": "Peak Hour",
+      "dataFrom": "Data from the last 4 weeks"
+    },
+    "timeRanges": {
+      "short": "4 Weeks",
+      "medium": "6 Months",
+      "long": "All Time"
+    },
+    "empty": {
+      "noData": "No data yet",
+      "noTracks": "No recent tracks",
+      "syncHint": "Sync history to see patterns"
+    },
+    "footer": {
+      "builtBy": "Built by",
+      "sysOnline": "SYS: ONLINE"
+    },
+    "featureCards": {
+      "aiDiscover": {
+        "title": "AI Discover",
+        "description": "Get personalized artist recommendations powered by AI"
+      },
+      "wrapped": {
+        "title": "Your Wrapped",
+        "description": "Explore your listening story with custom time ranges"
+      },
+      "share": {
+        "title": "Share",
+        "description": "Create beautiful cards for Instagram Stories"
+      }
+    }
+  },
+  "charts": {
+    "title": "Top Charts",
+    "subtitle": "Your most played artists, tracks, and albums",
+    "tabs": {
+      "artists": "Artists",
+      "tracks": "Tracks",
+      "albums": "Albums"
+    }
+  },
+  "albums": {
+    "featured": "Featured Albums",
+    "collection": "The Collection",
+    "errorLoading": "Error loading albums",
+    "noAlbums": "No albums yet",
+    "trackCount": "{count} {count, plural, one {track} other {tracks}}"
+  },
+  "history": {
+    "title": "Listening History",
+    "tracksSynced": "{count} tracks synced",
+    "lastSync": "Last sync: {date}",
+    "filters": {
+      "all": "ALL TIME",
+      "today": "TODAY",
+      "week": "WEEK",
+      "month": "MONTH"
+    },
+    "sync": {
+      "required": "sync.required",
+      "description": "Sync your listening history to view and filter your tracks.",
+      "hint": "This will save your last 50 played tracks to the database. Run it periodically to build your complete history."
+    },
+    "loading": "LOADING HISTORY...",
+    "noTracks": "No tracks found for this period"
+  },
+  "discover": {
+    "title": "AI Discover",
+    "subtitle": "Personalized recommendations powered by Gemini AI",
+    "regenerate": "Regenerate",
+    "analyzing": "Analyzing your listening patterns...",
+    "failed": "Failed to generate recommendations",
+    "apiHint": "Make sure your Gemini API key is configured correctly",
+    "basedOn": "Based on your top artists:",
+    "startWith": "Start with:"
+  },
+  "wrapped": {
+    "title": "Your Wrapped",
+    "subtitle": "Your personalized listening story",
+    "loading": "LOADING YOUR WRAPPED...",
+    "failed": "Failed to load data",
+    "journeyAwaits": "Your listening journey awaits",
+    "startWrapped": "START WRAPPED",
+    "timeRanges": {
+      "short": "Last 4 Weeks",
+      "medium": "Last 6 Months",
+      "long": "All Time"
+    },
+    "slides": {
+      "intro": {
+        "title": "Your {timeRange}",
+        "subtitle": "Let's see what you've been listening to"
+      },
+      "topArtist": {
+        "title": "Your #1 Artist"
+      },
+      "topArtists": {
+        "title": "Your Top Artists"
+      },
+      "topTracks": {
+        "title": "Your Top Tracks"
+      },
+      "genres": {
+        "title": "Your Top Genres"
+      },
+      "listeningPatterns": {
+        "title": "Your Listening Patterns",
+        "peakTime": "Peak listening time:",
+        "byDay": "By Day of Week"
+      },
+      "stats": {
+        "title": "Your Stats",
+        "timeListened": "Time Listened",
+        "tracksPlayed": "Tracks Played",
+        "uniqueArtists": "Unique Artists",
+        "uniqueTracks": "Unique Tracks"
+      }
+    },
+    "syncMore": "Sync more history to see patterns"
+  },
+  "share": {
+    "title": "Share",
+    "subtitle": "Create shareable cards for Instagram Stories (1080x1920)",
+    "templates": {
+      "title": "select_template",
+      "topArtist": "#1 Artist",
+      "top5Artists": "Top 5 Artists",
+      "topTrack": "#1 Track",
+      "statsCard": "Stats Card"
+    },
+    "timeRange": "time_range",
+    "download": "Download PNG",
+    "generating": "GENERATING...",
+    "preview": "Preview",
+    "tip": "Tip: Cards are optimized for Instagram Stories (9:16 aspect ratio)",
+    "cards": {
+      "myNumber1Artist": "My #1 Artist ({timeRange})",
+      "top5Artists": "Top 5 Artists ({timeRange})",
+      "myNumber1Track": "My #1 Track ({timeRange})",
+      "myStats": "My Stats ({timeRange})",
+      "timeListened": "Time Listened",
+      "tracksPlayed": "Tracks Played",
+      "artists": "Artists",
+      "tracks": "Tracks"
+    }
+  },
+  "concerts": {
+    "title": "Concerts",
+    "subtitle": "Upcoming shows from your favorite artists",
+    "searchPlaceholder": "Enter city or location...",
+    "search": "Search",
+    "apiNote": "NOTE: Concert data requires a Bandsintown API key. Configure BANDSINTOWN_APP_ID in your environment variables.",
+    "finding": "Finding concerts...",
+    "failed": "Failed to load concerts",
+    "apiHint": "Make sure your Bandsintown API key is configured",
+    "noConcerts": "No upcoming concerts found",
+    "noConcertsHint": "Try a different location or check back later",
+    "tracking": "Tracking:"
+  },
+  "meta": {
+    "title": "MyScrobble.fm | Your Spotify Dashboard",
+    "description": "Track your Spotify listening history, discover new music with AI, and find upcoming concerts."
+  }
+}

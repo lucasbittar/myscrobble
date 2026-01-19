@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CRTWrapper, GlowText, TerminalButton, TerminalCard } from '@/components/crt';
+import { useTranslations } from 'next-intl';
 
 // Spotify icon component
 function SpotifyIcon({ className }: { className?: string }) {
@@ -31,6 +32,8 @@ function TerminalLine({ delay, children }: { delay: number; children: React.Reac
 export default function HomePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const t = useTranslations('landing');
+  const tCommon = useTranslations('common');
 
   // Check for session on mount
   useEffect(() => {
@@ -64,7 +67,7 @@ export default function HomePage() {
             transition={{ duration: 1.5, repeat: Infinity }}
             className="font-terminal text-2xl text-[#00ff41]"
           >
-            LOADING SYSTEM...
+            {tCommon('loadingSystem')}
           </motion.div>
         </div>
       </CRTWrapper>
@@ -97,11 +100,11 @@ export default function HomePage() {
           >
             <h1 className="font-terminal text-5xl md:text-7xl">
               <GlowText color="phosphor" size="lg">
-                MyScrobble.fm
+                {t('title')}
               </GlowText>
             </h1>
             <p className="mt-2 font-terminal text-lg text-[#888888]">
-              <span className="text-[#00f5ff]">v2.0</span> // Spotify Dashboard
+              <span className="text-[#00f5ff]">{t('version')}</span> // {t('subtitle')}
             </p>
           </motion.div>
 
@@ -110,26 +113,26 @@ export default function HomePage() {
             <div className="space-y-2">
               <TerminalLine delay={0.2}>
                 <span className="text-[#00ff41]">&gt;</span>{' '}
-                <span className="text-[#888888]">Initializing MyScrobble...</span>
+                <span className="text-[#888888]">{t('init.loading')}</span>
               </TerminalLine>
               <TerminalLine delay={0.4}>
                 <span className="text-[#00ff41]">&gt;</span>{' '}
-                <span className="text-[#00f5ff]">Loading Spotify API module</span>{' '}
+                <span className="text-[#00f5ff]">{t('init.spotify')}</span>{' '}
                 <span className="text-[#00ff41]">[OK]</span>
               </TerminalLine>
               <TerminalLine delay={0.6}>
                 <span className="text-[#00ff41]">&gt;</span>{' '}
-                <span className="text-[#00f5ff]">Loading AI recommendations</span>{' '}
+                <span className="text-[#00f5ff]">{t('init.ai')}</span>{' '}
                 <span className="text-[#00ff41]">[OK]</span>
               </TerminalLine>
               <TerminalLine delay={0.8}>
                 <span className="text-[#00ff41]">&gt;</span>{' '}
-                <span className="text-[#00f5ff]">Loading concert discovery</span>{' '}
+                <span className="text-[#00f5ff]">{t('init.concerts')}</span>{' '}
                 <span className="text-[#00ff41]">[OK]</span>
               </TerminalLine>
               <TerminalLine delay={1.0}>
                 <span className="text-[#00ff41]">&gt;</span>{' '}
-                <span className="text-[#ff00ff]">Awaiting authentication...</span>
+                <span className="text-[#ff00ff]">{t('init.auth')}</span>
                 <motion.span
                   className="inline-block w-2 h-4 ml-1 bg-[#ff00ff] align-middle"
                   animate={{ opacity: [1, 1, 0, 0] }}
@@ -147,10 +150,10 @@ export default function HomePage() {
             transition={{ delay: 1.2, duration: 0.5 }}
             className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4"
           >
-            <FeatureCard iconType="stats" label="Listening Stats" color="phosphor" />
-            <FeatureCard iconType="ai" label="AI Discover" color="cyan" />
-            <FeatureCard iconType="concerts" label="Concerts" color="magenta" />
-            <FeatureCard iconType="share" label="Share" color="amber" />
+            <FeatureCard iconType="stats" label={t('features.stats')} color="phosphor" />
+            <FeatureCard iconType="ai" label={t('features.ai')} color="cyan" />
+            <FeatureCard iconType="concerts" label={t('features.concerts')} color="magenta" />
+            <FeatureCard iconType="share" label={t('features.share')} color="amber" />
           </motion.div>
 
           {/* Login Button */}
@@ -167,7 +170,7 @@ export default function HomePage() {
               icon={<SpotifyIcon className="h-5 w-5" />}
               className="w-full md:w-auto"
             >
-              CONNECT WITH SPOTIFY
+              {t('login')}
             </TerminalButton>
           </motion.div>
 
@@ -178,7 +181,7 @@ export default function HomePage() {
             transition={{ delay: 1.6, duration: 0.5 }}
             className="mt-6 text-center font-mono text-xs text-[#555555]"
           >
-            Your listening history stays private. We only analyze your data to provide insights.
+            {t('privacy')}
           </motion.p>
         </div>
 
@@ -189,8 +192,8 @@ export default function HomePage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
         >
-          <div>SYS: READY</div>
-          <div>MEM: 64KB FREE</div>
+          <div>{t('system.ready')}</div>
+          <div>{t('system.memory')}</div>
         </motion.div>
 
         <motion.div
@@ -199,8 +202,8 @@ export default function HomePage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
         >
-          <div>BUILD: 2024.01</div>
-          <div>NODE: ACTIVE</div>
+          <div>{t('system.build')}</div>
+          <div>{t('system.node')}</div>
         </motion.div>
       </div>
     </CRTWrapper>

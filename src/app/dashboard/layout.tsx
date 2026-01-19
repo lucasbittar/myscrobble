@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CRTWrapper, GlowText } from '@/components/crt';
 import { useTheme } from '@/lib/theme';
+import { useTranslations } from 'next-intl';
 
 function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
@@ -24,7 +25,7 @@ function ThemeToggle() {
   );
 }
 
-function MobileThemeToggle() {
+function MobileThemeToggle({ lightModeLabel, darkModeLabel }: { lightModeLabel: string; darkModeLabel: string }) {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -33,7 +34,7 @@ function MobileThemeToggle() {
       className="flex w-full items-center gap-3 rounded-md px-4 py-3 font-terminal text-base text-muted-foreground hover:bg-secondary transition-colors"
     >
       <span>{theme === 'dark' ? '☀' : '☾'}</span>
-      {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+      {theme === 'dark' ? lightModeLabel : darkModeLabel}
     </button>
   );
 }
@@ -52,13 +53,13 @@ interface Session {
   expiresAt: number;
 }
 
-const navItems = [
-  { href: '/dashboard', label: 'Home', icon: '⌂' },
-  { href: '/dashboard/history', label: 'History', icon: '◎' },
-  { href: '/dashboard/top', label: 'Charts', icon: '▲' },
-  { href: '/dashboard/discover', label: 'Discover', icon: '✦' },
-  { href: '/dashboard/wrapped', label: 'Wrapped', icon: '◆' },
-  { href: '/dashboard/share', label: 'Share', icon: '◫' },
+const navItemKeys = [
+  { href: '/dashboard', key: 'home', icon: '⌂' },
+  { href: '/dashboard/history', key: 'history', icon: '◎' },
+  { href: '/dashboard/top', key: 'charts', icon: '▲' },
+  { href: '/dashboard/discover', key: 'discover', icon: '✦' },
+  { href: '/dashboard/wrapped', key: 'wrapped', icon: '◆' },
+  { href: '/dashboard/share', key: 'share', icon: '◫' },
 ];
 
 export default function DashboardLayout({
@@ -71,6 +72,15 @@ export default function DashboardLayout({
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const t = useTranslations('dashboard.navigation');
+  const tCommon = useTranslations('common');
+  const tFooter = useTranslations('dashboard.footer');
+
+  // Create navItems with translated labels
+  const navItems = navItemKeys.map(item => ({
+    ...item,
+    label: t(item.key as 'home' | 'history' | 'charts' | 'discover' | 'wrapped' | 'share'),
+  }));
 
   useEffect(() => {
     const checkSession = async () => {
@@ -106,7 +116,7 @@ export default function DashboardLayout({
             transition={{ duration: 1.5, repeat: Infinity }}
             className="font-terminal text-2xl text-primary"
           >
-            LOADING...
+            {tCommon('loading').toUpperCase()}
           </motion.div>
         </div>
       </CRTWrapper>
@@ -252,13 +262,13 @@ export default function DashboardLayout({
                         <p className="font-terminal text-base text-foreground">{session.user?.name}</p>
                       </div>
                     </div>
-                    <MobileThemeToggle />
+                    <MobileThemeToggle lightModeLabel={t('lightMode')} darkModeLabel={t('darkMode')} />
                     <button
                       onClick={handleSignOut}
                       className="flex w-full items-center gap-3 rounded-md px-4 py-3 font-terminal text-base text-destructive hover:bg-destructive/10"
                     >
                       <span>⏻</span>
-                      Sign Out
+                      {t('signOut')}
                     </button>
                   </div>
                 </nav>
@@ -279,7 +289,7 @@ export default function DashboardLayout({
           <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
               <p className="font-mono text-xs text-muted-foreground">
-                Built by{' '}
+                {tFooter('builtBy')}{' '}
                 <a
                   href="https://lucasbittar.dev"
                   target="_blank"
@@ -290,7 +300,7 @@ export default function DashboardLayout({
                 </a>
               </p>
               <div className="flex items-center gap-4 font-mono text-xs text-muted-foreground/50">
-                <span>SYS: ONLINE</span>
+                <span>{tFooter('sysOnline')}</span>
                 <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
               </div>
             </div>

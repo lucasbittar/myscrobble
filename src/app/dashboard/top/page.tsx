@@ -5,15 +5,10 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { GlowText, TerminalButton } from '@/components/crt';
 import { TopArtists, TopTracks, TopAlbums } from '@/components/dashboard';
+import { useTranslations } from 'next-intl';
 
 type TimeRange = 'short_term' | 'medium_term' | 'long_term';
 type ViewMode = 'artists' | 'tracks' | 'albums';
-
-const timeRangeLabels: Record<TimeRange, string> = {
-  short_term: '4 Weeks',
-  medium_term: '6 Months',
-  long_term: 'All Time',
-};
 
 const validViewModes: ViewMode[] = ['artists', 'tracks', 'albums'];
 const validTimeRanges: TimeRange[] = ['short_term', 'medium_term', 'long_term'];
@@ -21,6 +16,8 @@ const validTimeRanges: TimeRange[] = ['short_term', 'medium_term', 'long_term'];
 export default function TopChartsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const t = useTranslations('charts');
+  const tDashboard = useTranslations('dashboard');
 
   // Get initial values from URL params
   const viewParam = searchParams.get('view');
@@ -30,6 +27,13 @@ export default function TopChartsPage() {
 
   const [timeRange, setTimeRange] = useState<TimeRange>(initialTime);
   const [viewMode, setViewMode] = useState<ViewMode>(initialView);
+
+  // Time range labels from translations
+  const timeRangeLabels: Record<TimeRange, string> = {
+    short_term: tDashboard('timeRanges.short'),
+    medium_term: tDashboard('timeRanges.medium'),
+    long_term: tDashboard('timeRanges.long'),
+  };
 
   // Update URL with both params
   const updateUrl = (view: ViewMode, time: TimeRange) => {
@@ -70,11 +74,11 @@ export default function TopChartsPage() {
       >
         <h1 className="font-terminal text-3xl">
           <GlowText color="phosphor" size="sm">
-            <span className="text-[#888888]">▲</span> Top Charts
+            <span className="text-[#888888]">▲</span> {t('title')}
           </GlowText>
         </h1>
         <p className="mt-1 font-mono text-sm text-muted-foreground">
-          Your most played artists, tracks, and albums
+          {t('subtitle')}
         </p>
       </motion.div>
 
@@ -92,21 +96,21 @@ export default function TopChartsPage() {
             size="sm"
             onClick={() => handleViewChange('artists')}
           >
-            Artists
+            {t('tabs.artists')}
           </TerminalButton>
           <TerminalButton
             variant={viewMode === 'tracks' ? 'primary' : 'ghost'}
             size="sm"
             onClick={() => handleViewChange('tracks')}
           >
-            Tracks
+            {t('tabs.tracks')}
           </TerminalButton>
           <TerminalButton
             variant={viewMode === 'albums' ? 'primary' : 'ghost'}
             size="sm"
             onClick={() => handleViewChange('albums')}
           >
-            Albums
+            {t('tabs.albums')}
           </TerminalButton>
         </div>
 

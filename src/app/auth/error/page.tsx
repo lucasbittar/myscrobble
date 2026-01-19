@@ -5,18 +5,29 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { CRTWrapper, GlowText, TerminalButton, TerminalCard } from '@/components/crt';
 import { Suspense } from 'react';
-
-const errorMessages: Record<string, string> = {
-  Configuration: 'There is a problem with the server configuration.',
-  AccessDenied: 'Access was denied. You may have declined the permissions.',
-  Verification: 'The verification token has expired or has already been used.',
-  Default: 'An unexpected error occurred during authentication.',
-};
+import { useTranslations } from 'next-intl';
 
 function ErrorContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get('error') || 'Default';
-  const message = errorMessages[error] || errorMessages.Default;
+  const t = useTranslations('auth.errors');
+  const tCommon = useTranslations('common');
+
+  // Map error codes to translation keys
+  const getErrorMessage = (errorCode: string) => {
+    switch (errorCode) {
+      case 'Configuration':
+        return t('configuration');
+      case 'AccessDenied':
+        return t('accessDenied');
+      case 'Verification':
+        return t('verification');
+      default:
+        return t('default');
+    }
+  };
+
+  const message = getErrorMessage(error);
 
   return (
     <CRTWrapper>
@@ -31,7 +42,7 @@ function ErrorContent() {
             <div className="space-y-6">
               <div className="text-center">
                 <h1 className="font-terminal text-3xl">
-                  <GlowText color="magenta">ERROR</GlowText>
+                  <GlowText color="magenta">{t('title')}</GlowText>
                 </h1>
                 <p className="mt-2 text-sm text-[#ff4444]">{error}</p>
               </div>
@@ -43,25 +54,25 @@ function ErrorContent() {
               <div className="space-y-2 text-sm">
                 <div className="font-mono">
                   <span className="text-[#00ff41]">&gt;</span>{' '}
-                  <span className="text-[#888888]">Troubleshooting:</span>
+                  <span className="text-[#888888]">{t('troubleshooting')}</span>
                 </div>
                 <ul className="ml-4 space-y-1 font-mono text-xs text-[#00f5ff]">
-                  <li>• Make sure you have a Spotify account</li>
-                  <li>• Check that cookies are enabled</li>
-                  <li>• Try clearing your browser cache</li>
-                  <li>• Try again in a few minutes</li>
+                  <li>• {t('tips.account')}</li>
+                  <li>• {t('tips.cookies')}</li>
+                  <li>• {t('tips.cache')}</li>
+                  <li>• {t('tips.wait')}</li>
                 </ul>
               </div>
 
               <div className="flex gap-3">
                 <Link href="/auth/login" className="flex-1">
                   <TerminalButton variant="secondary" className="w-full">
-                    TRY AGAIN
+                    {tCommon('tryAgain').toUpperCase()}
                   </TerminalButton>
                 </Link>
                 <Link href="/" className="flex-1">
                   <TerminalButton variant="ghost" className="w-full">
-                    GO HOME
+                    {tCommon('goHome').toUpperCase()}
                   </TerminalButton>
                 </Link>
               </div>

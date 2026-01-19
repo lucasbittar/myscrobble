@@ -3,6 +3,8 @@ import { IBM_Plex_Mono, VT323 } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { ThemeProvider } from '@/lib/theme';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: '--font-ibm-plex-mono',
@@ -40,19 +42,24 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en" data-theme="dark" suppressHydrationWarning>
+    <html lang={locale} data-theme="dark" suppressHydrationWarning>
       <body
         className={`${ibmPlexMono.variable} ${vt323.variable} font-mono antialiased bg-background text-foreground min-h-screen`}
       >
-        <Providers>
-          <ThemeProvider>{children}</ThemeProvider>
-        </Providers>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <Providers>
+            <ThemeProvider>{children}</ThemeProvider>
+          </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

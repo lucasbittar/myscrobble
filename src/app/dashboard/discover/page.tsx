@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
+import { useTranslations } from 'next-intl';
 
 interface Recommendation {
   artist: string;
@@ -26,6 +27,8 @@ export default function DiscoverPage() {
   const queryClient = useQueryClient();
   const [isGenerating, setIsGenerating] = useState(false);
   const refreshRef = useRef(false);
+  const t = useTranslations('discover');
+  const tCommon = useTranslations('common');
 
   const { data, isLoading, error } = useQuery<RecommendationsResponse>({
     queryKey: ['ai-recommendations'],
@@ -60,11 +63,11 @@ export default function DiscoverPage() {
         <div>
           <h1 className="font-terminal text-3xl">
             <GlowText color="cyan" size="sm">
-              <span className="text-[#888888]">✦</span> AI Discover
+              <span className="text-[#888888]">✦</span> {t('title')}
             </GlowText>
           </h1>
           <p className="mt-1 font-mono text-sm text-[#888888]">
-            Personalized recommendations powered by Gemini AI
+            {t('subtitle')}
           </p>
         </div>
         <TerminalButton
@@ -74,7 +77,7 @@ export default function DiscoverPage() {
           loading={isGenerating}
           disabled={isLoading}
         >
-          Regenerate
+          {t('regenerate')}
         </TerminalButton>
       </motion.div>
 
@@ -93,10 +96,10 @@ export default function DiscoverPage() {
             ✦
           </motion.div>
           <p className="font-terminal text-[#00f5ff]">
-            Analyzing your listening patterns...
+            {t('analyzing')}
           </p>
           <p className="mt-2 font-mono text-xs text-[#555555]">
-            This may take a few seconds
+            {tCommon('loading_hint')}
           </p>
         </motion.div>
       )}
@@ -106,13 +109,13 @@ export default function DiscoverPage() {
         <TerminalCard>
           <div className="py-8 text-center">
             <p className="mb-4 font-terminal text-[#ff4444]">
-              Failed to generate recommendations
+              {t('failed')}
             </p>
             <p className="mb-4 font-mono text-xs text-[#888888]">
-              Make sure your Gemini API key is configured correctly
+              {t('apiHint')}
             </p>
             <TerminalButton variant="secondary" size="sm" onClick={handleRegenerate}>
-              Try Again
+              {tCommon('tryAgain')}
             </TerminalButton>
           </div>
         </TerminalCard>
@@ -129,7 +132,7 @@ export default function DiscoverPage() {
             className="rounded-lg border border-[rgba(0,245,255,0.2)] bg-[rgba(0,245,255,0.05)] p-4"
           >
             <p className="font-mono text-xs text-[#888888]">
-              <span className="text-[#00f5ff]">Based on your top artists:</span>{' '}
+              <span className="text-[#00f5ff]">{t('basedOn')}</span>{' '}
               {data.basedOn.join(', ')}
             </p>
           </motion.div>
@@ -180,7 +183,7 @@ export default function DiscoverPage() {
                     {rec.starterSongs.length > 0 && (
                       <div>
                         <p className="mb-1 font-terminal text-xs text-[#00f5ff]">
-                          Start with:
+                          {t('startWith')}
                         </p>
                         <ul className="space-y-0.5">
                           {rec.starterSongs.map((song: string, i: number) => (
@@ -200,7 +203,7 @@ export default function DiscoverPage() {
                         rel="noopener noreferrer"
                         className="inline-block font-terminal text-xs text-[#00f5ff] hover:text-[#00ff41]"
                       >
-                        Open in Spotify →
+                        {tCommon('openInSpotify')}
                       </a>
                     )}
                   </div>

@@ -6,22 +6,10 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import html2canvas from 'html2canvas';
 import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
+import { useTranslations } from 'next-intl';
 
 type Template = 'topArtist' | 'top5Artists' | 'topTrack' | 'stats';
 type TimeRange = 'short_term' | 'medium_term' | 'long_term';
-
-const templates: Record<Template, string> = {
-  topArtist: '#1 Artist',
-  top5Artists: 'Top 5 Artists',
-  topTrack: '#1 Track',
-  stats: 'Stats Card',
-};
-
-const timeRangeLabels: Record<TimeRange, string> = {
-  short_term: '4 Weeks',
-  medium_term: '6 Months',
-  long_term: 'All Time',
-};
 
 interface ShareData {
   topArtists: Array<{ name: string; image: string }>;
@@ -91,6 +79,23 @@ export default function SharePage() {
   const [template, setTemplate] = useState<Template>('topArtist');
   const [timeRange, setTimeRange] = useState<TimeRange>('medium_term');
   const cardRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations('share');
+  const tDashboard = useTranslations('dashboard');
+  const tCommon = useTranslations('common');
+
+  // Create templates and timeRangeLabels from translations
+  const templates: Record<Template, string> = {
+    topArtist: t('templates.topArtist'),
+    top5Artists: t('templates.top5Artists'),
+    topTrack: t('templates.topTrack'),
+    stats: t('templates.statsCard'),
+  };
+
+  const timeRangeLabels: Record<TimeRange, string> = {
+    short_term: tDashboard('timeRanges.short'),
+    medium_term: tDashboard('timeRanges.medium'),
+    long_term: tDashboard('timeRanges.long'),
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ['share-data', timeRange],
@@ -159,11 +164,11 @@ export default function SharePage() {
       >
         <h1 className="font-terminal text-3xl">
           <GlowText color="phosphor" size="sm">
-            <span className="text-[#888888]">◫</span> Share
+            <span className="text-[#888888]">◫</span> {t('title')}
           </GlowText>
         </h1>
         <p className="mt-1 font-mono text-sm text-[#888888]">
-          Create shareable cards for Instagram Stories (1080x1920)
+          {t('subtitle')}
         </p>
       </motion.div>
 
@@ -176,7 +181,7 @@ export default function SharePage() {
           className="space-y-6"
         >
           {/* Template Selector */}
-          <TerminalCard title="select_template">
+          <TerminalCard title={t('templates.title')}>
             <div className="grid grid-cols-2 gap-2">
               {(Object.keys(templates) as Template[]).map((t) => (
                 <button
@@ -195,7 +200,7 @@ export default function SharePage() {
           </TerminalCard>
 
           {/* Time Range */}
-          <TerminalCard title="time_range">
+          <TerminalCard title={t('timeRange')}>
             <div className="flex gap-2">
               {(Object.keys(timeRangeLabels) as TimeRange[]).map((range) => (
                 <TerminalButton
@@ -219,12 +224,12 @@ export default function SharePage() {
               className="flex-1"
               disabled={isLoading || isDownloading}
             >
-              {isDownloading ? 'GENERATING...' : 'Download PNG'}
+              {isDownloading ? t('generating') : t('download')}
             </TerminalButton>
           </div>
 
           <p className="font-mono text-xs text-[#555555]">
-            Tip: Cards are optimized for Instagram Stories (9:16 aspect ratio)
+            {t('tip')}
           </p>
         </motion.div>
 
@@ -234,7 +239,7 @@ export default function SharePage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <p className="mb-3 font-terminal text-sm text-[#888888]">Preview</p>
+          <p className="mb-3 font-terminal text-sm text-[#888888]">{t('preview')}</p>
           <div className="overflow-hidden rounded-lg border border-[rgba(0,255,65,0.2)]">
             <div
               ref={cardRef}
@@ -247,14 +252,14 @@ export default function SharePage() {
             >
               {isLoading ? (
                 <div className="flex h-full items-center justify-center">
-                  <p className="font-terminal text-[#00ff41]">Loading...</p>
+                  <p className="font-terminal text-[#00ff41]">{tCommon('loading')}</p>
                 </div>
               ) : data ? (
                 <>
-                  {template === 'topArtist' && <TopArtistCard data={data} timeRange={timeRange} />}
-                  {template === 'top5Artists' && <Top5ArtistsCard data={data} timeRange={timeRange} />}
-                  {template === 'topTrack' && <TopTrackCard data={data} timeRange={timeRange} />}
-                  {template === 'stats' && <StatsCard data={data} timeRange={timeRange} />}
+                  {template === 'topArtist' && <TopArtistCard data={data} timeRangeLabel={timeRangeLabels[timeRange]} />}
+                  {template === 'top5Artists' && <Top5ArtistsCard data={data} timeRangeLabel={timeRangeLabels[timeRange]} />}
+                  {template === 'topTrack' && <TopTrackCard data={data} timeRangeLabel={timeRangeLabels[timeRange]} />}
+                  {template === 'stats' && <StatsCard data={data} timeRangeLabel={timeRangeLabels[timeRange]} t={t} />}
                 </>
               ) : null}
             </div>
@@ -289,7 +294,7 @@ function CardWrapper({ children, userName }: { children: React.ReactNode; userNa
   );
 }
 
-function TopArtistCard({ data, timeRange }: { data: ShareData; timeRange: TimeRange }) {
+function TopArtistCard({ data, timeRangeLabel }: { data: ShareData; timeRangeLabel: string }) {
   const artist = data.topArtists[0];
   if (!artist) return null;
 
@@ -297,7 +302,7 @@ function TopArtistCard({ data, timeRange }: { data: ShareData; timeRange: TimeRa
     <CardWrapper userName={data.userName}>
       <div className="flex h-full flex-col items-center justify-center text-center">
         <p className="mb-4 font-terminal text-sm text-[#888888]">
-          My #1 Artist ({timeRangeLabels[timeRange]})
+          My #1 Artist ({timeRangeLabel})
         </p>
         {artist.image && (
           <div className="mb-6 h-40 w-40 overflow-hidden rounded-full border-4 border-[#00ff41] shadow-[0_0_40px_rgba(0,255,65,0.3)]">
@@ -310,12 +315,12 @@ function TopArtistCard({ data, timeRange }: { data: ShareData; timeRange: TimeRa
   );
 }
 
-function Top5ArtistsCard({ data, timeRange }: { data: ShareData; timeRange: TimeRange }) {
+function Top5ArtistsCard({ data, timeRangeLabel }: { data: ShareData; timeRangeLabel: string }) {
   return (
     <CardWrapper userName={data.userName}>
       <div className="flex h-full flex-col">
         <p className="mb-6 text-center font-terminal text-sm text-[#888888]">
-          Top 5 Artists ({timeRangeLabels[timeRange]})
+          Top 5 Artists ({timeRangeLabel})
         </p>
         <div className="flex-1 space-y-3">
           {data.topArtists.slice(0, 5).map((artist, index) => (
@@ -337,7 +342,7 @@ function Top5ArtistsCard({ data, timeRange }: { data: ShareData; timeRange: Time
   );
 }
 
-function TopTrackCard({ data, timeRange }: { data: ShareData; timeRange: TimeRange }) {
+function TopTrackCard({ data, timeRangeLabel }: { data: ShareData; timeRangeLabel: string }) {
   const track = data.topTracks[0];
   if (!track) return null;
 
@@ -345,7 +350,7 @@ function TopTrackCard({ data, timeRange }: { data: ShareData; timeRange: TimeRan
     <CardWrapper userName={data.userName}>
       <div className="flex h-full flex-col items-center justify-center text-center">
         <p className="mb-4 font-terminal text-sm text-[#888888]">
-          My #1 Track ({timeRangeLabels[timeRange]})
+          My #1 Track ({timeRangeLabel})
         </p>
         {track.image && (
           <div className="mb-6 h-36 w-36 overflow-hidden rounded-lg border-4 border-[#00f5ff] shadow-[0_0_40px_rgba(0,245,255,0.3)]">
@@ -359,7 +364,7 @@ function TopTrackCard({ data, timeRange }: { data: ShareData; timeRange: TimeRan
   );
 }
 
-function StatsCard({ data, timeRange }: { data: ShareData; timeRange: TimeRange }) {
+function StatsCard({ data, timeRangeLabel, t }: { data: ShareData; timeRangeLabel: string; t: ReturnType<typeof useTranslations<'share'>> }) {
   const hours = Math.floor(data.stats.totalMinutes / 60);
   const minutes = data.stats.totalMinutes % 60;
   const hasListeningData = data.stats.totalMinutes > 0 || data.stats.totalTracks > 0;
@@ -368,7 +373,7 @@ function StatsCard({ data, timeRange }: { data: ShareData; timeRange: TimeRange 
     <CardWrapper userName={data.userName}>
       <div className="flex h-full flex-col items-center justify-center text-center">
         <p className="mb-6 font-terminal text-sm text-[#888888]">
-          My Stats ({timeRangeLabels[timeRange]})
+          My Stats ({timeRangeLabel})
         </p>
         <div className="space-y-6">
           {hasListeningData && (
@@ -377,22 +382,22 @@ function StatsCard({ data, timeRange }: { data: ShareData; timeRange: TimeRange 
                 <p className="font-terminal text-4xl text-[#ffb000]">
                   {hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`}
                 </p>
-                <p className="mt-1 font-mono text-xs text-[#888888]">Time Listened</p>
+                <p className="mt-1 font-mono text-xs text-[#888888]">{t('cards.timeListened')}</p>
               </div>
               <div>
                 <p className="font-terminal text-4xl text-[#00ff41]">{data.stats.totalTracks.toLocaleString()}</p>
-                <p className="mt-1 font-mono text-xs text-[#888888]">Tracks Played</p>
+                <p className="mt-1 font-mono text-xs text-[#888888]">{t('cards.tracksPlayed')}</p>
               </div>
             </>
           )}
           <div className="flex gap-8 justify-center">
             <div>
               <p className="font-terminal text-3xl text-[#00f5ff]">{data.stats.uniqueArtists}</p>
-              <p className="mt-1 font-mono text-xs text-[#888888]">Artists</p>
+              <p className="mt-1 font-mono text-xs text-[#888888]">{t('cards.artists')}</p>
             </div>
             <div>
               <p className="font-terminal text-3xl text-[#ff00ff]">{data.stats.uniqueTracks}</p>
-              <p className="mt-1 font-mono text-xs text-[#888888]">Tracks</p>
+              <p className="mt-1 font-mono text-xs text-[#888888]">{t('cards.tracks')}</p>
             </div>
           </div>
         </div>

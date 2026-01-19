@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { CRTWrapper, GlowText, TerminalButton, TerminalCard } from '@/components/crt';
+import { useTranslations } from 'next-intl';
 
 function SpotifyIcon({ className }: { className?: string }) {
   return (
@@ -14,6 +15,7 @@ function SpotifyIcon({ className }: { className?: string }) {
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useTranslations('auth.login');
 
   const handleSpotifyLogin = () => {
     // Use custom OAuth route instead of NextAuth's signIn
@@ -33,23 +35,23 @@ export default function LoginPage() {
             <div className="space-y-6">
               <div className="text-center">
                 <h1 className="font-terminal text-3xl">
-                  <GlowText color="phosphor">LOGIN</GlowText>
+                  <GlowText color="phosphor">{t('title')}</GlowText>
                 </h1>
                 <p className="mt-2 text-sm text-[#888888]">
-                  Connect your Spotify account to continue
+                  {t('subtitle')}
                 </p>
               </div>
 
               <div className="space-y-2 border-t border-[rgba(0,255,65,0.2)] pt-4">
                 <div className="font-mono text-sm">
                   <span className="text-[#00ff41]">&gt;</span>{' '}
-                  <span className="text-[#888888]">Permissions requested:</span>
+                  <span className="text-[#888888]">{t('permissions')}</span>
                 </div>
                 <ul className="ml-4 space-y-1 font-mono text-xs text-[#00f5ff]">
-                  <li>• View your recently played tracks</li>
-                  <li>• View your top artists and tracks</li>
-                  <li>• View your saved library</li>
-                  <li>• View your currently playing track</li>
+                  <li>• {t('permissionsList.recentlyPlayed')}</li>
+                  <li>• {t('permissionsList.topItems')}</li>
+                  <li>• {t('permissionsList.library')}</li>
+                  <li>• {t('permissionsList.nowPlaying')}</li>
                 </ul>
               </div>
 
@@ -60,11 +62,11 @@ export default function LoginPage() {
                 icon={<SpotifyIcon className="h-5 w-5" />}
                 className="w-full"
               >
-                CONNECT SPOTIFY
+                {t('button')}
               </TerminalButton>
 
               <p className="text-center font-mono text-xs text-[#555555]">
-                We never modify your Spotify data or playlists.
+                {t('disclaimer')}
               </p>
             </div>
           </TerminalCard>

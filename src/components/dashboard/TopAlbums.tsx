@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { TerminalCard } from '@/components/crt';
+import { useTranslations } from 'next-intl';
 
 interface Album {
   id: string;
@@ -63,6 +64,8 @@ export function TopAlbums({
   timeRange = 'medium_term',
   showTitle = true,
 }: TopAlbumsProps) {
+  const t = useTranslations('albums');
+  const tCommon = useTranslations('common');
   const { data, isLoading, error } = useQuery({
     queryKey: ['top-albums', timeRange, limit],
     queryFn: () => fetchTopAlbums(timeRange, limit),
@@ -93,7 +96,7 @@ export function TopAlbums({
     return (
       <TerminalCard title={showTitle ? "top_albums.data" : undefined} animate={false}>
         <div className="py-4 text-center">
-          <p className="font-terminal text-sm text-destructive">Error loading albums</p>
+          <p className="font-terminal text-sm text-destructive">{t('errorLoading')}</p>
         </div>
       </TerminalCard>
     );
@@ -111,7 +114,7 @@ export function TopAlbums({
           <div>
             <div className="flex items-center gap-2 mb-4">
               <span className="text-[var(--crt-magenta)]">★</span>
-              <span className="font-terminal text-sm text-muted-foreground uppercase tracking-wider">Featured Albums</span>
+              <span className="font-terminal text-sm text-muted-foreground uppercase tracking-wider">{t('featured')}</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -164,7 +167,7 @@ export function TopAlbums({
                     {/* Track count badge */}
                     <div className="absolute top-2 right-2 px-2 pb-1 rounded bg-background/80 backdrop-blur-sm leading-none">
                       <span className="font-mono text-xs text-[var(--crt-magenta)]">
-                        {album.trackCount} {album.trackCount === 1 ? 'track' : 'tracks'}
+                        {album.trackCount} {album.trackCount === 1 ? tCommon('track') : tCommon('tracks')}
                       </span>
                     </div>
 
@@ -188,7 +191,7 @@ export function TopAlbums({
           <div>
             <div className="flex items-center gap-2 mb-4">
               <span className="text-muted-foreground">◉</span>
-              <span className="font-terminal text-sm text-muted-foreground uppercase tracking-wider">The Collection</span>
+              <span className="font-terminal text-sm text-muted-foreground uppercase tracking-wider">{t('collection')}</span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
@@ -239,7 +242,7 @@ export function TopAlbums({
                         <p className="font-mono text-[10px] text-[var(--crt-magenta)] truncate">{album.artist}</p>
                         <div className="mt-1 flex items-center gap-1">
                           <span className="text-[var(--crt-magenta)] text-[10px]">♫</span>
-                          <span className="font-mono text-[10px] text-muted-foreground">{album.trackCount} tracks</span>
+                          <span className="font-mono text-[10px] text-muted-foreground">{album.trackCount} {album.trackCount === 1 ? tCommon('track') : tCommon('tracks')}</span>
                         </div>
                       </div>
 
@@ -255,7 +258,7 @@ export function TopAlbums({
 
         {albums.length === 0 && (
           <div className="py-8 text-center">
-            <p className="font-mono text-base text-muted-foreground">No albums yet</p>
+            <p className="font-mono text-base text-muted-foreground">{t('noAlbums')}</p>
           </div>
         )}
       </div>

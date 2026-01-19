@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { GlowText, TerminalCard } from '@/components/crt';
+import { useTranslations } from 'next-intl';
 
 interface NowPlayingData {
   isPlaying: boolean;
@@ -154,15 +155,17 @@ async function fetchListeningStats(): Promise<ListeningStats> {
 }
 
 export default function DashboardPage() {
+  const t = useTranslations('dashboard');
+  const tCommon = useTranslations('common');
   const [greeting, setGreeting] = useState('');
   const [userName, setUserName] = useState('');
 
   // Fetch session for user name
   useEffect(() => {
     const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Good morning');
-    else if (hour < 18) setGreeting('Good afternoon');
-    else setGreeting('Good evening');
+    if (hour < 12) setGreeting(t('greeting.morning'));
+    else if (hour < 18) setGreeting(t('greeting.afternoon'));
+    else setGreeting(t('greeting.evening'));
 
     fetch('/api/auth/session')
       .then(res => res.json())
@@ -171,7 +174,7 @@ export default function DashboardPage() {
           setUserName(data.user.name.split(' ')[0]);
         }
       });
-  }, []);
+  }, [t]);
 
   const { data: nowPlaying } = useQuery({
     queryKey: ['now-playing'],
@@ -249,7 +252,7 @@ export default function DashboardPage() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
                   </span>
-                  <span className="font-terminal text-xs text-primary uppercase tracking-wider">Now Live</span>
+                  <span className="font-terminal text-xs text-primary uppercase tracking-wider">{t('nowPlaying.live')}</span>
                 </motion.div>
               </div>
 
@@ -284,7 +287,7 @@ export default function DashboardPage() {
                           />
                         ))}
                       </span>
-                      <span className="font-terminal text-xs text-primary uppercase">Live</span>
+                      <span className="font-terminal text-xs text-primary uppercase">{t('nowPlaying.liveShort')}</span>
                     </div>
                   </motion.div>
                 </div>
@@ -329,12 +332,12 @@ export default function DashboardPage() {
               <div className="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-xl border-2 border-dashed border-primary/20 flex items-center justify-center bg-primary/5 flex-shrink-0">
                 <div className="text-center">
                   <span className="text-4xl opacity-30">♪</span>
-                  <p className="mt-2 font-terminal text-xs text-muted-foreground">Not playing</p>
+                  <p className="mt-2 font-terminal text-xs text-muted-foreground">{tCommon('notPlaying')}</p>
                 </div>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-mono text-sm text-muted-foreground uppercase tracking-wider mb-2">
-                  Nothing Playing
+                  {t('nowPlaying.notPlaying')}
                 </p>
                 <h2 className="font-terminal text-3xl sm:text-4xl text-foreground mb-2">
                   <span className="text-primary">&gt;</span> {greeting}{userName && `, ${userName}`}
@@ -345,7 +348,7 @@ export default function DashboardPage() {
                   />
                 </h2>
                 <p className="font-mono text-base text-muted-foreground">
-                  Play something on Spotify to see it here
+                  {t('nowPlaying.hint')}
                 </p>
               </div>
             </div>
@@ -362,24 +365,24 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <FeatureCard
             href="/dashboard/discover"
-            title="AI Discover"
-            description="Get personalized artist recommendations powered by AI"
+            title={t('featureCards.aiDiscover.title')}
+            description={t('featureCards.aiDiscover.description')}
             icon="✦"
             gradient="from-[#00f5ff] to-[#0066ff]"
             accentColor="#00f5ff"
           />
           <FeatureCard
             href="/dashboard/wrapped"
-            title="Your Wrapped"
-            description="Explore your listening story with custom time ranges"
+            title={t('featureCards.wrapped.title')}
+            description={t('featureCards.wrapped.description')}
             icon="◆"
             gradient="from-[#ffb000] to-[#ff6600]"
             accentColor="#ffb000"
           />
           <FeatureCard
             href="/dashboard/share"
-            title="Share"
-            description="Create beautiful cards for Instagram Stories"
+            title={t('featureCards.share.title')}
+            description={t('featureCards.share.description')}
             icon="◫"
             gradient="from-[#ff00ff] to-[#aa00ff]"
             accentColor="#ff00ff"
@@ -396,14 +399,14 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-terminal text-xl">
             <GlowText color="phosphor" size="sm">
-              <span className="text-muted-foreground">◎</span> Recent Activity
+              <span className="text-muted-foreground">◎</span> {t('sections.recentActivity')}
             </GlowText>
           </h2>
           <Link
             href="/dashboard/history"
             className="font-mono text-sm text-muted-foreground hover:text-primary transition-colors"
           >
-            View all →
+            {tCommon('viewAll')}
           </Link>
         </div>
 
@@ -454,7 +457,7 @@ export default function DashboardPage() {
                       {/* Time badge */}
                       <div className="absolute top-2 right-2 px-2 pb-1 rounded-full bg-background/80 backdrop-blur-sm leading-none">
                         <span className="font-mono text-[10px] text-primary">
-                          {formatRelativeTime(track.playedAt)}
+                          {formatRelativeTime(track.playedAt, tCommon)}
                         </span>
                       </div>
                     </div>
@@ -466,7 +469,7 @@ export default function DashboardPage() {
         ) : (
           <TerminalCard animate={false}>
             <div className="py-8 text-center">
-              <p className="font-mono text-base text-muted-foreground">No recent tracks</p>
+              <p className="font-mono text-base text-muted-foreground">{t('empty.noTracks')}</p>
             </div>
           </TerminalCard>
         )}
@@ -483,7 +486,7 @@ export default function DashboardPage() {
           <div className="md:col-span-2 rounded-xl border border-border bg-card p-5">
             <div className="flex items-center gap-2 mb-4">
               <span className="text-[var(--crt-amber)]">⏱</span>
-              <h3 className="font-terminal text-base text-foreground">Peak Listening Time</h3>
+              <h3 className="font-terminal text-base text-foreground">{t('sections.peakTime')}</h3>
             </div>
 
             {listeningStats && listeningStats.listeningByHour.length > 0 ? (
@@ -571,19 +574,19 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="flex items-center justify-center h-24">
-                <p className="font-mono text-sm text-muted-foreground">Sync history to see patterns</p>
+                <p className="font-mono text-sm text-muted-foreground">{t('empty.syncHint')}</p>
               </div>
             )}
           </div>
 
           {/* Peak Hour stat */}
           <div className="rounded-xl border border-border bg-card p-5 flex flex-col justify-center items-center">
-            <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider mb-2">Peak Hour</span>
+            <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider mb-2">{t('stats.peakHour')}</span>
             <span className="font-terminal text-4xl text-[var(--crt-amber)]">
               {listeningStats?.peakHour !== undefined ? formatHour(listeningStats.peakHour) : '—'}
             </span>
             <span className="mt-2 font-mono text-xs text-muted-foreground">
-              Most active time
+              {t('stats.mostActive')}
             </span>
           </div>
         </div>
@@ -647,20 +650,20 @@ export default function DashboardPage() {
 
             </div>
             <div>
-              <h3 className="font-terminal text-base text-foreground">Your Top Charts</h3>
-              <p className="font-mono text-xs text-muted-foreground">Data from the last 4 weeks</p>
+              <h3 className="font-terminal text-base text-foreground">{t('sections.topCharts')}</h3>
+              <p className="font-mono text-xs text-muted-foreground">{t('stats.dataFrom')}</p>
             </div>
           </div>
           <div className="flex items-center gap-6">
             <div className="text-center sm:text-right">
-              <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Minutes Listened</p>
+              <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">{t('stats.minutesListened')}</p>
               <p className="font-terminal text-2xl text-primary">
                 {listeningStats?.totalMinutes?.toLocaleString() || '—'}
               </p>
             </div>
             <div className="hidden sm:block w-px h-10 bg-primary/20" />
             <div className="text-center sm:text-right">
-              <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Tracks Played</p>
+              <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">{t('stats.tracksPlayed')}</p>
               <p className="font-terminal text-2xl text-primary">
                 {listeningStats?.totalTracks?.toLocaleString() || '—'}
               </p>
@@ -682,18 +685,18 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <h2 className="font-terminal text-xl">
                 <GlowText color="cyan" size="sm">
-                  <span className="text-muted-foreground">▲</span> Top Artists
+                  <span className="text-muted-foreground">▲</span> {t('sections.topArtists')}
                 </GlowText>
               </h2>
               <span className="px-2 py-0.5 rounded-full bg-accent/10 font-mono text-[10px] text-accent uppercase">
-                4 weeks
+                {t('timeRanges.short')}
               </span>
             </div>
             <Link
               href="/dashboard/top?view=artists&time=short_term"
               className="font-mono text-sm text-muted-foreground hover:text-accent transition-colors"
             >
-              View all →
+              {tCommon('viewAll')}
             </Link>
           </div>
 
@@ -782,7 +785,7 @@ export default function DashboardPage() {
               </>
             ) : (
               <div className="py-8 text-center">
-                <p className="font-mono text-base text-muted-foreground">No data yet</p>
+                <p className="font-mono text-base text-muted-foreground">{t('empty.noData')}</p>
               </div>
             )}
           </div>
@@ -799,18 +802,18 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <h2 className="font-terminal text-xl">
                 <GlowText color="phosphor" size="sm">
-                  <span className="text-muted-foreground">♫</span> Top Tracks
+                  <span className="text-muted-foreground">♫</span> {t('sections.topTracks')}
                 </GlowText>
               </h2>
               <span className="px-2 py-0.5 rounded-full bg-primary/10 font-mono text-[10px] text-primary uppercase">
-                4 weeks
+                {t('timeRanges.short')}
               </span>
             </div>
             <Link
               href="/dashboard/top?view=tracks&time=short_term"
               className="font-mono text-sm text-muted-foreground hover:text-primary transition-colors"
             >
-              View all →
+              {tCommon('viewAll')}
             </Link>
           </div>
 
@@ -938,7 +941,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="py-8 text-center">
-                <p className="font-mono text-sm text-muted-foreground">No data yet</p>
+                <p className="font-mono text-sm text-muted-foreground">{t('empty.noData')}</p>
               </div>
             )}
           </div>
@@ -955,18 +958,18 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2">
             <h2 className="font-terminal text-xl">
               <GlowText color="magenta" size="sm">
-                <span className="text-muted-foreground">◉</span> Top Albums
+                <span className="text-muted-foreground">◉</span> {t('sections.topAlbums')}
               </GlowText>
             </h2>
             <span className="px-2 py-0.5 rounded-full bg-[var(--crt-magenta)]/10 font-mono text-[10px] text-[var(--crt-magenta)] uppercase">
-              4 weeks
+              {t('timeRanges.short')}
             </span>
           </div>
           <Link
             href="/dashboard/top?view=albums&time=short_term"
             className="font-mono text-sm text-muted-foreground hover:text-[var(--crt-magenta)] transition-colors"
           >
-            View all →
+            {tCommon('viewAll')}
           </Link>
         </div>
 
@@ -1014,7 +1017,7 @@ export default function DashboardPage() {
                   {/* Track count badge */}
                   <div className="absolute top-1.5 right-1.5 px-1.5 pb-1 rounded bg-background/80 backdrop-blur-sm leading-none">
                     <span className="font-mono text-[10px] text-[var(--crt-magenta)]">
-                      {album.trackCount} {album.trackCount === 1 ? 'track' : 'tracks'}
+                      {album.trackCount} {album.trackCount === 1 ? tCommon('track') : tCommon('tracks')}
                     </span>
                   </div>
 
@@ -1030,7 +1033,7 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="py-8 text-center">
-              <p className="font-mono text-base text-muted-foreground">No data yet</p>
+              <p className="font-mono text-base text-muted-foreground">{t('empty.noData')}</p>
             </div>
           )}
         </div>
@@ -1118,7 +1121,10 @@ function formatHour(hour: number): string {
   return `${hour - 12}PM`;
 }
 
-function formatRelativeTime(dateStr: string): string {
+function formatRelativeTime(
+  dateStr: string,
+  t: (key: string, values?: Record<string, number>) => string
+): string {
   const date = new Date(dateStr);
   const now = new Date();
   const diff = now.getTime() - date.getTime();
@@ -1126,9 +1132,9 @@ function formatRelativeTime(dateStr: string): string {
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
 
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  if (days < 7) return `${days}d ago`;
+  if (minutes < 1) return t('timeAgo.justNow');
+  if (minutes < 60) return t('timeAgo.minutes', { count: minutes });
+  if (hours < 24) return t('timeAgo.hours', { count: hours });
+  if (days < 7) return t('timeAgo.days', { count: days });
   return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
 }

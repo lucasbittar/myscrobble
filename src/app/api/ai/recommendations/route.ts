@@ -1,10 +1,31 @@
 import { NextResponse } from 'next/server';
+import { cookies, headers } from 'next/headers';
 import { getSession } from '@/lib/session';
 import { createSpotifyClient } from '@/lib/spotify';
 import { createServerClient } from '@/lib/supabase/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+
+// Helper function to detect locale
+async function detectLocale(): Promise<string> {
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get('NEXT_LOCALE')?.value;
+
+  if (localeCookie && ['en', 'pt-BR'].includes(localeCookie)) {
+    return localeCookie;
+  }
+
+  const headersList = await headers();
+  const acceptLanguage = headersList.get('accept-language') || '';
+
+  // Check for Portuguese
+  if (acceptLanguage.toLowerCase().includes('pt')) {
+    return 'pt-BR';
+  }
+
+  return 'en';
+}
 
 export async function GET(request: Request) {
   try {
@@ -70,26 +91,36 @@ export async function GET(request: Request) {
     const artistNames = topArtists.items.map((a) => a.name);
     const genres = [...new Set(topArtists.items.flatMap((a) => a.genres))].slice(0, 10);
 
+    // Detect user's locale
+    const locale = await detectLocale();
+    const isPortuguese = locale === 'pt-BR';
+
     // Generate recommendations using Gemini
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
+    const languageInstruction = isPortuguese
+      ? 'IMPORTANT: Respond entirely in Brazilian Portuguese (pt-BR). The "reason" field must be written in Portuguese.'
+      : 'Respond in English.';
+
     const prompt = `Based on the following music preferences, recommend 5 new artists that the user might enjoy. Be creative and suggest artists they likely haven't heard of yet.
+
+${languageInstruction}
 
 User's top artists: ${artistNames.join(', ')}
 Favorite genres: ${genres.join(', ')}
 
 For each recommendation, provide:
-1. Artist name
-2. A brief reason why they'd like this artist (1-2 sentences, relate to their existing tastes)
-3. 2-3 starter songs to check out
-4. Main genres
+1. Artist name (keep the original artist name, do not translate)
+2. A brief reason why they'd like this artist (1-2 sentences, relate to their existing tastes)${isPortuguese ? ' - Write this in Portuguese' : ''}
+3. 2-3 starter songs to check out (keep the original song titles, do not translate)
+4. Main genres (keep in English for consistency)
 
 Respond in JSON format exactly like this:
 {
   "recommendations": [
     {
       "artist": "Artist Name",
-      "reason": "Why they'd enjoy this artist",
+      "reason": "${isPortuguese ? 'Motivo em português do porquê eles gostariam deste artista' : 'Why they\'d enjoy this artist'}",
       "starterSongs": ["Song 1", "Song 2", "Song 3"],
       "genres": ["genre1", "genre2"]
     }
@@ -106,7 +137,19 @@ Only respond with valid JSON, no additional text.`;
     let recommendations;
     try {
       // Clean up the response - remove markdown code blocks if present
-      const cleanedText = text.replace(/```json\n?|\n?```/g, '').trim();
+      let cleanedText = text.replace(/```json\n?|\n?```/g, '').trim();
+
+      // Fix common JSON issues from AI responses
+      // Add missing closing brace if needed
+      const openBraces = (cleanedText.match(/\{/g) || []).length;
+      const closeBraces = (cleanedText.match(/\}/g) || []).length;
+      if (openBraces > closeBraces) {
+        cleanedText += '}'.repeat(openBraces - closeBraces);
+      }
+
+      // Remove trailing commas before ] or }
+      cleanedText = cleanedText.replace(/,(\s*[}\]])/g, '$1');
+
       recommendations = JSON.parse(cleanedText);
     } catch {
       console.error('Failed to parse Gemini response:', text);

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { GlowText, TerminalCard, TerminalButton, TerminalInput } from '@/components/crt';
+import { useTranslations } from 'next-intl';
 
 interface Concert {
   id: string;
@@ -36,6 +37,8 @@ async function fetchConcerts(location?: string): Promise<ConcertsResponse> {
 export default function ConcertsPage() {
   const [location, setLocation] = useState('');
   const [searchLocation, setSearchLocation] = useState('');
+  const t = useTranslations('concerts');
+  const tCommon = useTranslations('common');
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['concerts', searchLocation],
@@ -56,11 +59,11 @@ export default function ConcertsPage() {
       >
         <h1 className="font-terminal text-3xl">
           <GlowText color="magenta" size="sm">
-            <span className="text-[#888888]">♪</span> Concerts
+            <span className="text-[#888888]">♪</span> {t('title')}
           </GlowText>
         </h1>
         <p className="mt-1 font-mono text-sm text-[#888888]">
-          Upcoming shows from your favorite artists
+          {t('subtitle')}
         </p>
       </motion.div>
 
@@ -73,14 +76,14 @@ export default function ConcertsPage() {
       >
         <div className="flex-1">
           <TerminalInput
-            placeholder="Enter city or location..."
+            placeholder={t('searchPlaceholder')}
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
         </div>
         <TerminalButton onClick={handleSearch} disabled={isLoading}>
-          Search
+          {t('search')}
         </TerminalButton>
       </motion.div>
 
@@ -92,8 +95,7 @@ export default function ConcertsPage() {
         className="rounded-lg border border-[rgba(255,0,255,0.2)] bg-[rgba(255,0,255,0.05)] p-4"
       >
         <p className="font-mono text-xs text-[#ff00ff]">
-          <span className="font-bold">NOTE:</span> Concert data requires a Bandsintown API key.
-          Configure BANDSINTOWN_APP_ID in your environment variables.
+          {t('apiNote')}
         </p>
       </motion.div>
 
@@ -107,7 +109,7 @@ export default function ConcertsPage() {
           >
             ♪
           </motion.div>
-          <p className="font-terminal text-[#ff00ff]">Finding concerts...</p>
+          <p className="font-terminal text-[#ff00ff]">{t('finding')}</p>
         </div>
       )}
 
@@ -116,10 +118,10 @@ export default function ConcertsPage() {
         <TerminalCard>
           <div className="py-8 text-center">
             <p className="mb-4 font-terminal text-[#ff4444]">
-              Failed to load concerts
+              {t('failed')}
             </p>
             <p className="font-mono text-xs text-[#888888]">
-              Make sure your Bandsintown API key is configured
+              {t('apiHint')}
             </p>
           </div>
         </TerminalCard>
@@ -131,10 +133,10 @@ export default function ConcertsPage() {
           <div className="py-8 text-center">
             <div className="mb-4 text-4xl opacity-30">🎤</div>
             <p className="font-terminal text-[#888888]">
-              No upcoming concerts found
+              {t('noConcerts')}
             </p>
             <p className="mt-2 font-mono text-xs text-[#555555]">
-              Try a different location or check back later
+              {t('noConcertsHint')}
             </p>
           </div>
         </TerminalCard>
@@ -150,7 +152,7 @@ export default function ConcertsPage() {
             transition={{ delay: 0.2 }}
           >
             <p className="mb-4 font-mono text-xs text-[#888888]">
-              <span className="text-[#ff00ff]">Tracking:</span> {data.artists.join(', ')}
+              <span className="text-[#ff00ff]">{t('tracking')}</span> {data.artists.join(', ')}
             </p>
           </motion.div>
 
@@ -171,7 +173,7 @@ export default function ConcertsPage() {
                         {concert.artist}
                       </h3>
                       <span className="rounded-full bg-[rgba(255,0,255,0.2)] px-2 py-0.5 font-terminal text-xs text-[#ff00ff]">
-                        ON TOUR
+                        {tCommon('onTour')}
                       </span>
                     </div>
 
@@ -209,7 +211,7 @@ export default function ConcertsPage() {
                         rel="noopener noreferrer"
                       >
                         <TerminalButton variant="secondary" size="sm">
-                          Tickets
+                          {tCommon('tickets')}
                         </TerminalButton>
                       </a>
                     </div>
@@ -217,7 +219,7 @@ export default function ConcertsPage() {
                     {/* Lineup */}
                     {concert.lineup.length > 1 && (
                       <p className="font-mono text-xs text-[#555555]">
-                        With: {concert.lineup.slice(1).join(', ')}
+                        {tCommon('with')} {concert.lineup.slice(1).join(', ')}
                       </p>
                     )}
                   </div>

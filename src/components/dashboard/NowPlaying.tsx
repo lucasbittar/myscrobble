@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TerminalCard, GlowText } from '@/components/crt';
+import { useTranslations } from 'next-intl';
 
 interface NowPlayingData {
   is_playing: boolean;
@@ -35,6 +36,7 @@ function formatTime(ms: number): string {
 }
 
 export function NowPlaying() {
+  const t = useTranslations('dashboard.nowPlaying');
   const { data, isLoading } = useQuery({
     queryKey: ['now-playing'],
     queryFn: fetchNowPlaying,
@@ -63,10 +65,10 @@ export function NowPlaying() {
         <div className="flex flex-col items-center justify-center py-8 text-center">
           <div className="mb-2 text-4xl opacity-30">🎵</div>
           <p className="font-terminal text-sm text-[#555555]">
-            Nothing playing right now
+            {t('notPlaying')}
           </p>
           <p className="mt-1 font-mono text-xs text-[#333333]">
-            Play something on Spotify to see it here
+            {t('hint')}
           </p>
         </div>
       </TerminalCard>
@@ -117,7 +119,7 @@ export function NowPlaying() {
           {/* Track info */}
           <div className="min-w-0 flex-1">
             <div className="mb-1 flex items-center gap-2">
-              <span className="font-terminal text-xs text-[#00ff41]">NOW PLAYING</span>
+              <span className="font-terminal text-xs text-[#00ff41]">{t('title').toUpperCase()}</span>
               <motion.span
                 animate={{ opacity: [1, 0.3, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}

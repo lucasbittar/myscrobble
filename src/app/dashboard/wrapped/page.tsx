@@ -5,14 +5,9 @@ import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
+import { useTranslations } from 'next-intl';
 
 type TimeRange = 'short_term' | 'medium_term' | 'long_term';
-
-const timeRangeLabels: Record<TimeRange, string> = {
-  short_term: 'Last 4 Weeks',
-  medium_term: 'Last 6 Months',
-  long_term: 'All Time',
-};
 
 interface WrappedData {
   topArtists: Array<{
@@ -113,6 +108,15 @@ export default function WrappedPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>('medium_term');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const t = useTranslations('wrapped');
+  const tCommon = useTranslations('common');
+
+  // Time range labels from translations
+  const timeRangeLabels: Record<TimeRange, string> = {
+    short_term: t('timeRanges.short'),
+    medium_term: t('timeRanges.medium'),
+    long_term: t('timeRanges.long'),
+  };
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['wrapped', timeRange],
@@ -147,7 +151,7 @@ export default function WrappedPage() {
           transition={{ duration: 1.5, repeat: Infinity }}
           className="font-terminal text-2xl text-[#ffb000]"
         >
-          LOADING YOUR WRAPPED...
+          {t('loading')}
         </motion.div>
       </div>
     );
@@ -158,7 +162,7 @@ export default function WrappedPage() {
       <div className="flex min-h-[60vh] items-center justify-center">
         <TerminalCard>
           <div className="py-8 text-center">
-            <p className="font-terminal text-[#ff4444]">Failed to load data</p>
+            <p className="font-terminal text-[#ff4444]">{t('failed')}</p>
           </div>
         </TerminalCard>
       </div>
@@ -176,11 +180,11 @@ export default function WrappedPage() {
         <div>
           <h1 className="font-terminal text-3xl">
             <GlowText color="amber" size="sm">
-              <span className="text-[#888888]">◆</span> Your Wrapped
+              <span className="text-[#888888]">◆</span> {t('title')}
             </GlowText>
           </h1>
           <p className="mt-1 font-mono text-sm text-[#888888]">
-            Your personalized listening story
+            {t('subtitle')}
           </p>
         </div>
 
@@ -214,10 +218,10 @@ export default function WrappedPage() {
             <h2 className="mb-2 font-terminal text-4xl text-[#ffb000]">
               {timeRangeLabels[timeRange]}
             </h2>
-            <p className="font-mono text-[#888888]">Your listening journey awaits</p>
+            <p className="font-mono text-[#888888]">{t('journeyAwaits')}</p>
           </div>
           <TerminalButton size="lg" glow onClick={startPresentation}>
-            START WRAPPED
+            {t('startWrapped')}
           </TerminalButton>
         </motion.div>
       ) : (
@@ -267,7 +271,7 @@ export default function WrappedPage() {
               onClick={prevSlide}
               disabled={currentSlide === 0}
             >
-              ← Previous
+              {tCommon('previous')}
             </TerminalButton>
             <div className="flex gap-2">
               {slides.map((_, index) => (
@@ -286,7 +290,7 @@ export default function WrappedPage() {
               variant="ghost"
               onClick={nextSlide}
             >
-              {currentSlide === slides.length - 1 ? 'Finish' : 'Next →'}
+              {currentSlide === slides.length - 1 ? tCommon('finish') : tCommon('next')}
             </TerminalButton>
           </div>
         </div>
