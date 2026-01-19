@@ -39,7 +39,25 @@ interface TopArtist {
 async function fetchNowPlaying(): Promise<NowPlayingData> {
   const res = await fetch('/api/spotify/now-playing');
   if (!res.ok) return { isPlaying: false };
-  return res.json();
+
+  const data = await res.json();
+
+  // Transform Spotify API response to our interface
+  if (!data.is_playing || !data.item) {
+    return { isPlaying: false };
+  }
+
+  return {
+    isPlaying: data.is_playing,
+    track: {
+      name: data.item.name,
+      artists: data.item.artists?.map((a: { name: string }) => a.name).join(', ') || 'Unknown',
+      album: data.item.album?.name || 'Unknown',
+      albumArt: data.item.album?.images?.[0]?.url,
+      progress: data.progress_ms || 0,
+      duration: data.item.duration_ms || 0,
+    },
+  };
 }
 
 async function fetchRecentTracks(): Promise<RecentTrack[]> {
