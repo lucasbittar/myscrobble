@@ -162,7 +162,7 @@ export function TopAlbums({
                     </div>
 
                     {/* Track count badge */}
-                    <div className="absolute top-2 right-2 px-2 py-0.5 rounded bg-background/80 backdrop-blur-sm">
+                    <div className="absolute top-2 right-2 px-2 pb-1 rounded bg-background/80 backdrop-blur-sm leading-none">
                       <span className="font-mono text-xs text-[var(--crt-magenta)]">
                         {album.trackCount} {album.trackCount === 1 ? 'track' : 'tracks'}
                       </span>

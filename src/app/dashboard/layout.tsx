@@ -14,7 +14,7 @@ function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="hidden sm:flex items-center justify-center w-9 h-9 rounded-md border border-border hover:bg-secondary transition-colors"
+      className="cursor-pointer hidden sm:flex items-center justify-center w-9 h-9 rounded-md border border-border hover:bg-secondary transition-colors"
       title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
       <span className="font-terminal text-sm text-primary">
@@ -180,7 +180,7 @@ export default function DashboardLayout({
                 <ThemeToggle />
                 <button
                   onClick={handleSignOut}
-                  className="hidden sm:flex items-center gap-2 px-3 py-1.5 font-terminal text-xs text-muted-foreground hover:text-destructive transition-colors"
+                  className="cursor-pointer hidden sm:flex items-center gap-2 px-3 py-1.5 font-terminal text-xs text-muted-foreground hover:text-destructive transition-colors"
                 >
                   <span>⏻</span>
                 </button>

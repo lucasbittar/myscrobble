@@ -17,19 +17,19 @@ const vt323 = VT323({
 });
 
 export const metadata: Metadata = {
-  title: 'MyScrobble | Your Spotify Dashboard',
+  title: 'MyScrobble.fm | Your Spotify Dashboard',
   description:
     'Visualize your Spotify listening history with AI-powered recommendations, concert discovery, and a retro CRT terminal aesthetic.',
   keywords: ['Spotify', 'music', 'dashboard', 'scrobble', 'listening history', 'analytics'],
-  authors: [{ name: 'MyScrobble' }],
+  authors: [{ name: 'MyScrobble.fm' }],
   openGraph: {
-    title: 'MyScrobble | Your Spotify Dashboard',
+    title: 'MyScrobble.fm | Your Spotify Dashboard',
     description: 'Visualize your Spotify listening history with AI-powered recommendations.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MyScrobble | Your Spotify Dashboard',
+    title: 'MyScrobble.fm | Your Spotify Dashboard',
     description: 'Visualize your Spotify listening history with AI-powered recommendations.',
   },
 };

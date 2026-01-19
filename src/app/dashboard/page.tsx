@@ -452,7 +452,7 @@ export default function DashboardPage() {
                       </div>
 
                       {/* Time badge */}
-                      <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-background/80 backdrop-blur-sm">
+                      <div className="absolute top-2 right-2 px-2 pb-1 rounded-full bg-background/80 backdrop-blur-sm leading-none">
                         <span className="font-mono text-[10px] text-primary">
                           {formatRelativeTime(track.playedAt)}
                         </span>
@@ -597,8 +597,54 @@ export default function DashboardPage() {
       >
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 rounded-xl border border-primary/20 bg-primary/5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-              <span className="text-primary text-lg">📊</span>
+            {/* Arcade Trophy Podium Icon */}
+            <div className="relative w-10 h-10 rounded-lg bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 flex items-center justify-center overflow-hidden group">
+              {/* Scanline overlay */}
+              <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.1)_2px,rgba(0,0,0,0.1)_4px)] pointer-events-none" />
+
+              {/* Glow pulse background */}
+              <div className="absolute inset-0 bg-primary/20 animate-pulse" style={{ animationDuration: '2s' }} />
+
+              {/* Podium bars container */}
+              <div className="relative flex items-end justify-center gap-[3px] h-6">
+                {/* 2nd place bar (left) */}
+                <motion.div
+                  className="w-[6px] bg-gradient-to-t from-primary to-primary/70 rounded-t-[2px]"
+                  initial={{ height: 0 }}
+                  animate={{ height: 14 }}
+                  transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
+                  style={{ boxShadow: '0 0 6px var(--primary)' }}
+                />
+                {/* 1st place bar (center - tallest) with crown */}
+                <div className="relative flex flex-col items-center">
+                  {/* Crown */}
+                  <motion.div
+                    className="absolute -top-[7px] text-[8px] text-primary"
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.9, duration: 0.3, type: "spring" }}
+                    style={{ filter: 'drop-shadow(0 0 4px var(--primary))' }}
+                  >
+                    ♛
+                  </motion.div>
+                  <motion.div
+                    className="w-[6px] bg-gradient-to-t from-primary via-primary to-primary/80 rounded-t-[2px]"
+                    initial={{ height: 0 }}
+                    animate={{ height: 20 }}
+                    transition={{ delay: 0.5, duration: 0.5, ease: "easeOut" }}
+                    style={{ boxShadow: '0 0 10px var(--primary), 0 0 20px var(--primary)' }}
+                  />
+                </div>
+                {/* 3rd place bar (right) */}
+                <motion.div
+                  className="w-[6px] bg-gradient-to-t from-primary/80 to-primary/50 rounded-t-[2px]"
+                  initial={{ height: 0 }}
+                  animate={{ height: 10 }}
+                  transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
+                  style={{ boxShadow: '0 0 4px var(--primary)' }}
+                />
+              </div>
+
             </div>
             <div>
               <h3 className="font-terminal text-base text-foreground">Your Top Charts</h3>
@@ -966,7 +1012,7 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Track count badge */}
-                  <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded bg-background/80 backdrop-blur-sm">
+                  <div className="absolute top-1.5 right-1.5 px-1.5 pb-1 rounded bg-background/80 backdrop-blur-sm leading-none">
                     <span className="font-mono text-[10px] text-[var(--crt-magenta)]">
                       {album.trackCount} {album.trackCount === 1 ? 'track' : 'tracks'}
                     </span>

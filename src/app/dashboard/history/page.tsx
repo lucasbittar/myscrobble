@@ -167,7 +167,7 @@ export default function HistoryPage() {
               setDateRange(range);
               setOffset(0);
             }}
-            className={`rounded-md border px-3 py-1 font-terminal text-xs transition-all ${
+            className={`cursor-pointer rounded-md border px-3 py-1 font-terminal text-xs transition-all ${
               dateRange === range
                 ? 'border-[#00ff41] bg-[rgba(0,255,65,0.1)] text-[#00ff41]'
                 : 'border-[rgba(0,255,65,0.2)] text-[#888888] hover:border-[#00ff41] hover:text-[#e0e0e0]'

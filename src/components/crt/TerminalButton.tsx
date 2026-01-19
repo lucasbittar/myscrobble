@@ -49,7 +49,7 @@ export function TerminalButton({
       whileHover={{ scale: disabled ? 1 : 1.02 }}
       whileTap={{ scale: disabled ? 1 : 0.98 }}
       className={cn(
-        'relative inline-flex items-center justify-center gap-2 rounded-md border font-terminal font-medium transition-all duration-200',
+        'cursor-pointer relative inline-flex items-center justify-center gap-2 rounded-md border font-terminal font-medium transition-all duration-200',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         'disabled:cursor-not-allowed disabled:opacity-50',
         variantClasses[variant],

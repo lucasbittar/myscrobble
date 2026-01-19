@@ -182,7 +182,7 @@ export default function SharePage() {
                 <button
                   key={t}
                   onClick={() => setTemplate(t)}
-                  className={`rounded-md border p-3 text-left font-terminal text-sm transition-all ${
+                  className={`cursor-pointer rounded-md border p-3 text-left font-terminal text-sm transition-all ${
                     template === t
                       ? 'border-[#00ff41] bg-[rgba(0,255,65,0.1)] text-[#00ff41]'
                       : 'border-[rgba(0,255,65,0.2)] text-[#888888] hover:border-[rgba(0,255,65,0.4)]'
