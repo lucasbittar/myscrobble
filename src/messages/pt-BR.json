@@ -1,0 +1,300 @@
+{
+  "common": {
+    "loading": "Carregando...",
+    "loadingSystem": "CARREGANDO SISTEMA...",
+    "error": "Erro",
+    "viewAll": "Ver tudo →",
+    "tryAgain": "Tentar Novamente",
+    "goHome": "Ir para Início",
+    "prev": "← ANTERIOR",
+    "next": "PRÓXIMO →",
+    "page": "Página {current} de {total}",
+    "syncing": "SINCRONIZANDO...",
+    "syncNow": "SINCRONIZAR",
+    "startSync": "INICIAR SINCRONIZAÇÃO",
+    "synced": "✓ {count} novas músicas sincronizadas",
+    "loading_hint": "Isso pode levar alguns segundos",
+    "notPlaying": "Nada tocando",
+    "openInSpotify": "Abrir no Spotify →",
+    "previous": "← Anterior",
+    "finish": "Finalizar",
+    "track": "música",
+    "tracks": "músicas",
+    "onTour": "EM TURNÊ",
+    "tickets": "Ingressos",
+    "with": "Com:",
+    "timeAgo": {
+      "justNow": "Agora",
+      "minutes": "há {count}m",
+      "hours": "há {count}h",
+      "days": "há {count}d"
+    }
+  },
+  "landing": {
+    "title": "MyScrobble.fm",
+    "subtitle": "Painel do Spotify",
+    "version": "v2.0",
+    "login": "CONECTAR COM SPOTIFY",
+    "privacy": "Seu histórico de músicas permanece privado. Apenas analisamos seus dados para fornecer insights.",
+    "init": {
+      "loading": "Inicializando MyScrobble...",
+      "spotify": "Carregando módulo da API do Spotify",
+      "ai": "Carregando recomendações de IA",
+      "concerts": "Carregando descoberta de shows",
+      "auth": "Aguardando autenticação..."
+    },
+    "features": {
+      "stats": "Estatísticas",
+      "ai": "IA Discover",
+      "concerts": "Shows",
+      "share": "Compartilhar"
+    },
+    "system": {
+      "ready": "SIS: PRONTO",
+      "memory": "MEM: 64KB LIVRE",
+      "build": "BUILD: 2024.01",
+      "node": "NODE: ATIVO"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "LOGIN",
+      "subtitle": "Conecte sua conta do Spotify para continuar",
+      "button": "CONECTAR SPOTIFY",
+      "permissions": "Permissões solicitadas:",
+      "permissionsList": {
+        "recentlyPlayed": "Ver suas músicas tocadas recentemente",
+        "topItems": "Ver seus artistas e músicas mais tocados",
+        "library": "Ver sua biblioteca salva",
+        "nowPlaying": "Ver a música que está tocando agora"
+      },
+      "disclaimer": "Nunca modificamos seus dados ou playlists do Spotify."
+    },
+    "errors": {
+      "title": "ERRO",
+      "configuration": "Há um problema com a configuração do servidor.",
+      "accessDenied": "Acesso negado. Você pode ter recusado as permissões.",
+      "verification": "O token de verificação expirou ou já foi usado.",
+      "default": "Ocorreu um erro inesperado durante a autenticação.",
+      "troubleshooting": "Solução de problemas:",
+      "tips": {
+        "account": "Certifique-se de ter uma conta no Spotify",
+        "cookies": "Verifique se os cookies estão habilitados",
+        "cache": "Tente limpar o cache do navegador",
+        "wait": "Tente novamente em alguns minutos"
+      }
+    }
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Bom dia",
+      "afternoon": "Boa tarde",
+      "evening": "Boa noite"
+    },
+    "nowPlaying": {
+      "title": "Tocando Agora",
+      "live": "Ao Vivo",
+      "liveShort": "Ao Vivo",
+      "notPlaying": "Nada Tocando",
+      "hint": "Toque algo no Spotify para ver aqui"
+    },
+    "navigation": {
+      "home": "Início",
+      "history": "Histórico",
+      "charts": "Rankings",
+      "discover": "Descobrir",
+      "wrapped": "Wrapped",
+      "share": "Compartilhar",
+      "concerts": "Shows",
+      "signOut": "Sair",
+      "lightMode": "Modo Claro",
+      "darkMode": "Modo Escuro"
+    },
+    "sections": {
+      "recentActivity": "Atividade Recente",
+      "topCharts": "Seus Mais Tocados",
+      "topArtists": "Artistas Favoritos",
+      "topTracks": "Músicas Favoritas",
+      "topAlbums": "Álbuns Favoritos",
+      "peakTime": "Horário de Pico"
+    },
+    "stats": {
+      "minutesListened": "Minutos Ouvidos",
+      "tracksPlayed": "Músicas Tocadas",
+      "mostActive": "Horário mais ativo",
+      "peakHour": "Horário de Pico",
+      "dataFrom": "Dados das últimas 4 semanas"
+    },
+    "timeRanges": {
+      "short": "4 Semanas",
+      "medium": "6 Meses",
+      "long": "Todos os Tempos"
+    },
+    "empty": {
+      "noData": "Sem dados ainda",
+      "noTracks": "Nenhuma música recente",
+      "syncHint": "Sincronize o histórico para ver padrões"
+    },
+    "footer": {
+      "builtBy": "Desenvolvido por",
+      "sysOnline": "SIS: ONLINE"
+    },
+    "featureCards": {
+      "aiDiscover": {
+        "title": "IA Discover",
+        "description": "Receba recomendações personalizadas"
+      },
+      "charts": {
+        "title": "Seus Rankings",
+        "description": "Veja seus artistas, músicas e álbuns favoritos"
+      },
+      "concerts": {
+        "title": "Shows",
+        "description": "Encontre shows dos seus artistas favoritos"
+      },
+      "wrapped": {
+        "title": "Seu Wrapped",
+        "description": "Explore sua história musical com períodos personalizados"
+      },
+      "share": {
+        "title": "Compartilhar",
+        "description": "Crie cards bonitos para Instagram Stories"
+      }
+    }
+  },
+  "charts": {
+    "title": "Rankings",
+    "subtitle": "Seus artistas, músicas e álbuns mais tocados",
+    "tabs": {
+      "artists": "Artistas",
+      "tracks": "Músicas",
+      "albums": "Álbuns"
+    }
+  },
+  "albums": {
+    "featured": "Álbuns em Destaque",
+    "collection": "A Coleção",
+    "errorLoading": "Erro ao carregar álbuns",
+    "noAlbums": "Nenhum álbum ainda",
+    "trackCount": "{count} {count, plural, one {música} other {músicas}}"
+  },
+  "history": {
+    "title": "Histórico de Músicas",
+    "tracksSynced": "{count} músicas sincronizadas",
+    "lastSync": "Última sincronização: {date}",
+    "filters": {
+      "all": "TUDO",
+      "today": "HOJE",
+      "week": "SEMANA",
+      "month": "MÊS"
+    },
+    "sync": {
+      "required": "sincronização.necessária",
+      "description": "Sincronize seu histórico de músicas para visualizar e filtrar suas faixas.",
+      "hint": "Isso salvará suas últimas 50 músicas tocadas no banco de dados. Execute periodicamente para construir seu histórico completo."
+    },
+    "loading": "CARREGANDO HISTÓRICO...",
+    "noTracks": "Nenhuma música encontrada para este período"
+  },
+  "discover": {
+    "title": "IA Discover",
+    "subtitle": "Recomendações personalizadas com Gemini AI",
+    "regenerate": "Regenerar",
+    "analyzing": "Analisando seus padrões de audição...",
+    "failed": "Falha ao gerar recomendações",
+    "apiHint": "Certifique-se de que sua chave da API Gemini está configurada corretamente",
+    "basedOn": "Baseado nos seus artistas favoritos:",
+    "startWith": "Comece com:"
+  },
+  "wrapped": {
+    "title": "Seu Wrapped",
+    "subtitle": "Sua história musical personalizada",
+    "loading": "CARREGANDO SEU WRAPPED...",
+    "failed": "Falha ao carregar dados",
+    "journeyAwaits": "Sua jornada musical aguarda",
+    "startWrapped": "INICIAR WRAPPED",
+    "timeRanges": {
+      "short": "Últimas 4 Semanas",
+      "medium": "Últimos 6 Meses",
+      "long": "Todos os Tempos"
+    },
+    "slides": {
+      "intro": {
+        "title": "Seu {timeRange}",
+        "subtitle": "Vamos ver o que você tem ouvido"
+      },
+      "topArtist": {
+        "title": "Seu Artista #1"
+      },
+      "topArtists": {
+        "title": "Seus Artistas Favoritos"
+      },
+      "topTracks": {
+        "title": "Suas Músicas Favoritas"
+      },
+      "genres": {
+        "title": "Seus Gêneros Favoritos"
+      },
+      "listeningPatterns": {
+        "title": "Seus Padrões de Audição",
+        "peakTime": "Horário de pico:",
+        "byDay": "Por Dia da Semana"
+      },
+      "stats": {
+        "title": "Suas Estatísticas",
+        "timeListened": "Tempo Ouvido",
+        "tracksPlayed": "Músicas Tocadas",
+        "uniqueArtists": "Artistas Únicos",
+        "uniqueTracks": "Músicas Únicas"
+      }
+    },
+    "syncMore": "Sincronize mais histórico para ver padrões"
+  },
+  "share": {
+    "title": "Compartilhar",
+    "subtitle": "Crie cards compartilháveis para Instagram Stories (1080x1920)",
+    "templates": {
+      "title": "selecionar_modelo",
+      "topArtist": "Artista #1",
+      "top5Artists": "Top 5 Artistas",
+      "topTrack": "Música #1",
+      "statsCard": "Card de Estatísticas"
+    },
+    "timeRange": "período",
+    "download": "Baixar PNG",
+    "generating": "GERANDO...",
+    "preview": "Prévia",
+    "tip": "Dica: Os cards são otimizados para Instagram Stories (proporção 9:16)",
+    "cards": {
+      "myNumber1Artist": "Meu Artista #1 ({timeRange})",
+      "top5Artists": "Top 5 Artistas ({timeRange})",
+      "myNumber1Track": "Minha Música #1 ({timeRange})",
+      "myStats": "Minhas Estatísticas ({timeRange})",
+      "timeListened": "Tempo Ouvido",
+      "tracksPlayed": "Músicas Tocadas",
+      "artists": "Artistas",
+      "tracks": "Músicas"
+    }
+  },
+  "concerts": {
+    "title": "Shows",
+    "subtitle": "Próximos shows dos seus artistas favoritos",
+    "tracking": "Rastreando:"
+  },
+  "meta": {
+    "title": "MyScrobble.fm | Seu Painel do Spotify",
+    "description": "Acompanhe seu histórico de músicas do Spotify, descubra novas músicas com IA e encontre shows."
+  },
+  "tour": {
+    "onTour": "EM TURNÊ",
+    "upcoming": "Próximos Shows",
+    "noUpcoming": "Nenhum show próximo na sua região",
+    "nearYou": "Perto de você",
+    "kmAway": "{distance}km de distância",
+    "getTickets": "Comprar Ingressos",
+    "viewAll": "Ver Todos os Shows",
+    "locationPermission": "Ative a localização para shows próximos",
+    "searching": "Buscando shows...",
+    "fromTopArtists": "Baseado nos seus artistas favoritos"
+  }
+}
