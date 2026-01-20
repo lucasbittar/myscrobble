@@ -3,12 +3,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
 import { OnTourBadge } from '@/components/ui/OnTourBadge';
 import { useTourStatusBatch } from '@/hooks/useTourStatus';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useTranslations } from 'next-intl';
 import type { TourEvent } from '@/types/tour';
+import { ModernCard, ModernButton, Heading, ScrollReveal } from '@/components/modern';
 
 interface TopArtist {
   id: string;
@@ -86,37 +86,30 @@ export default function ConcertsPage() {
   const isLoading = artistsLoading || locationLoading || tourLoading;
 
   return (
-    <div className="space-y-6">
+    <div className="py-12 md:py-24 px-6 md:px-12">
+      <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h1 className="font-terminal text-3xl">
-          <GlowText color="magenta" size="sm">
-            <span className="text-[#888888]">♪</span> {t('title')}
-          </GlowText>
-        </h1>
-        <p className="mt-1 font-mono text-sm text-[#888888]">
+      <ScrollReveal>
+        <Heading level={2}>{t('title')}</Heading>
+        <p className="mt-1 text-muted-foreground">
           {t('subtitle')}
         </p>
-      </motion.div>
+      </ScrollReveal>
 
       {/* Location Permission Banner */}
       {permissionDenied && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="rounded-lg border border-[rgba(255,0,255,0.2)] bg-[rgba(255,0,255,0.05)] p-4 flex items-center justify-between"
-        >
-          <p className="font-mono text-xs text-[#ff00ff]">
-            {tTour('locationPermission')}
-          </p>
-          <TerminalButton variant="secondary" size="sm" onClick={requestPermission}>
-            Enable
-          </TerminalButton>
-        </motion.div>
+        <ScrollReveal delay={0.1}>
+          <ModernCard className="bg-[#EC4899]/5 border-[#EC4899]/20">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-[#EC4899]">
+                {tTour('locationPermission')}
+              </p>
+              <ModernButton variant="secondary" size="sm" onClick={requestPermission}>
+                Enable
+              </ModernButton>
+            </div>
+          </ModernCard>
+        </ScrollReveal>
       )}
 
       {/* Loading State */}
@@ -129,7 +122,7 @@ export default function ConcertsPage() {
           >
             ♪
           </motion.div>
-          <p className="font-terminal text-[#ff00ff]">{tTour('searching')}</p>
+          <p className="font-medium text-[#EC4899]">{tTour('searching')}</p>
         </div>
       )}
 
@@ -138,13 +131,9 @@ export default function ConcertsPage() {
         <>
           {/* Artists On Tour Section */}
           {artistsOnTour.length > 0 && (
-            <motion.section
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              <h2 className="mb-4 font-terminal text-lg text-foreground">
-                {t('tracking')} <span className="text-[#ff00ff]">{artistsOnTour.length}</span> artists
+            <ScrollReveal delay={0.2}>
+              <h2 className="mb-4 text-lg font-semibold text-foreground">
+                {t('tracking')} <span className="text-[#EC4899]">{artistsOnTour.length}</span> artists
               </h2>
               <div className="flex flex-wrap gap-3">
                 {artistsOnTour.map((artist) => (
@@ -152,7 +141,7 @@ export default function ConcertsPage() {
                     key={artist.id}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="flex items-center gap-2 rounded-full border border-[rgba(255,0,255,0.3)] bg-[rgba(255,0,255,0.1)] pl-1 pr-3 py-1"
+                    className="flex items-center gap-2 rounded-full border border-[#EC4899]/30 bg-[#EC4899]/10 pl-1 pr-3 py-1"
                   >
                     <div className="relative w-6 h-6 rounded-full overflow-hidden">
                       {artist.images[0]?.url && (
@@ -164,37 +153,33 @@ export default function ConcertsPage() {
                         />
                       )}
                     </div>
-                    <span className="font-terminal text-xs text-[#ff00ff]">
+                    <span className="text-xs font-medium text-[#EC4899]">
                       {artist.name}
                     </span>
                   </motion.div>
                 ))}
               </div>
-            </motion.section>
+            </ScrollReveal>
           )}
 
           {/* Empty State */}
           {allConcerts.length === 0 && (
-            <TerminalCard>
-              <div className="py-12 text-center">
-                <div className="mb-4 text-4xl opacity-30">🎤</div>
-                <p className="font-terminal text-[#888888]">
+            <ScrollReveal delay={0.2}>
+              <ModernCard className="text-center py-16">
+                <div className="mb-4 text-5xl opacity-30">🎤</div>
+                <p className="text-lg font-medium text-muted-foreground">
                   {tTour('noUpcoming')}
                 </p>
-                <p className="mt-2 font-mono text-xs text-[#555555]">
+                <p className="mt-2 text-sm text-muted-foreground/70">
                   {tTour('fromTopArtists')}
                 </p>
-              </div>
-            </TerminalCard>
+              </ModernCard>
+            </ScrollReveal>
           )}
 
           {/* Concerts Grid */}
           {allConcerts.length > 0 && (
-            <motion.section
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
+            <ScrollReveal delay={0.3}>
               <div className="grid gap-4 md:grid-cols-2">
                 {allConcerts.map((concert, index) => (
                   <motion.div
@@ -203,13 +188,13 @@ export default function ConcertsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 + index * 0.05 }}
                   >
-                    <TerminalCard className="h-full">
+                    <ModernCard hover className="h-full">
                       <div className="space-y-3">
                         {/* Artist Header */}
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-3">
                             {concert.artistImage && (
-                              <div className="relative w-10 h-10 rounded-full overflow-hidden border border-[rgba(255,0,255,0.3)]">
+                              <div className="relative w-10 h-10 rounded-full overflow-hidden border border-[#EC4899]/30">
                                 <Image
                                   src={concert.artistImage}
                                   alt={concert.artistName}
@@ -218,7 +203,7 @@ export default function ConcertsPage() {
                                 />
                               </div>
                             )}
-                            <h3 className="font-terminal text-lg text-[#ff00ff]">
+                            <h3 className="text-lg font-semibold text-[#EC4899]">
                               {concert.artistName}
                             </h3>
                           </div>
@@ -227,10 +212,10 @@ export default function ConcertsPage() {
 
                         {/* Venue */}
                         <div>
-                          <p className="font-terminal text-sm text-[#e0e0e0]">
+                          <p className="text-sm font-medium text-foreground">
                             {concert.venue}
                           </p>
-                          <p className="font-mono text-xs text-[#888888]">
+                          <p className="text-sm text-muted-foreground">
                             {concert.city}
                           </p>
                         </div>
@@ -238,7 +223,7 @@ export default function ConcertsPage() {
                         {/* Date and Distance */}
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-terminal text-[#00f5ff]">
+                            <p className="font-medium text-primary">
                               {new Date(concert.date).toLocaleDateString(undefined, {
                                 weekday: 'short',
                                 month: 'short',
@@ -247,7 +232,7 @@ export default function ConcertsPage() {
                               })}
                             </p>
                             {concert.distanceKm !== undefined && (
-                              <p className="font-mono text-xs text-[#555555]">
+                              <p className="text-xs text-muted-foreground">
                                 {tTour('kmAway', { distance: concert.distanceKm })}
                               </p>
                             )}
@@ -259,21 +244,22 @@ export default function ConcertsPage() {
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              <TerminalButton variant="secondary" size="sm">
+                              <ModernButton variant="secondary" size="sm">
                                 {tTour('getTickets')}
-                              </TerminalButton>
+                              </ModernButton>
                             </a>
                           )}
                         </div>
                       </div>
-                    </TerminalCard>
+                    </ModernCard>
                   </motion.div>
                 ))}
               </div>
-            </motion.section>
+            </ScrollReveal>
           )}
         </>
       )}
+      </div>
     </div>
   );
 }

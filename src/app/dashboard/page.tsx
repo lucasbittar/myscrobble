@@ -1,14 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { GlowText, TerminalCard } from '@/components/crt';
 import { OnTourBadge } from '@/components/ui/OnTourBadge';
 import { UpcomingConcerts } from '@/components/dashboard/UpcomingConcerts';
-import { AIDiscoverIcon, ShareIcon, WrappedIcon, ConcertsIcon, ListeningStatsIcon, PodcastsIcon } from '@/components/icons/FeatureIcons';
 import { useTourStatusBatch } from '@/hooks/useTourStatus';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useTranslations } from 'next-intl';
@@ -41,15 +39,6 @@ interface TopArtist {
   genres: string[];
 }
 
-interface TopAlbum {
-  id: string;
-  name: string;
-  artist: string;
-  image?: string;
-  spotifyUrl: string;
-  trackCount: number;
-}
-
 interface TopTrack {
   id: string;
   name: string;
@@ -72,7 +61,6 @@ async function fetchNowPlaying(): Promise<NowPlayingData> {
 
   const data = await res.json();
 
-  // Transform Spotify API response to our interface
   if (!data.is_playing || !data.item) {
     return { isPlaying: false };
   }
@@ -91,7 +79,7 @@ async function fetchNowPlaying(): Promise<NowPlayingData> {
 }
 
 async function fetchRecentTracks(): Promise<RecentTrack[]> {
-  const res = await fetch('/api/spotify/recent-tracks?limit=6');
+  const res = await fetch('/api/spotify/recent-tracks?limit=8');
   if (!res.ok) return [];
   const data = await res.json();
   return data.items?.map((item: { track: { id: string; name: string; artists: { name: string }[]; album: { name: string; images: { url: string }[] } }; played_at: string }) => ({
@@ -105,7 +93,7 @@ async function fetchRecentTracks(): Promise<RecentTrack[]> {
 }
 
 async function fetchTopArtists(): Promise<TopArtist[]> {
-  const res = await fetch('/api/spotify/top-artists?time_range=short_term&limit=5');
+  const res = await fetch('/api/spotify/top-artists?time_range=short_term&limit=6');
   if (!res.ok) return [];
   const data = await res.json();
   return data.items?.map((artist: { id: string; name: string; images: { url: string }[]; genres: string[] }) => ({
@@ -114,13 +102,6 @@ async function fetchTopArtists(): Promise<TopArtist[]> {
     image: artist.images[0]?.url,
     genres: artist.genres.slice(0, 2),
   })) || [];
-}
-
-async function fetchTopAlbums(): Promise<TopAlbum[]> {
-  const res = await fetch('/api/spotify/top-albums?time_range=short_term&limit=6');
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.items || [];
 }
 
 async function fetchTopTracks(): Promise<TopTrack[]> {
@@ -137,7 +118,6 @@ async function fetchTopTracks(): Promise<TopTrack[]> {
 }
 
 async function fetchListeningStats(): Promise<ListeningStats> {
-  // Get stats for the last 4 weeks (28 days) to match Spotify's short_term
   const endDate = new Date().toISOString();
   const startDate = new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toISOString();
 
@@ -159,13 +139,61 @@ async function fetchListeningStats(): Promise<ListeningStats> {
   };
 }
 
+// Scroll reveal section wrapper
+function RevealSection({
+  children,
+  className,
+  delay = 0
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const ref = useRef<HTMLElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
+
+  return (
+    <motion.section
+      ref={ref}
+      initial={{ opacity: 0, y: 60 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
+      transition={{ duration: 0.7, delay, ease: 'easeOut' }}
+      className={className}
+    >
+      {children}
+    </motion.section>
+  );
+}
+
+// Highlight text component
+function Highlight({
+  children,
+  color = 'green'
+}: {
+  children: React.ReactNode;
+  color?: 'green' | 'purple' | 'pink' | 'blue' | 'amber';
+}) {
+  const colors = {
+    green: 'bg-[#1DB954]/20',
+    purple: 'bg-[#8B5CF6]/20',
+    pink: 'bg-[#EC4899]/20',
+    blue: 'bg-[#3B82F6]/20',
+    amber: 'bg-[#F59E0B]/20',
+  };
+
+  return (
+    <span className={`relative inline-block px-2 -mx-1 ${colors[color]} rounded-lg`}>
+      {children}
+    </span>
+  );
+}
+
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
   const tCommon = useTranslations('common');
   const [greeting, setGreeting] = useState('');
   const [userName, setUserName] = useState('');
 
-  // Fetch session for user name
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting(t('greeting.morning'));
@@ -197,11 +225,6 @@ export default function DashboardPage() {
     queryFn: fetchTopArtists,
   });
 
-  const { data: topAlbums } = useQuery({
-    queryKey: ['top-albums-home'],
-    queryFn: fetchTopAlbums,
-  });
-
   const { data: topTracks } = useQuery({
     queryKey: ['top-tracks-home'],
     queryFn: fetchTopTracks,
@@ -212,7 +235,6 @@ export default function DashboardPage() {
     queryFn: fetchListeningStats,
   });
 
-  // Geolocation and tour status for badges
   const { location } = useGeolocation();
   const artistNames = topArtists?.map((a) => a.name) || [];
   const { data: tourStatus } = useTourStatusBatch(
@@ -222,952 +244,736 @@ export default function DashboardPage() {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="relative">
       {/* Hero Section - Now Playing */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-card via-background to-background"
-      >
-        {/* Background glow effect */}
-        {nowPlaying?.track?.albumArt && (
-          <div
-            className="absolute inset-0 opacity-20 blur-3xl"
-            style={{
-              backgroundImage: `url(${nowPlaying.track.albumArt})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          />
-        )}
-
-        <div className="relative z-10 p-6 sm:p-8 lg:p-10">
+      <section className="min-h-[70vh] flex items-center px-6 md:px-12 py-24">
+        <div className="max-w-7xl mx-auto w-full">
           {nowPlaying?.isPlaying && nowPlaying.track ? (
-            <>
-              {/* Terminal Header - Greeting + Status (only when playing) */}
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-primary/10">
-                <div className="flex items-center gap-2">
-                  <span className="text-primary font-terminal">&gt;</span>
-                  <h2 className="font-terminal text-lg sm:text-xl text-foreground">
-                    {greeting}{userName && `, ${userName}`}
-                    <motion.span
-                      className="inline-block w-2 h-5 bg-primary ml-1 align-middle"
-                      animate={{ opacity: [1, 1, 0, 0] }}
-                      transition={{ duration: 1, repeat: Infinity, times: [0, 0.5, 0.5, 1] }}
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              {/* Album Art - Large and prominent */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8 }}
+                className="relative"
+              >
+                <div className="relative aspect-square max-w-lg mx-auto lg:max-w-none rounded-3xl overflow-hidden shadow-2xl">
+                  {nowPlaying.track.albumArt && (
+                    <Image
+                      src={nowPlaying.track.albumArt}
+                      alt={nowPlaying.track.album}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      className="object-cover"
+                      priority
                     />
-                  </h2>
-                </div>
-                <motion.div
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="flex items-center gap-2"
-                >
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
-                  </span>
-                  <span className="font-terminal text-xs text-primary uppercase tracking-wider">{t('nowPlaying.live')}</span>
-                </motion.div>
-              </div>
-
-              {/* Now Playing Content */}
-              <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-10">
-                {/* Album Art */}
-                <div className="relative flex-shrink-0">
-                  <motion.div
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="relative"
-                  >
-                    <div className="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-xl overflow-hidden border-2 border-primary/30 shadow-[0_0_40px_var(--primary)/15]">
-                      {nowPlaying.track.albumArt && (
-                        <Image
-                          src={nowPlaying.track.albumArt}
-                          alt={nowPlaying.track.album}
-                          fill
-                          className="object-cover"
+                  )}
+                  {/* Overlay with now playing indicator */}
+                  <div className="absolute bottom-6 left-6 flex items-center gap-3 px-4 py-2 rounded-full bg-white/90 backdrop-blur-sm shadow-lg">
+                    <span className="flex gap-0.5">
+                      {[1, 2, 3].map((i) => (
+                        <motion.span
+                          key={i}
+                          className="w-1 bg-[#1DB954] rounded-full"
+                          animate={{ height: ['8px', '20px', '8px'] }}
+                          transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
                         />
-                      )}
-                    </div>
-                    {/* Playing indicator */}
-                    <div className="absolute -bottom-2 -right-2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-background border border-primary">
-                      <span className="flex gap-0.5">
-                        {[1, 2, 3].map((i) => (
-                          <motion.span
-                            key={i}
-                            className="w-1 bg-primary rounded-full"
-                            animate={{ height: ['8px', '16px', '8px'] }}
-                            transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
-                          />
-                        ))}
-                      </span>
-                      <span className="font-terminal text-xs text-primary uppercase">{t('nowPlaying.liveShort')}</span>
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Track Info */}
-                <div className="flex-1 min-w-0">
-                  <h1 className="font-terminal text-2xl sm:text-3xl lg:text-4xl text-foreground truncate mb-2">
-                    {nowPlaying.track.name}
-                  </h1>
-                  <p className="font-mono text-xl text-primary truncate mb-1">
-                    {nowPlaying.track.artists}
-                  </p>
-                  <p className="font-mono text-base text-muted-foreground truncate mb-6">
-                    {nowPlaying.track.album}
-                  </p>
-
-                  {/* Progress bar */}
-                  <div className="max-w-md">
-                    <div className="h-1 bg-primary/10 rounded-full overflow-hidden">
-                      <motion.div
-                        className="h-full bg-primary rounded-full"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${(nowPlaying.track.progress / nowPlaying.track.duration) * 100}%` }}
-                        transition={{ duration: 0.5 }}
-                      />
-                    </div>
-                    <div className="flex justify-between mt-2">
-                      <span className="font-mono text-xs text-muted-foreground">
-                        {formatTime(nowPlaying.track.progress)}
-                      </span>
-                      <span className="font-mono text-xs text-muted-foreground">
-                        {formatTime(nowPlaying.track.duration)}
-                      </span>
-                    </div>
+                      ))}
+                    </span>
+                    <span className="text-sm font-medium text-foreground">{t('nowPlaying.liveShort')}</span>
                   </div>
                 </div>
-              </div>
-            </>
-          ) : (
-            /* Not Playing State - Original Layout */
-            <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-10">
-              <div className="w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-xl border-2 border-dashed border-primary/20 flex items-center justify-center bg-primary/5 flex-shrink-0">
-                <div className="text-center">
-                  <span className="text-4xl opacity-30">♪</span>
-                  <p className="mt-2 font-terminal text-xs text-muted-foreground">{tCommon('notPlaying')}</p>
-                </div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-mono text-sm text-muted-foreground uppercase tracking-wider mb-2">
-                  {t('nowPlaying.notPlaying')}
-                </p>
-                <h2 className="font-terminal text-3xl sm:text-4xl text-foreground mb-2">
-                  <span className="text-primary">&gt;</span> {greeting}{userName && `, ${userName}`}
-                  <motion.span
-                    className="inline-block w-3 h-8 bg-primary ml-2 align-middle"
-                    animate={{ opacity: [1, 1, 0, 0] }}
-                    transition={{ duration: 1, repeat: Infinity, times: [0, 0.5, 0.5, 1] }}
-                  />
+              </motion.div>
+
+              {/* Track Info - Editorial style */}
+              <motion.div
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                {/* Greeting */}
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+                  {greeting}{userName && `, ${userName}`}
                 </h2>
-                <p className="font-mono text-base text-muted-foreground">
-                  {t('nowPlaying.hint')}
+                <p className="text-sm uppercase tracking-[0.3em] text-[#1DB954] mb-6 flex items-center gap-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1DB954] opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#1DB954]" />
+                  </span>
+                  {t('nowPlaying.live')}
                 </p>
-              </div>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[0.9] tracking-tight text-foreground mb-4">
+                  {nowPlaying.track.name}
+                </h1>
+                <p className="text-xl md:text-2xl text-muted-foreground font-medium mb-1">
+                  {nowPlaying.track.artists}
+                </p>
+                <p className="text-base text-muted-foreground/70 mb-8">
+                  {nowPlaying.track.album}
+                </p>
+
+                {/* Progress bar - Minimal */}
+                <div className="max-w-md">
+                  <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-[#1DB954] rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(nowPlaying.track.progress / nowPlaying.track.duration) * 100}%` }}
+                      transition={{ duration: 0.5 }}
+                    />
+                  </div>
+                  <div className="flex justify-between mt-2">
+                    <span className="text-xs text-muted-foreground">
+                      {formatTime(nowPlaying.track.progress)}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {formatTime(nowPlaying.track.duration)}
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
             </div>
+          ) : (
+            /* Not Playing State - Editorial greeting */
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center max-w-4xl mx-auto"
+            >
+              <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-6">
+                {t('nowPlaying.notPlaying')}
+              </p>
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tight text-foreground mb-8">
+                {greeting}
+                {userName && (
+                  <>
+                    ,<br />
+                    <Highlight color="green">{userName}</Highlight>
+                  </>
+                )}
+              </h1>
+              <p className="text-xl text-muted-foreground max-w-lg mx-auto">
+                {t('nowPlaying.hint')}
+              </p>
+            </motion.div>
           )}
         </div>
-      </motion.section>
+      </section>
 
-      {/* Feature Cards - Prominent CTAs */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-      >
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <FeatureCard
-            href="/dashboard/discover"
-            title={t('featureCards.aiDiscover.title')}
-            description={t('featureCards.aiDiscover.description')}
-            icon={<AIDiscoverIcon />}
-            gradient="from-[#00f5ff] to-[#0066ff]"
-            accentColor="#00f5ff"
-          />
-          <FeatureCard
-            href="/dashboard/top"
-            title={t('featureCards.charts.title')}
-            description={t('featureCards.charts.description')}
-            icon={<ListeningStatsIcon />}
-            gradient="from-[#00ff41] to-[#00aa41]"
-            accentColor="#00ff41"
-          />
-          <FeatureCard
-            href="/dashboard/wrapped"
-            title={t('featureCards.wrapped.title')}
-            description={t('featureCards.wrapped.description')}
-            icon={<WrappedIcon />}
-            gradient="from-[#ffb000] to-[#ff6600]"
-            accentColor="#ffb000"
-          />
-          <FeatureCard
-            href="/dashboard/podcasts"
-            title={t('featureCards.podcasts.title')}
-            description={t('featureCards.podcasts.description')}
-            icon={<PodcastsIcon />}
-            gradient="from-[#a855f7] to-[#7c3aed]"
-            accentColor="#a855f7"
-          />
-          <FeatureCard
-            href="/dashboard/share"
-            title={t('featureCards.share.title')}
-            description={t('featureCards.share.description')}
-            icon={<ShareIcon />}
-            gradient="from-[#ff00ff] to-[#aa00ff]"
-            accentColor="#ff00ff"
-          />
+      {/* Stats Section - Large numbers */}
+      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-t border-border/30">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-4">
+            {t('stats.dataFrom')}
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            <StatItem
+              value={listeningStats?.totalMinutes || 0}
+              label={t('stats.minutesListened')}
+              color="#1DB954"
+              delay={0}
+            />
+            <StatItem
+              value={listeningStats?.totalTracks || 0}
+              label={t('stats.tracksPlayed')}
+              color="#8B5CF6"
+              delay={0.1}
+            />
+            <StatItem
+              value={listeningStats?.peakHour !== undefined ? formatHourNumber(listeningStats.peakHour) : 0}
+              label={t('stats.peakHour')}
+              suffix={listeningStats?.peakHour !== undefined ? (listeningStats.peakHour >= 12 ? 'PM' : 'AM') : ''}
+              color="#F59E0B"
+              delay={0.2}
+            />
+            <StatItem
+              value={Math.round((listeningStats?.totalMinutes || 0) / 28)}
+              label={t('stats.avgPerDay')}
+              suffix="min"
+              color="#EC4899"
+              delay={0.3}
+            />
+          </div>
         </div>
-      </motion.section>
+      </RevealSection>
 
-      {/* Upcoming Concerts Section */}
+      {/* Top Artists Section - Editorial grid */}
+      <RevealSection className="py-24 md:py-32 px-6 md:px-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-2">
+                {t('timeRanges.short')}
+              </p>
+              <h2 className="text-4xl md:text-6xl font-black text-foreground">
+                {t('sections.topArtists')}
+              </h2>
+            </div>
+            <Link
+              href="/dashboard/top?view=artists"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {tCommon('viewAll')}
+            </Link>
+          </div>
+
+          {topArtists && topArtists.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+              {topArtists.slice(0, 6).map((artist, index) => (
+                <ArtistCard
+                  key={artist.id}
+                  artist={artist}
+                  rank={index + 1}
+                  onTour={tourStatus?.[artist.name]?.onTour}
+                  delay={index * 0.1}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-muted-foreground py-12">{t('empty.noData')}</p>
+          )}
+        </div>
+      </RevealSection>
+
+      {/* Top Tracks Section - List style */}
+      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-t border-border/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-2">
+                {t('timeRanges.short')}
+              </p>
+              <h2 className="text-4xl md:text-6xl font-black text-foreground mb-4">
+                {t('sections.topTracks')}
+              </h2>
+              <p className="text-lg text-muted-foreground mb-8">
+                Your most played tracks this month. These are the songs that defined your listening.
+              </p>
+              <Link
+                href="/dashboard/top?view=tracks"
+                className="inline-flex items-center gap-2 text-foreground font-medium hover:text-[#1DB954] transition-colors"
+              >
+                {tCommon('viewAll')}
+              </Link>
+            </div>
+
+            <div className="space-y-1">
+              {topTracks && topTracks.length > 0 ? (
+                topTracks.slice(0, 5).map((track, index) => (
+                  <TrackRow
+                    key={track.id}
+                    track={track}
+                    rank={index + 1}
+                    delay={index * 0.1}
+                  />
+                ))
+              ) : (
+                <p className="text-muted-foreground">{t('empty.noData')}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </RevealSection>
+
+      {/* Concerts Section */}
       {topArtists && topArtists.length > 0 && (
-        <UpcomingConcerts topArtists={topArtists} />
+        <RevealSection className="py-24 md:py-32 px-6 md:px-12">
+          <div className="max-w-7xl mx-auto">
+            <UpcomingConcerts topArtists={topArtists} />
+          </div>
+        </RevealSection>
       )}
 
-      {/* Recent Activity - Horizontal Timeline */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-terminal text-xl">
-            <GlowText color="phosphor" size="sm">
-              <span className="text-muted-foreground">◎</span> {t('sections.recentActivity')}
-            </GlowText>
-          </h2>
-          <Link
-            href="/dashboard/history"
-            className="font-mono text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            {tCommon('viewAll')}
-          </Link>
+      {/* Recent Activity - Horizontal scroll */}
+      <RevealSection className="py-24 md:py-32 border-t border-border/30">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 mb-8">
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-2">
+                Just played
+              </p>
+              <h2 className="text-4xl md:text-5xl font-black text-foreground">
+                {t('sections.recentActivity')}
+              </h2>
+            </div>
+            <Link
+              href="/dashboard/history"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {tCommon('viewAll')}
+            </Link>
+          </div>
         </div>
 
         {recentTracks && recentTracks.length > 0 ? (
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-primary/50 via-primary/20 to-transparent" />
-
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="overflow-x-auto scrollbar-hide">
+            <div className="flex gap-6 px-6 md:px-12 pb-4" style={{ width: 'max-content' }}>
               {recentTracks.map((track, index) => (
-                <motion.div
+                <RecentTrackCard
                   key={`${track.id}-${track.playedAt}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.08 }}
-                  className="relative flex-shrink-0 group"
-                >
-                  {/* Time dot on timeline */}
-                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary/50 group-hover:bg-primary transition-colors" />
-
-                  <div className={`relative rounded-xl overflow-hidden border border-border bg-card transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-[0_0_20px_rgba(var(--primary),0.15)] ${index === 0 ? 'w-40' : 'w-32'}`}>
-                    <div className={`relative ${index === 0 ? 'h-40' : 'h-32'}`}>
-                      {track.albumArt ? (
-                        <Image
-                          src={track.albumArt}
-                          alt={track.album}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-secondary flex items-center justify-center text-muted-foreground text-2xl">
-                          ♪
-                        </div>
-                      )}
-                      {/* Gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
-
-                      {/* Track info overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 p-3">
-                        <p className={`font-terminal text-foreground truncate ${index === 0 ? 'text-sm' : 'text-xs'}`}>
-                          {track.name}
-                        </p>
-                        <p className="font-mono text-xs text-muted-foreground truncate">
-                          {track.artist}
-                        </p>
-                      </div>
-
-                      {/* Time badge */}
-                      <div className="absolute top-2 right-2 px-2 pb-1 rounded-full bg-background/80 backdrop-blur-sm leading-none">
-                        <span className="font-mono text-[10px] text-primary">
-                          {formatRelativeTime(track.playedAt, tCommon)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+                  track={track}
+                  index={index}
+                  formatTimeAgo={createTimeAgoFormatter(tCommon)}
+                />
               ))}
             </div>
           </div>
         ) : (
-          <TerminalCard animate={false}>
-            <div className="py-8 text-center">
-              <p className="font-mono text-base text-muted-foreground">{t('empty.noTracks')}</p>
-            </div>
-          </TerminalCard>
+          <p className="px-6 md:px-12 text-muted-foreground">{t('empty.noTracks')}</p>
         )}
-      </motion.section>
+      </RevealSection>
 
-      {/* Stats Row - Peak Listening + Quick Stats */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25 }}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Peak Listening Time - Clock Visualization */}
-          <div className="md:col-span-2 rounded-xl border border-border bg-card p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-[var(--crt-amber)]">⏱</span>
-              <h3 className="font-terminal text-base text-foreground">{t('sections.peakTime')}</h3>
-            </div>
-
-            {listeningStats && listeningStats.listeningByHour.length > 0 ? (
-              <div className="flex items-center gap-6">
-                {/* Clock visualization */}
-                <div className="relative w-24 h-24 flex-shrink-0">
-                  <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                    {/* Background circle */}
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="45"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      className="text-border"
-                    />
-                    {/* Hour markers */}
-                    {[...Array(24)].map((_, i) => {
-                      const hourData = listeningStats.listeningByHour.find(h => h.hour === i);
-                      const maxCount = Math.max(...listeningStats.listeningByHour.map(h => h.count), 1);
-                      const intensity = hourData ? hourData.count / maxCount : 0;
-                      const angle = (i / 24) * 360;
-                      const x1 = 50 + 35 * Math.cos((angle * Math.PI) / 180);
-                      const y1 = 50 + 35 * Math.sin((angle * Math.PI) / 180);
-                      const x2 = 50 + (35 + 10 * intensity) * Math.cos((angle * Math.PI) / 180);
-                      const y2 = 50 + (35 + 10 * intensity) * Math.sin((angle * Math.PI) / 180);
-                      return (
-                        <line
-                          key={i}
-                          x1={x1}
-                          y1={y1}
-                          x2={x2}
-                          y2={y2}
-                          stroke={`var(--crt-amber)`}
-                          strokeWidth={intensity > 0.5 ? 3 : 2}
-                          strokeLinecap="round"
-                          opacity={0.2 + intensity * 0.8}
-                        />
-                      );
-                    })}
-                    {/* Peak hour indicator */}
-                    <circle
-                      cx={50 + 35 * Math.cos(((listeningStats.peakHour / 24) * 360 - 90) * Math.PI / 180)}
-                      cy={50 + 35 * Math.sin(((listeningStats.peakHour / 24) * 360 - 90) * Math.PI / 180)}
-                      r="5"
-                      fill="var(--crt-amber)"
-                      className="animate-pulse"
-                    />
-                  </svg>
-                  {/* Center text */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="font-terminal text-lg text-[var(--crt-amber)]">
-                      {formatHour(listeningStats.peakHour)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Hourly bar chart */}
-                <div className="flex-1">
-                  <div className="flex items-end gap-0.5 h-16">
-                    {[...Array(24)].map((_, i) => {
-                      const hourData = listeningStats.listeningByHour.find(h => h.hour === i);
-                      const maxCount = Math.max(...listeningStats.listeningByHour.map(h => h.count), 1);
-                      const height = hourData ? (hourData.count / maxCount) * 100 : 5;
-                      const isPeak = i === listeningStats.peakHour;
-                      return (
-                        <motion.div
-                          key={i}
-                          initial={{ height: 0 }}
-                          animate={{ height: `${height}%` }}
-                          transition={{ delay: i * 0.02, duration: 0.3 }}
-                          className={`flex-1 min-h-[2px] rounded-t ${isPeak ? 'bg-[var(--crt-amber)]' : 'bg-[var(--crt-amber)]/30'}`}
-                          title={`${formatHour(i)}: ${hourData?.count || 0} plays`}
-                        />
-                      );
-                    })}
-                  </div>
-                  <div className="flex justify-between mt-1">
-                    <span className="font-mono text-[10px] text-muted-foreground">12AM</span>
-                    <span className="font-mono text-[10px] text-muted-foreground">12PM</span>
-                    <span className="font-mono text-[10px] text-muted-foreground">11PM</span>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center h-24">
-                <p className="font-mono text-sm text-muted-foreground">{t('empty.syncHint')}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Peak Hour stat */}
-          <div className="rounded-xl border border-border bg-card p-5 flex flex-col justify-center items-center">
-            <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider mb-2">{t('stats.peakHour')}</span>
-            <span className="font-terminal text-4xl text-[var(--crt-amber)]">
-              {listeningStats?.peakHour !== undefined ? formatHour(listeningStats.peakHour) : '—'}
-            </span>
-            <span className="mt-2 font-mono text-xs text-muted-foreground">
-              {t('stats.mostActive')}
-            </span>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Period Header + Minutes Listened */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.28 }}
-      >
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 rounded-xl border border-primary/20 bg-primary/5">
-          <div className="flex items-center gap-3">
-            {/* Arcade Trophy Podium Icon */}
-            <div className="relative w-10 h-10 rounded-lg bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 flex items-center justify-center overflow-hidden group">
-              {/* Scanline overlay */}
-              <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.1)_2px,rgba(0,0,0,0.1)_4px)] pointer-events-none" />
-
-              {/* Glow pulse background */}
-              <div className="absolute inset-0 bg-primary/20 animate-pulse" style={{ animationDuration: '2s' }} />
-
-              {/* Podium bars container */}
-              <div className="relative flex items-end justify-center gap-[3px] h-6">
-                {/* 2nd place bar (left) */}
-                <motion.div
-                  className="w-[6px] bg-gradient-to-t from-primary to-primary/70 rounded-t-[2px]"
-                  initial={{ height: 0 }}
-                  animate={{ height: 14 }}
-                  transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
-                  style={{ boxShadow: '0 0 6px var(--primary)' }}
-                />
-                {/* 1st place bar (center - tallest) with crown */}
-                <div className="relative flex flex-col items-center">
-                  {/* Crown */}
-                  <motion.div
-                    className="absolute -top-[7px] text-[8px] text-primary"
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.9, duration: 0.3, type: "spring" }}
-                    style={{ filter: 'drop-shadow(0 0 4px var(--primary))' }}
-                  >
-                    ♛
-                  </motion.div>
-                  <motion.div
-                    className="w-[6px] bg-gradient-to-t from-primary via-primary to-primary/80 rounded-t-[2px]"
-                    initial={{ height: 0 }}
-                    animate={{ height: 20 }}
-                    transition={{ delay: 0.5, duration: 0.5, ease: "easeOut" }}
-                    style={{ boxShadow: '0 0 10px var(--primary), 0 0 20px var(--primary)' }}
-                  />
-                </div>
-                {/* 3rd place bar (right) */}
-                <motion.div
-                  className="w-[6px] bg-gradient-to-t from-primary/80 to-primary/50 rounded-t-[2px]"
-                  initial={{ height: 0 }}
-                  animate={{ height: 10 }}
-                  transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
-                  style={{ boxShadow: '0 0 4px var(--primary)' }}
-                />
-              </div>
-
-            </div>
-            <div>
-              <h3 className="font-terminal text-base text-foreground">{t('sections.topCharts')}</h3>
-              <p className="font-mono text-xs text-muted-foreground">{t('stats.dataFrom')}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-6">
-            <div className="text-center sm:text-right">
-              <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">{t('stats.minutesListened')}</p>
-              <p className="font-terminal text-2xl text-primary">
-                {listeningStats?.totalMinutes?.toLocaleString() || '—'}
-              </p>
-            </div>
-            <div className="hidden sm:block w-px h-10 bg-primary/20" />
-            <div className="text-center sm:text-right">
-              <p className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">{t('stats.tracksPlayed')}</p>
-              <p className="font-terminal text-2xl text-primary">
-                {listeningStats?.totalTracks?.toLocaleString() || '—'}
-              </p>
-            </div>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Two Column Grid - Artists & Tracks */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Artists - Podium Style */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="flex flex-col"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <h2 className="font-terminal text-xl">
-                <GlowText color="cyan" size="sm">
-                  <span className="text-muted-foreground">▲</span> {t('sections.topArtists')}
-                </GlowText>
-              </h2>
-              <span className="px-2 py-0.5 rounded-full bg-accent/10 font-mono text-[10px] text-accent uppercase">
-                {t('timeRanges.short')}
-              </span>
-            </div>
-            <Link
-              href="/dashboard/top?view=artists&time=short_term"
-              className="font-mono text-sm text-muted-foreground hover:text-accent transition-colors"
-            >
-              {tCommon('viewAll')}
-            </Link>
-          </div>
-
-          <div className="rounded-xl border border-border bg-card p-5 flex-1 flex flex-col justify-center">
-            {topArtists && topArtists.length >= 3 ? (
-              <>
-                {/* Podium - Top 3 */}
-                <div className="flex items-end justify-center gap-3 mb-6">
-                  {/* 2nd Place */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="flex flex-col items-center"
-                  >
-                    <div className="relative mb-2">
-                      <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-accent/30">
-                        {topArtists[1]?.image && (
-                          <Image src={topArtists[1].image} alt={topArtists[1].name} fill className="object-cover" />
-                        )}
-                      </div>
-                      {tourStatus?.[topArtists[1]?.name]?.onTour && (
-                        <div className="absolute -bottom-0.5 -right-0.5">
-                          <OnTourBadge variant="indicator" />
-                        </div>
-                      )}
-                    </div>
-                    <p className="font-terminal text-xs text-foreground text-center truncate w-20">{topArtists[1]?.name}</p>
-                    <div className="mt-2 w-16 h-12 bg-accent/20 rounded-t flex items-center justify-center">
-                      <span className="font-terminal text-xl text-accent">2</span>
-                    </div>
-                  </motion.div>
-
-                  {/* 1st Place */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.05 }}
-                    className="flex flex-col items-center"
-                  >
-                    <div className="relative mb-2">
-                      <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-accent shadow-[0_0_20px_rgba(var(--accent),0.3)]">
-                        {topArtists[0]?.image && (
-                          <Image src={topArtists[0].image} alt={topArtists[0].name} fill className="object-cover" />
-                        )}
-                      </div>
-                      {tourStatus?.[topArtists[0]?.name]?.onTour && (
-                        <div className="absolute -bottom-0.5 -right-0.5">
-                          <OnTourBadge variant="indicator" />
-                        </div>
-                      )}
-                    </div>
-                    <p className="font-terminal text-sm text-foreground text-center truncate w-24">{topArtists[0]?.name}</p>
-                    <div className="mt-2 w-20 h-16 bg-accent/30 rounded-t flex items-center justify-center">
-                      <span className="font-terminal text-2xl text-accent">1</span>
-                    </div>
-                  </motion.div>
-
-                  {/* 3rd Place */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15 }}
-                    className="flex flex-col items-center"
-                  >
-                    <div className="relative mb-2">
-                      <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-accent/20">
-                        {topArtists[2]?.image && (
-                          <Image src={topArtists[2].image} alt={topArtists[2].name} fill className="object-cover" />
-                        )}
-                      </div>
-                      {tourStatus?.[topArtists[2]?.name]?.onTour && (
-                        <div className="absolute -bottom-0.5 -right-0.5">
-                          <OnTourBadge variant="indicator" />
-                        </div>
-                      )}
-                    </div>
-                    <p className="font-terminal text-xs text-foreground text-center truncate w-16">{topArtists[2]?.name}</p>
-                    <div className="mt-2 w-14 h-8 bg-accent/10 rounded-t flex items-center justify-center">
-                      <span className="font-terminal text-lg text-accent/70">3</span>
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Remaining artists */}
-                {topArtists.length > 3 && (
-                  <div className="flex justify-center gap-4 pt-4 border-t border-border">
-                    {topArtists.slice(3, 5).map((artist, index) => (
-                      <motion.div
-                        key={artist.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.2 + index * 0.05 }}
-                        className="flex items-center gap-2"
-                      >
-                        <span className="font-terminal text-sm text-muted-foreground">{index + 4}</span>
-                        <div className="relative">
-                          <div className="w-8 h-8 rounded-full overflow-hidden border border-border">
-                            {artist.image && (
-                              <Image src={artist.image} alt={artist.name} fill className="object-cover" />
-                            )}
-                          </div>
-                          {tourStatus?.[artist.name]?.onTour && (
-                            <div className="absolute -bottom-0.5 -right-0.5">
-                              <OnTourBadge variant="indicator" />
-                            </div>
-                          )}
-                        </div>
-                        <span className="font-mono text-xs text-muted-foreground truncate max-w-[80px]">{artist.name}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="py-8 text-center">
-                <p className="font-mono text-base text-muted-foreground">{t('empty.noData')}</p>
-              </div>
-            )}
-          </div>
-        </motion.section>
-
-        {/* Top Tracks - Prestige Leaderboard */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="flex flex-col"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <h2 className="font-terminal text-xl">
-                <GlowText color="phosphor" size="sm">
-                  <span className="text-muted-foreground">♫</span> {t('sections.topTracks')}
-                </GlowText>
-              </h2>
-              <span className="px-2 py-0.5 rounded-full bg-primary/10 font-mono text-[10px] text-primary uppercase">
-                {t('timeRanges.short')}
-              </span>
-            </div>
-            <Link
-              href="/dashboard/top?view=tracks&time=short_term"
-              className="font-mono text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
-              {tCommon('viewAll')}
-            </Link>
-          </div>
-
-          <div className="rounded-xl border border-primary/20 bg-card overflow-hidden flex-1">
-            {topTracks && topTracks.length > 0 ? (
-              <div>
-                {topTracks.slice(0, 5).map((track, index) => {
-                  const isTop3 = index < 3;
-                  // Glow intensity decreases with rank
-                  const glowIntensity = index === 0 ? 1 : index === 1 ? 0.6 : index === 2 ? 0.3 : 0;
-
-                  return (
-                    <motion.a
-                      key={track.id}
-                      href={track.spotifyUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="group relative flex items-center gap-3 p-3 pl-5 hover:bg-primary/5 transition-all duration-300 border-b border-primary/10 last:border-b-0"
-                    >
-                      {/* Left accent border for top 3 */}
-                      {isTop3 && (
-                        <motion.div
-                          className="absolute left-0 top-0 bottom-0 w-1 bg-primary"
-                          initial={{ scaleY: 0 }}
-                          animate={{ scaleY: 1 }}
-                          transition={{ delay: index * 0.1 + 0.2, duration: 0.3 }}
-                          style={{ opacity: 0.3 + glowIntensity * 0.7 }}
-                        />
-                      )}
-
-                      {/* Rank badge - Terminal style */}
-                      <div className="relative z-10 flex-shrink-0">
-                        <motion.div
-                          className={`min-w-[42px] h-8 rounded flex items-center justify-center font-terminal text-sm font-bold transition-all duration-300 ${
-                            index === 0
-                              ? 'bg-primary text-background shadow-[0_0_20px_var(--primary)]'
-                              : index === 1
-                              ? 'bg-primary/60 text-background shadow-[0_0_12px_var(--primary)]'
-                              : index === 2
-                              ? 'bg-primary/40 text-background shadow-[0_0_6px_var(--primary)]'
-                              : 'bg-primary/10 text-primary/70'
-                          }`}
-                          initial={{ scale: 0.8, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{ delay: index * 0.1 + 0.1, type: "spring", stiffness: 200 }}
-                        >
-                          <span className="opacity-50">[</span>
-                          {String(index + 1).padStart(2, '0')}
-                          <span className="opacity-50">]</span>
-                        </motion.div>
-                      </div>
-
-                      {/* Album art */}
-                      <div className={`relative z-10 flex-shrink-0 rounded-md overflow-hidden transition-all duration-300 ${isTop3 ? 'w-12 h-12 border-2' : 'w-10 h-10 border'} ${index === 0 ? 'border-primary/60' : index === 1 ? 'border-primary/40' : index === 2 ? 'border-primary/30' : 'border-primary/20'} group-hover:border-primary/80`}>
-                        {track.albumArt ? (
-                          <Image
-                            src={track.albumArt}
-                            alt={track.name}
-                            fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-primary/10 flex items-center justify-center text-primary/50">
-                            ♪
-                          </div>
-                        )}
-                        {/* Shine effect on hover */}
-                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </div>
-
-                      {/* Track info */}
-                      <div className="relative z-10 flex-1 min-w-0">
-                        <p className={`font-terminal truncate transition-colors ${isTop3 ? 'text-sm text-foreground' : 'text-sm text-foreground/80'} group-hover:text-primary`}>
-                          {track.name}
-                        </p>
-                        <p className="font-mono text-xs text-muted-foreground truncate">
-                          {track.artist}
-                        </p>
-                      </div>
-
-                      {/* Frequency bars - decorative */}
-                      <div className="relative z-10 flex-shrink-0 flex items-center gap-3">
-                        <div className="flex items-end gap-0.5 h-5">
-                          {[0.3, 0.6, 1, 0.5, 0.8].map((height, i) => (
-                            <motion.div
-                              key={i}
-                              className={`w-1 rounded-sm ${isTop3 ? 'bg-primary/60' : 'bg-primary/30'}`}
-                              initial={{ height: 0 }}
-                              animate={{ height: `${height * 100}%` }}
-                              transition={{
-                                delay: index * 0.1 + 0.4 + i * 0.05,
-                                duration: 0.4,
-                                repeat: Infinity,
-                                repeatType: "reverse",
-                                repeatDelay: 2 + i * 0.5
-                              }}
-                            />
-                          ))}
-                        </div>
-
-                        {/* Play indicator on hover */}
-                        <motion.div
-                          className="opacity-0 group-hover:opacity-100 transition-opacity"
-                          whileHover={{ scale: 1.1 }}
-                        >
-                          <span className="text-primary text-lg">▶</span>
-                        </motion.div>
-                      </div>
-
-                      {/* Scanline hover effect */}
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none overflow-hidden">
-                        <motion.div
-                          className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/5"
-                          initial={{ y: '-100%' }}
-                          whileHover={{ y: '100%' }}
-                          transition={{ duration: 0.6, ease: "linear" }}
-                        />
-                      </div>
-                    </motion.a>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="py-8 text-center">
-                <p className="font-mono text-sm text-muted-foreground">{t('empty.noData')}</p>
-              </div>
-            )}
-          </div>
-        </motion.section>
-      </div>
-
-      {/* Top Albums - Vinyl Grid (Full Width) */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <h2 className="font-terminal text-xl">
-              <GlowText color="magenta" size="sm">
-                <span className="text-muted-foreground">◉</span> {t('sections.topAlbums')}
-              </GlowText>
+      {/* Quick Links - Feature cards */}
+      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-t border-border/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4">
+              Explore <Highlight color="purple">More</Highlight>
             </h2>
-            <span className="px-2 py-0.5 rounded-full bg-[var(--crt-magenta)]/10 font-mono text-[10px] text-[var(--crt-magenta)] uppercase">
-              {t('timeRanges.short')}
-            </span>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Discover all the ways to experience your music story
+            </p>
           </div>
-          <Link
-            href="/dashboard/top?view=albums&time=short_term"
-            className="font-mono text-sm text-muted-foreground hover:text-[var(--crt-magenta)] transition-colors"
-          >
-            {tCommon('viewAll')}
-          </Link>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <FeatureLink
+              href="/dashboard/discover"
+              title={t('featureCards.aiDiscover.title')}
+              description={t('featureCards.aiDiscover.description')}
+              color="#8B5CF6"
+              icon="ai"
+            />
+            <FeatureLink
+              href="/dashboard/wrapped"
+              title={t('featureCards.wrapped.title')}
+              description={t('featureCards.wrapped.description')}
+              color="#F59E0B"
+              icon="wrapped"
+            />
+            <FeatureLink
+              href="/dashboard/share"
+              title={t('featureCards.share.title')}
+              description={t('featureCards.share.description')}
+              color="#3B82F6"
+              icon="share"
+            />
+          </div>
         </div>
-
-        <div className="rounded-xl border border-border bg-card p-4">
-          {topAlbums && topAlbums.length > 0 ? (
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-              {topAlbums.slice(0, 6).map((album, index) => (
-                <motion.a
-                  key={album.id}
-                  href={album.spotifyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="group relative aspect-square rounded-lg overflow-hidden border border-border hover:border-[var(--crt-magenta)]/50 transition-all duration-300"
-                >
-                  {/* Album art */}
-                  {album.image ? (
-                    <Image
-                      src={album.image}
-                      alt={album.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-secondary flex items-center justify-center text-muted-foreground">
-                      ♪
-                    </div>
-                  )}
-
-                  {/* Vinyl peek effect on hover */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="absolute -right-4 top-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-[#1a1a1a] border-4 border-[#333] opacity-80">
-                      <div className="absolute inset-2 rounded-full border border-[#444]" />
-                      <div className="absolute inset-[35%] rounded-full bg-[var(--crt-magenta)]/50" />
-                    </div>
-                  </div>
-
-                  {/* Rank badge */}
-                  <div className="absolute top-1.5 left-1.5 w-5 h-5 rounded-full bg-[var(--crt-magenta)] flex items-center justify-center">
-                    <span className="font-terminal text-xs text-white">{index + 1}</span>
-                  </div>
-
-                  {/* Track count badge */}
-                  <div className="absolute top-1.5 right-1.5 px-1.5 pb-1 rounded bg-background/80 backdrop-blur-sm leading-none">
-                    <span className="font-mono text-[10px] text-[var(--crt-magenta)]">
-                      {album.trackCount} {album.trackCount === 1 ? tCommon('track') : tCommon('tracks')}
-                    </span>
-                  </div>
-
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="absolute bottom-0 left-0 right-0 p-2">
-                      <p className="font-terminal text-xs text-foreground truncate">{album.name}</p>
-                      <p className="font-mono text-[10px] text-muted-foreground truncate">{album.artist}</p>
-                    </div>
-                  </div>
-                </motion.a>
-              ))}
-            </div>
-          ) : (
-            <div className="py-8 text-center">
-              <p className="font-mono text-base text-muted-foreground">{t('empty.noData')}</p>
-            </div>
-          )}
-        </div>
-      </motion.section>
-
+      </RevealSection>
     </div>
   );
 }
 
-// Feature Card Component
-function FeatureCard({
+// Stat item with animated number
+function StatItem({
+  value,
+  label,
+  suffix = '',
+  color,
+  delay
+}: {
+  value: number;
+  label: string;
+  suffix?: string;
+  color: string;
+  delay: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.5 });
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    if (isInView) {
+      const duration = 1500;
+      const startTime = Date.now();
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setDisplayValue(Math.floor(eased * value));
+        if (progress < 1) requestAnimationFrame(animate);
+      };
+      requestAnimationFrame(animate);
+    }
+  }, [isInView, value]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.6, delay }}
+    >
+      <p className="text-5xl md:text-7xl font-black mb-2" style={{ color }}>
+        {displayValue.toLocaleString()}
+        {suffix && <span className="text-2xl md:text-3xl ml-1">{suffix}</span>}
+      </p>
+      <p className="text-sm text-muted-foreground uppercase tracking-wider">{label}</p>
+    </motion.div>
+  );
+}
+
+// Artist card for grid
+function ArtistCard({
+  artist,
+  rank,
+  onTour,
+  delay
+}: {
+  artist: TopArtist;
+  rank: number;
+  onTour?: boolean;
+  delay: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.3 });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+      transition={{ duration: 0.6, delay }}
+      className="group relative"
+    >
+      <div className="relative aspect-square rounded-2xl overflow-hidden mb-4">
+        {artist.image ? (
+          <Image
+            src={artist.image}
+            alt={artist.name}
+            fill
+            sizes="(max-width: 768px) 50vw, 33vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full bg-secondary flex items-center justify-center">
+            <span className="text-4xl opacity-30">♪</span>
+          </div>
+        )}
+        {/* Rank badge */}
+        <div className="absolute top-4 left-4 w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-lg">
+          <span className="text-lg font-bold text-foreground">{rank}</span>
+        </div>
+        {/* Tour badge */}
+        {onTour && (
+          <div className="absolute top-4 right-4">
+            <OnTourBadge variant="compact" />
+          </div>
+        )}
+      </div>
+      <h3 className="text-xl font-bold text-foreground group-hover:text-[#1DB954] transition-colors">
+        {artist.name}
+      </h3>
+      {artist.genres.length > 0 && (
+        <p className="text-sm text-muted-foreground truncate">
+          {artist.genres.join(' • ')}
+        </p>
+      )}
+    </motion.div>
+  );
+}
+
+// Track row for list
+function TrackRow({
+  track,
+  rank,
+  delay
+}: {
+  track: TopTrack;
+  rank: number;
+  delay: number;
+}) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.5 });
+
+  return (
+    <motion.a
+      ref={ref}
+      href={track.spotifyUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, x: 20 }}
+      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+      transition={{ duration: 0.5, delay }}
+      className="group flex items-center gap-4 py-4 border-b border-border/50 hover:border-[#1DB954] transition-colors"
+    >
+      <span className="text-3xl font-black text-muted-foreground/30 w-12 group-hover:text-[#1DB954] transition-colors">
+        {rank.toString().padStart(2, '0')}
+      </span>
+      <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
+        {track.albumArt ? (
+          <Image
+            src={track.albumArt}
+            alt={track.name}
+            fill
+            sizes="56px"
+            className="object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-secondary flex items-center justify-center">
+            <span className="text-lg opacity-30">♪</span>
+          </div>
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="font-medium text-foreground truncate group-hover:text-[#1DB954] transition-colors">
+          {track.name}
+        </p>
+        <p className="text-sm text-muted-foreground truncate">
+          {track.artist}
+        </p>
+      </div>
+      <span className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+        →
+      </span>
+    </motion.a>
+  );
+}
+
+// Recent track card
+function RecentTrackCard({
+  track,
+  index,
+  formatTimeAgo
+}: {
+  track: RecentTrack;
+  index: number;
+  formatTimeAgo: (date: string) => string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.5 });
+  const timeAgo = formatTimeAgo(track.playedAt);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.5, delay: index * 0.05 }}
+      className="w-48 flex-shrink-0 group"
+    >
+      <div className="relative aspect-square rounded-xl overflow-hidden mb-3 shadow-lg">
+        {track.albumArt ? (
+          <Image
+            src={track.albumArt}
+            alt={track.album}
+            fill
+            sizes="192px"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full bg-secondary flex items-center justify-center">
+            <span className="text-3xl opacity-30">♪</span>
+          </div>
+        )}
+        {/* Time badge overlay */}
+        <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-black/70 backdrop-blur-sm">
+          <span className="text-[10px] font-medium text-white/90">
+            {timeAgo}
+          </span>
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      </div>
+      <p className="font-medium text-foreground truncate group-hover:text-[#1DB954] transition-colors">
+        {track.name}
+      </p>
+      <p className="text-sm text-muted-foreground truncate">
+        {track.artist}
+      </p>
+    </motion.div>
+  );
+}
+
+// Feature link card with flashy icons
+function FeatureLink({
   href,
   title,
   description,
-  icon,
-  gradient,
-  accentColor,
+  color,
+  icon
 }: {
   href: string;
   title: string;
   description: string;
-  icon: React.ReactNode;
-  gradient: string;
-  accentColor: string;
+  color: string;
+  icon: 'ai' | 'wrapped' | 'share';
 }) {
   return (
-    <Link href={href} className="group block">
+    <Link
+      href={href}
+      className="group block p-8 rounded-2xl bg-white dark:bg-white/5 border border-border/30 hover:border-transparent hover:shadow-xl hover:shadow-black/5 transition-all duration-300"
+      style={{ '--accent-color': color } as React.CSSProperties}
+    >
       <div
-        className="relative h-full rounded-xl border border-border bg-card p-6 overflow-hidden transition-all duration-300 hover:border-foreground/10 hover:shadow-lg"
-        style={{
-          boxShadow: `0 0 0 0 ${accentColor}00`,
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.boxShadow = `0 0 30px -10px ${accentColor}40`;
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.boxShadow = `0 0 0 0 ${accentColor}00`;
-        }}
+        className="w-16 h-16 rounded-2xl mb-6 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
+        style={{ backgroundColor: `${color}15` }}
       >
-        {/* Gradient overlay on hover */}
-        <div
-          className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 bg-gradient-to-br ${gradient}`}
-        />
-
-        <div className="relative z-10">
-          <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
-            style={{
-              backgroundColor: `${accentColor}15`,
-            }}
-          >
-            {icon}
-          </div>
-          <h3 className="font-terminal text-lg text-foreground mb-1 group-hover:brightness-125 transition-colors">
-            {title}
-          </h3>
-          <p className="font-mono text-sm text-muted-foreground leading-relaxed">
-            {description}
-          </p>
-        </div>
-
-        {/* Arrow indicator */}
-        <div
-          className="absolute bottom-4 right-4 opacity-0 transform translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 font-mono text-sm"
-          style={{ color: accentColor }}
+        <FeatureIcon type={icon} color={color} />
+      </div>
+      <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-[var(--accent-color)] transition-colors">
+        {title}
+      </h3>
+      <p className="text-muted-foreground leading-relaxed">
+        {description}
+      </p>
+      <div className="mt-4 flex items-center gap-2 text-sm font-medium text-muted-foreground group-hover:text-[var(--accent-color)] transition-colors">
+        <span>Explore</span>
+        <motion.span
+          className="inline-block"
+          animate={{ x: [0, 4, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
         >
           →
-        </div>
+        </motion.span>
       </div>
     </Link>
   );
+}
+
+// Flashy animated icons for features
+function FeatureIcon({ type, color }: { type: 'ai' | 'wrapped' | 'share'; color: string }) {
+  if (type === 'ai') {
+    return (
+      <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
+        <motion.circle
+          cx="16"
+          cy="16"
+          r="8"
+          stroke={color}
+          strokeWidth="2"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1, rotate: 360 }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+        />
+        <motion.path
+          d="M16 8v16M8 16h16"
+          stroke={color}
+          strokeWidth="2"
+          strokeLinecap="round"
+          initial={{ opacity: 0.3 }}
+          animate={{ opacity: [0.3, 1, 0.3] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+        <motion.circle
+          cx="16"
+          cy="16"
+          r="3"
+          fill={color}
+          animate={{ scale: [1, 1.3, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        />
+        {/* Orbiting dots */}
+        {[0, 90, 180, 270].map((angle, i) => (
+          <motion.circle
+            key={angle}
+            cx="16"
+            cy="16"
+            r="1.5"
+            fill={color}
+            animate={{
+              cx: [
+                16 + 10 * Math.cos((angle * Math.PI) / 180),
+                16 + 10 * Math.cos(((angle + 90) * Math.PI) / 180),
+                16 + 10 * Math.cos(((angle + 180) * Math.PI) / 180),
+                16 + 10 * Math.cos(((angle + 270) * Math.PI) / 180),
+                16 + 10 * Math.cos((angle * Math.PI) / 180),
+              ],
+              cy: [
+                16 + 10 * Math.sin((angle * Math.PI) / 180),
+                16 + 10 * Math.sin(((angle + 90) * Math.PI) / 180),
+                16 + 10 * Math.sin(((angle + 180) * Math.PI) / 180),
+                16 + 10 * Math.sin(((angle + 270) * Math.PI) / 180),
+                16 + 10 * Math.sin((angle * Math.PI) / 180),
+              ],
+            }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'linear', delay: i * 0.25 }}
+          />
+        ))}
+      </svg>
+    );
+  }
+
+  if (type === 'wrapped') {
+    return (
+      <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
+        {/* Stacked bars forming a chart */}
+        {[0, 1, 2, 3, 4].map((i) => (
+          <motion.rect
+            key={i}
+            x={4 + i * 5}
+            y={24}
+            width="4"
+            rx="2"
+            fill={color}
+            initial={{ height: 0 }}
+            animate={{ height: [8, 12 + i * 3, 8 + i * 2, 16 - i, 8] }}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.15, ease: 'easeInOut' }}
+            style={{ originY: 1 }}
+          />
+        ))}
+        {/* Sparkle */}
+        <motion.path
+          d="M26 4l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z"
+          fill={color}
+          animate={{ scale: [1, 1.2, 1], opacity: [1, 0.6, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        />
+      </svg>
+    );
+  }
+
+  if (type === 'share') {
+    return (
+      <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
+        {/* Phone outline */}
+        <motion.rect
+          x="8"
+          y="4"
+          width="16"
+          height="24"
+          rx="3"
+          stroke={color}
+          strokeWidth="2"
+          fill="none"
+          animate={{ y: [4, 3, 4] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        />
+        {/* Screen content - Instagram story simulation */}
+        <motion.rect
+          x="10"
+          y="8"
+          width="12"
+          height="16"
+          rx="1"
+          fill={color}
+          fillOpacity={0.2}
+        />
+        {/* Pulsing share indicator */}
+        <motion.circle
+          cx="16"
+          cy="16"
+          r="3"
+          fill={color}
+          animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+          transition={{ duration: 1, repeat: Infinity }}
+        />
+        {/* Share arrows */}
+        <motion.path
+          d="M16 13v-5M13 11l3-3 3 3"
+          stroke={color}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          animate={{ y: [0, -2, 0] }}
+          transition={{ duration: 0.8, repeat: Infinity }}
+        />
+      </svg>
+    );
+  }
+
+  return null;
 }
 
 // Utility functions
@@ -1177,27 +983,24 @@ function formatTime(ms: number): string {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-function formatHour(hour: number): string {
-  if (hour === 0) return '12AM';
-  if (hour < 12) return `${hour}AM`;
-  if (hour === 12) return '12PM';
-  return `${hour - 12}PM`;
+function formatHourNumber(hour: number): number {
+  if (hour === 0) return 12;
+  if (hour > 12) return hour - 12;
+  return hour;
 }
 
-function formatRelativeTime(
-  dateStr: string,
-  t: (key: string, values?: Record<string, number>) => string
-): string {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(diff / 3600000);
-  const days = Math.floor(diff / 86400000);
+function createTimeAgoFormatter(t: ReturnType<typeof useTranslations<'common'>>) {
+  return (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
 
-  if (minutes < 1) return t('timeAgo.justNow');
-  if (minutes < 60) return t('timeAgo.minutes', { count: minutes });
-  if (hours < 24) return t('timeAgo.hours', { count: hours });
-  if (days < 7) return t('timeAgo.days', { count: days });
-  return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    if (diffMins < 1) return t('timeAgo.justNow');
+    if (diffMins < 60) return t('timeAgo.minutes', { count: diffMins });
+    if (diffHours < 24) return t('timeAgo.hours', { count: diffHours });
+    return t('timeAgo.days', { count: diffDays });
+  };
 }

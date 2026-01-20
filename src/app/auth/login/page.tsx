@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { CRTWrapper, GlowText, TerminalButton, TerminalCard } from '@/components/crt';
 import { useTranslations } from 'next-intl';
+import { ModernWrapper, BlobBackground, ModernCard, ModernButton, Heading } from '@/components/modern';
 
 function SpotifyIcon({ className }: { className?: string }) {
   return (
@@ -23,7 +23,19 @@ export default function LoginPage() {
   };
 
   return (
-    <CRTWrapper>
+    <ModernWrapper>
+      {/* Background decorations */}
+      <BlobBackground
+        color="purple"
+        position="top-right"
+        size="lg"
+      />
+      <BlobBackground
+        color="teal"
+        position="bottom-left"
+        size="xl"
+      />
+
       <div className="flex min-h-screen items-center justify-center px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -31,47 +43,58 @@ export default function LoginPage() {
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          <TerminalCard title="auth.login">
+          <ModernCard className="shadow-soft-lg">
             <div className="space-y-6">
               <div className="text-center">
-                <h1 className="font-terminal text-3xl">
-                  <GlowText color="phosphor">{t('title')}</GlowText>
-                </h1>
-                <p className="mt-2 text-sm text-[#888888]">
+                <Heading level={3} className="text-foreground">
+                  {t('title')}
+                </Heading>
+                <p className="mt-2 text-sm text-muted-foreground">
                   {t('subtitle')}
                 </p>
               </div>
 
-              <div className="space-y-2 border-t border-[rgba(0,255,65,0.2)] pt-4">
-                <div className="font-mono text-sm">
-                  <span className="text-[#00ff41]">&gt;</span>{' '}
-                  <span className="text-[#888888]">{t('permissions')}</span>
+              <div className="space-y-2 border-t border-border pt-4">
+                <div className="text-sm">
+                  <span className="text-primary font-medium">→</span>{' '}
+                  <span className="text-muted-foreground">{t('permissions')}</span>
                 </div>
-                <ul className="ml-4 space-y-1 font-mono text-xs text-[#00f5ff]">
-                  <li>• {t('permissionsList.recentlyPlayed')}</li>
-                  <li>• {t('permissionsList.topItems')}</li>
-                  <li>• {t('permissionsList.library')}</li>
-                  <li>• {t('permissionsList.nowPlaying')}</li>
+                <ul className="ml-4 space-y-1 text-xs text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <span className="text-primary">•</span>
+                    {t('permissionsList.recentlyPlayed')}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-primary">•</span>
+                    {t('permissionsList.topItems')}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-primary">•</span>
+                    {t('permissionsList.library')}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-primary">•</span>
+                    {t('permissionsList.nowPlaying')}
+                  </li>
                 </ul>
               </div>
 
-              <TerminalButton
+              <ModernButton
                 onClick={handleSpotifyLogin}
                 size="lg"
-                glow
-                icon={<SpotifyIcon className="h-5 w-5" />}
-                className="w-full"
+                className="w-full gap-2"
               >
+                <SpotifyIcon className="h-5 w-5" />
                 {t('button')}
-              </TerminalButton>
+              </ModernButton>
 
-              <p className="text-center font-mono text-xs text-[#555555]">
+              <p className="text-center text-xs text-muted-foreground/70">
                 {t('disclaimer')}
               </p>
             </div>
-          </TerminalCard>
+          </ModernCard>
         </motion.div>
       </div>
-    </CRTWrapper>
+    </ModernWrapper>
   );
 }

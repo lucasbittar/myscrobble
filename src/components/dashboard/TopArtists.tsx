@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { TerminalCard } from '@/components/crt';
 import { OnTourBadge } from '@/components/ui/OnTourBadge';
 import { useTourStatusBatch } from '@/hooks/useTourStatus';
 import { useGeolocation } from '@/hooks/useGeolocation';
+import { ModernCard } from '@/components/modern';
 
 interface Artist {
   id: string;
@@ -55,34 +55,34 @@ export function TopArtists({
 
   if (isLoading) {
     return (
-      <TerminalCard title={showTitle ? "top_artists.data" : undefined} animate={false}>
+      <ModernCard>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="animate-pulse">
-              <div className="aspect-square rounded-lg bg-[#1a1a1a]" />
-              <div className="mt-2 h-4 w-3/4 rounded bg-[#1a1a1a]" />
+              <div className="aspect-square rounded-xl bg-secondary" />
+              <div className="mt-2 h-4 w-3/4 rounded bg-secondary" />
             </div>
           ))}
         </div>
-      </TerminalCard>
+      </ModernCard>
     );
   }
 
   if (error) {
     return (
-      <TerminalCard title={showTitle ? "top_artists.data" : undefined} animate={false}>
+      <ModernCard>
         <div className="py-4 text-center">
-          <p className="font-terminal text-sm text-[#ff4444]">Error loading artists</p>
+          <p className="text-sm font-medium text-destructive">Error loading artists</p>
         </div>
-      </TerminalCard>
+      </ModernCard>
     );
   }
 
   const artists = data?.items || [];
 
   return (
-    <TerminalCard title={showTitle ? "top_artists.data" : undefined} animate={false}>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+    <ModernCard>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
         {artists.map((artist, index) => (
           <motion.div
             key={artist.id}
@@ -97,7 +97,7 @@ export function TopArtists({
               className="group block"
             >
               {/* Artist image */}
-              <div className="relative aspect-square overflow-hidden rounded-lg border border-[rgba(0,255,65,0.2)] transition-all group-hover:border-[#00ff41] group-hover:shadow-[0_0_15px_rgba(0,255,65,0.3)]">
+              <div className="relative aspect-square overflow-hidden rounded-xl shadow-soft transition-all group-hover:shadow-soft-lg group-hover:scale-[1.02]">
                 {artist.images[0]?.url ? (
                   <Image
                     src={artist.images[0].url}
@@ -106,12 +106,12 @@ export function TopArtists({
                     className="object-cover transition-transform group-hover:scale-105"
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center bg-[#1a1a1a]">
+                  <div className="flex h-full items-center justify-center bg-secondary">
                     <span className="text-2xl opacity-30">🎵</span>
                   </div>
                 )}
                 {/* Rank badge */}
-                <div className="absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#0a0a0a]/80 font-terminal text-xs text-[#00ff41]">
+                <div className="absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                   {index + 1}
                 </div>
                 {/* On Tour badge */}
@@ -123,13 +123,13 @@ export function TopArtists({
               </div>
 
               {/* Artist name */}
-              <p className="mt-2 truncate font-terminal text-sm text-[#e0e0e0] group-hover:text-[#00ff41]">
+              <p className="mt-2 truncate text-sm font-medium text-foreground group-hover:text-primary">
                 {artist.name}
               </p>
 
               {/* Genre */}
               {artist.genres[0] && (
-                <p className="truncate font-mono text-xs text-[#555555]">
+                <p className="truncate text-xs text-muted-foreground">
                   {artist.genres[0]}
                 </p>
               )}
@@ -137,7 +137,7 @@ export function TopArtists({
           </motion.div>
         ))}
       </div>
-    </TerminalCard>
+    </ModernCard>
   );
 }
 
@@ -176,15 +176,15 @@ export function TopArtistsList({
             href={artist.external_urls.spotify}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-[rgba(0,255,65,0.05)]"
+            className="group flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-secondary/50"
           >
             {/* Rank */}
-            <span className="w-6 text-center font-terminal text-lg text-[#00ff41]">
+            <span className="w-6 text-center text-lg font-bold text-primary">
               {index + 1}
             </span>
 
             {/* Artist image */}
-            <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-[rgba(0,255,65,0.2)]">
+            <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full">
               {artist.images[0]?.url && (
                 <Image
                   src={artist.images[0].url}
@@ -197,11 +197,11 @@ export function TopArtistsList({
 
             {/* Artist info */}
             <div className="min-w-0 flex-1">
-              <p className="truncate font-terminal text-sm text-[#e0e0e0] group-hover:text-[#00ff41]">
+              <p className="truncate text-sm font-medium text-foreground group-hover:text-primary">
                 {artist.name}
               </p>
               {artist.genres[0] && (
-                <p className="truncate font-mono text-xs text-[#555555]">
+                <p className="truncate text-xs text-muted-foreground">
                   {artist.genres[0]}
                 </p>
               )}

@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { GlowText, TerminalButton } from '@/components/crt';
 import { TopArtists, TopTracks, TopAlbums } from '@/components/dashboard';
 import { useTranslations } from 'next-intl';
+import { Heading, ModernButton, ScrollReveal } from '@/components/modern';
 
 type TimeRange = 'short_term' | 'medium_term' | 'long_term';
 type ViewMode = 'artists' | 'tracks' | 'albums';
@@ -19,7 +19,6 @@ export default function TopChartsPage() {
   const t = useTranslations('charts');
   const tDashboard = useTranslations('dashboard');
 
-  // Get initial values from URL params
   const viewParam = searchParams.get('view');
   const timeParam = searchParams.get('time');
   const initialView = validViewModes.includes(viewParam as ViewMode) ? (viewParam as ViewMode) : 'artists';
@@ -28,31 +27,26 @@ export default function TopChartsPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>(initialTime);
   const [viewMode, setViewMode] = useState<ViewMode>(initialView);
 
-  // Time range labels from translations
   const timeRangeLabels: Record<TimeRange, string> = {
     short_term: tDashboard('timeRanges.short'),
     medium_term: tDashboard('timeRanges.medium'),
     long_term: tDashboard('timeRanges.long'),
   };
 
-  // Update URL with both params
   const updateUrl = (view: ViewMode, time: TimeRange) => {
     router.push(`/dashboard/top?view=${view}&time=${time}`, { scroll: false });
   };
 
-  // Update URL when view mode changes
   const handleViewChange = (view: ViewMode) => {
     setViewMode(view);
     updateUrl(view, timeRange);
   };
 
-  // Update URL when time range changes
   const handleTimeChange = (time: TimeRange) => {
     setTimeRange(time);
     updateUrl(viewMode, time);
   };
 
-  // Sync with URL params if they change (e.g., browser back/forward)
   useEffect(() => {
     const newView = searchParams.get('view');
     const newTime = searchParams.get('time');
@@ -66,68 +60,54 @@ export default function TopChartsPage() {
   }, [searchParams, viewMode, timeRange]);
 
   return (
-    <div className="space-y-6">
+    <div className="py-12 md:py-24 px-6 md:px-12">
+      <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h1 className="font-terminal text-3xl">
-          <GlowText color="phosphor" size="sm">
-            <span className="text-[#888888]">▲</span> {t('title')}
-          </GlowText>
-        </h1>
-        <p className="mt-1 font-mono text-sm text-muted-foreground">
+      <ScrollReveal>
+        <Heading level={2}>{t('title')}</Heading>
+        <p className="mt-1 text-muted-foreground">
           {t('subtitle')}
         </p>
-      </motion.div>
+      </ScrollReveal>
 
       {/* Controls */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.1 }}
-        className="flex flex-wrap items-center gap-4"
-      >
-        {/* View Mode Toggle */}
-        <div className="flex gap-2">
-          <TerminalButton
-            variant={viewMode === 'artists' ? 'primary' : 'ghost'}
-            size="sm"
-            onClick={() => handleViewChange('artists')}
-          >
-            {t('tabs.artists')}
-          </TerminalButton>
-          <TerminalButton
-            variant={viewMode === 'tracks' ? 'primary' : 'ghost'}
-            size="sm"
-            onClick={() => handleViewChange('tracks')}
-          >
-            {t('tabs.tracks')}
-          </TerminalButton>
-          <TerminalButton
-            variant={viewMode === 'albums' ? 'primary' : 'ghost'}
-            size="sm"
-            onClick={() => handleViewChange('albums')}
-          >
-            {t('tabs.albums')}
-          </TerminalButton>
-        </div>
+      <ScrollReveal delay={0.1}>
+        <div className="flex flex-wrap items-center gap-4">
+          {/* View Mode Toggle */}
+          <div className="flex gap-2 p-1 bg-secondary rounded-xl">
+            {(['artists', 'tracks', 'albums'] as ViewMode[]).map((view) => (
+              <button
+                key={view}
+                onClick={() => handleViewChange(view)}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                  viewMode === view
+                    ? 'bg-background text-foreground shadow-soft'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {t(`tabs.${view}`)}
+              </button>
+            ))}
+          </div>
 
-        {/* Time Range Selector */}
-        <div className="flex gap-2">
-          {(Object.keys(timeRangeLabels) as TimeRange[]).map((range) => (
-            <TerminalButton
-              key={range}
-              variant={timeRange === range ? 'secondary' : 'ghost'}
-              size="sm"
-              onClick={() => handleTimeChange(range)}
-            >
-              {timeRangeLabels[range]}
-            </TerminalButton>
-          ))}
+          {/* Time Range Selector */}
+          <div className="flex gap-2">
+            {(Object.keys(timeRangeLabels) as TimeRange[]).map((range) => (
+              <button
+                key={range}
+                onClick={() => handleTimeChange(range)}
+                className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${
+                  timeRange === range
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                }`}
+              >
+                {timeRangeLabels[range]}
+              </button>
+            ))}
+          </div>
         </div>
-      </motion.div>
+      </ScrollReveal>
 
       {/* Content */}
       <motion.div
@@ -140,6 +120,7 @@ export default function TopChartsPage() {
         {viewMode === 'tracks' && <TopTracks limit={20} timeRange={timeRange} />}
         {viewMode === 'albums' && <TopAlbums limit={20} timeRange={timeRange} />}
       </motion.div>
+      </div>
     </div>
   );
 }

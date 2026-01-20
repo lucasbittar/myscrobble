@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
 import { useTranslations } from 'next-intl';
 import { getLargestImage } from '@/lib/spotify';
+import { ModernCard, ModernButton, Heading, ScrollReveal } from '@/components/modern';
 
 type TimeRange = 'short_term' | 'medium_term' | 'long_term';
 
@@ -162,7 +162,7 @@ export default function WrappedPage() {
         <motion.div
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          className="font-terminal text-2xl text-[#ffb000]"
+          className="text-2xl font-bold text-[#F59E0B]"
         >
           {t('loading')}
         </motion.div>
@@ -173,70 +173,66 @@ export default function WrappedPage() {
   if (error || !data) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <TerminalCard>
+        <ModernCard>
           <div className="py-8 text-center">
-            <p className="font-terminal text-[#ff4444]">{t('failed')}</p>
+            <p className="font-medium text-destructive">{t('failed')}</p>
           </div>
-        </TerminalCard>
+        </ModernCard>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="py-12 md:py-24 px-6 md:px-12">
+      <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-wrap items-start justify-between gap-4"
-      >
-        <div>
-          <h1 className="font-terminal text-3xl">
-            <GlowText color="amber" size="sm">
-              <span className="text-[#888888]">◆</span> {t('title')}
-            </GlowText>
-          </h1>
-          <p className="mt-1 font-mono text-sm text-[#888888]">
-            {t('subtitle')}
-          </p>
-        </div>
+      <ScrollReveal>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Heading level={2}>{t('title')}</Heading>
+            <p className="mt-1 text-muted-foreground">
+              {t('subtitle')}
+            </p>
+          </div>
 
-        {/* Time Range Selector */}
-        <div className="flex gap-2">
-          {(Object.keys(timeRangeLabels) as TimeRange[]).map((range) => (
-            <TerminalButton
-              key={range}
-              variant={timeRange === range ? 'primary' : 'ghost'}
-              size="sm"
-              onClick={() => {
-                setTimeRange(range);
-                setCurrentSlide(0);
-                setIsPlaying(false);
-              }}
-            >
-              {timeRangeLabels[range]}
-            </TerminalButton>
-          ))}
+          {/* Time Range Selector */}
+          <div className="flex gap-2">
+            {(Object.keys(timeRangeLabels) as TimeRange[]).map((range) => (
+              <button
+                key={range}
+                onClick={() => {
+                  setTimeRange(range);
+                  setCurrentSlide(0);
+                  setIsPlaying(false);
+                }}
+                className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${
+                  timeRange === range
+                    ? 'border-[#F59E0B] bg-[#F59E0B]/10 text-[#F59E0B]'
+                    : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                }`}
+              >
+                {timeRangeLabels[range]}
+              </button>
+            ))}
+          </div>
         </div>
-      </motion.div>
+      </ScrollReveal>
 
       {/* Presentation Area */}
       {!isPlaying ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex flex-col items-center justify-center py-12"
-        >
-          <div className="mb-8 text-center">
-            <h2 className="mb-2 font-terminal text-4xl text-[#ffb000]">
-              {timeRangeLabels[timeRange]}
-            </h2>
-            <p className="font-mono text-[#888888]">{t('journeyAwaits')}</p>
+        <ScrollReveal delay={0.1}>
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="mb-8 text-center">
+              <h2 className="mb-2 text-4xl font-bold text-[#F59E0B]">
+                {timeRangeLabels[timeRange]}
+              </h2>
+              <p className="text-muted-foreground">{t('journeyAwaits')}</p>
+            </div>
+            <ModernButton size="lg" onClick={startPresentation}>
+              {t('startWrapped')}
+            </ModernButton>
           </div>
-          <TerminalButton size="lg" glow onClick={startPresentation}>
-            {t('startWrapped')}
-          </TerminalButton>
-        </motion.div>
+        </ScrollReveal>
       ) : (
         <div className="relative">
           {/* Slide Container */}
@@ -282,13 +278,13 @@ export default function WrappedPage() {
 
           {/* Navigation */}
           <div className="mt-8 flex items-center justify-center gap-4">
-            <TerminalButton
+            <ModernButton
               variant="ghost"
               onClick={prevSlide}
               disabled={currentSlide === 0}
             >
               {tCommon('previous')}
-            </TerminalButton>
+            </ModernButton>
             <div className="flex gap-2">
               {slides.map((_, index) => (
                 <button
@@ -296,52 +292,53 @@ export default function WrappedPage() {
                   onClick={() => setCurrentSlide(index)}
                   className={`h-2 w-2 rounded-full transition-all ${
                     index === currentSlide
-                      ? 'bg-[#ffb000] shadow-[0_0_10px_rgba(255,176,0,0.5)]'
-                      : 'bg-[#333333]'
+                      ? 'bg-[#F59E0B] shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                      : 'bg-secondary'
                   }`}
                 />
               ))}
             </div>
-            <TerminalButton
+            <ModernButton
               variant="ghost"
               onClick={nextSlide}
             >
               {currentSlide === slides.length - 1 ? tCommon('finish') : tCommon('next')}
-            </TerminalButton>
+            </ModernButton>
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
 
 function SlideIntro({ timeRange }: { timeRange: string }) {
   return (
-    <TerminalCard className="py-16 text-center">
+    <ModernCard className="py-16 text-center">
       <motion.div
         initial={{ scale: 0.8 }}
         animate={{ scale: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <h2 className="mb-4 font-terminal text-5xl text-[#ffb000]">
+        <h2 className="mb-4 text-5xl font-bold text-[#F59E0B]">
           Your {timeRange}
         </h2>
-        <p className="font-mono text-lg text-[#888888]">
+        <p className="text-lg text-muted-foreground">
           Let&apos;s see what you&apos;ve been listening to
         </p>
       </motion.div>
-    </TerminalCard>
+    </ModernCard>
   );
 }
 
 function SlideTopArtist({ artist }: { artist: { name: string; image: string } }) {
   return (
-    <TerminalCard className="py-8 text-center">
-      <p className="mb-4 font-terminal text-lg text-[#888888]">
+    <ModernCard className="py-8 text-center">
+      <p className="mb-4 text-lg text-muted-foreground">
         Your #1 Artist
       </p>
       {artist.image && (
-        <div className="mx-auto mb-6 h-48 w-48 overflow-hidden rounded-full border-4 border-[#ffb000] shadow-[0_0_30px_rgba(255,176,0,0.3)]">
+        <div className="mx-auto mb-6 h-48 w-48 overflow-hidden rounded-full border-4 border-[#F59E0B] shadow-[0_0_30px_rgba(245,158,11,0.3)]">
           <Image
             src={artist.image}
             alt={artist.name}
@@ -351,15 +348,15 @@ function SlideTopArtist({ artist }: { artist: { name: string; image: string } })
           />
         </div>
       )}
-      <h2 className="font-terminal text-4xl text-[#ffb000]">{artist.name}</h2>
-    </TerminalCard>
+      <h2 className="text-4xl font-bold text-[#F59E0B]">{artist.name}</h2>
+    </ModernCard>
   );
 }
 
 function SlideTopArtists({ artists }: { artists: Array<{ name: string; image: string }> }) {
   return (
-    <TerminalCard className="py-8">
-      <h2 className="mb-6 text-center font-terminal text-2xl text-[#ffb000]">
+    <ModernCard className="py-8">
+      <h2 className="mb-6 text-center text-2xl font-bold text-[#F59E0B]">
         Your Top Artists
       </h2>
       <div className="space-y-3">
@@ -371,26 +368,26 @@ function SlideTopArtists({ artists }: { artists: Array<{ name: string; image: st
             transition={{ delay: index * 0.1 }}
             className="flex items-center gap-4"
           >
-            <span className="w-8 text-right font-terminal text-2xl text-[#ffb000]">
+            <span className="w-8 text-right text-2xl font-bold text-[#F59E0B]">
               {index + 1}
             </span>
             {artist.image && (
-              <div className="h-12 w-12 overflow-hidden rounded-full border border-[rgba(255,176,0,0.3)]">
+              <div className="h-12 w-12 overflow-hidden rounded-full border border-[#F59E0B]/30">
                 <Image src={artist.image} alt={artist.name} width={48} height={48} className="h-full w-full object-cover" />
               </div>
             )}
-            <span className="font-terminal text-lg text-[#e0e0e0]">{artist.name}</span>
+            <span className="text-lg font-medium text-foreground">{artist.name}</span>
           </motion.div>
         ))}
       </div>
-    </TerminalCard>
+    </ModernCard>
   );
 }
 
 function SlideTopTracks({ tracks }: { tracks: Array<{ name: string; artist: string; image: string }> }) {
   return (
-    <TerminalCard className="py-8">
-      <h2 className="mb-6 text-center font-terminal text-2xl text-[#00f5ff]">
+    <ModernCard className="py-8">
+      <h2 className="mb-6 text-center text-2xl font-bold text-[#3B82F6]">
         Your Top Tracks
       </h2>
       <div className="space-y-3">
@@ -402,29 +399,29 @@ function SlideTopTracks({ tracks }: { tracks: Array<{ name: string; artist: stri
             transition={{ delay: index * 0.1 }}
             className="flex items-center gap-4"
           >
-            <span className="w-8 text-right font-terminal text-2xl text-[#00f5ff]">
+            <span className="w-8 text-right text-2xl font-bold text-[#3B82F6]">
               {index + 1}
             </span>
             {track.image && (
-              <div className="h-12 w-12 overflow-hidden rounded border border-[rgba(0,245,255,0.3)]">
+              <div className="h-12 w-12 overflow-hidden rounded-lg border border-[#3B82F6]/30">
                 <Image src={track.image} alt={track.name} width={48} height={48} className="h-full w-full object-cover" />
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <p className="truncate font-terminal text-[#e0e0e0]">{track.name}</p>
-              <p className="truncate font-mono text-xs text-[#888888]">{track.artist}</p>
+              <p className="truncate font-medium text-foreground">{track.name}</p>
+              <p className="truncate text-sm text-muted-foreground">{track.artist}</p>
             </div>
           </motion.div>
         ))}
       </div>
-    </TerminalCard>
+    </ModernCard>
   );
 }
 
 function SlideGenres({ genres }: { genres: string[] }) {
   return (
-    <TerminalCard className="py-8 text-center">
-      <h2 className="mb-6 font-terminal text-2xl text-[#ff00ff]">
+    <ModernCard className="py-8 text-center">
+      <h2 className="mb-6 text-2xl font-bold text-[#EC4899]">
         Your Top Genres
       </h2>
       <div className="flex flex-wrap justify-center gap-3">
@@ -434,20 +431,20 @@ function SlideGenres({ genres }: { genres: string[] }) {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: index * 0.1 }}
-            className="rounded-full border border-[rgba(255,0,255,0.3)] bg-[rgba(255,0,255,0.1)] px-4 py-2 font-terminal text-[#ff00ff]"
+            className="rounded-full border border-[#EC4899]/30 bg-[#EC4899]/10 px-4 py-2 font-medium text-[#EC4899]"
           >
             {genre}
           </motion.span>
         ))}
       </div>
-    </TerminalCard>
+    </ModernCard>
   );
 }
 
 function SlidePodcasts({ podcasts }: { podcasts: Array<{ name: string; publisher: string; image: string }> }) {
   return (
-    <TerminalCard className="py-8">
-      <h2 className="mb-6 text-center font-terminal text-2xl text-[#a855f7]">
+    <ModernCard className="py-8">
+      <h2 className="mb-6 text-center text-2xl font-bold text-[#8B5CF6]">
         Your Top Podcasts
       </h2>
       <div className="space-y-3">
@@ -459,22 +456,22 @@ function SlidePodcasts({ podcasts }: { podcasts: Array<{ name: string; publisher
             transition={{ delay: index * 0.1 }}
             className="flex items-center gap-4"
           >
-            <span className="w-8 text-right font-terminal text-2xl text-[#a855f7]">
+            <span className="w-8 text-right text-2xl font-bold text-[#8B5CF6]">
               {index + 1}
             </span>
             {podcast.image && (
-              <div className="h-12 w-12 overflow-hidden rounded-lg border border-[rgba(168,85,247,0.3)]">
+              <div className="h-12 w-12 overflow-hidden rounded-lg border border-[#8B5CF6]/30">
                 <Image src={podcast.image} alt={podcast.name} width={48} height={48} quality={100} className="h-full w-full object-cover" />
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <p className="truncate font-terminal text-[#e0e0e0]">{podcast.name}</p>
-              <p className="truncate font-mono text-xs text-[#888888]">{podcast.publisher}</p>
+              <p className="truncate font-medium text-foreground">{podcast.name}</p>
+              <p className="truncate text-sm text-muted-foreground">{podcast.publisher}</p>
             </div>
           </motion.div>
         ))}
       </div>
-    </TerminalCard>
+    </ModernCard>
   );
 }
 
@@ -498,15 +495,15 @@ function SlideListeningPatterns({
   };
 
   return (
-    <TerminalCard className="py-8">
-      <h2 className="mb-6 text-center font-terminal text-2xl text-[#ff00ff]">
+    <ModernCard className="py-8">
+      <h2 className="mb-6 text-center text-2xl font-bold text-[#EC4899]">
         Your Listening Patterns
       </h2>
 
       {byHour.length > 0 && (
         <div className="mb-8">
-          <p className="mb-3 text-center font-mono text-sm text-[#888888]">
-            Peak listening time: <span className="text-[#ff00ff]">{formatHour(peakHour.hour)}</span>
+          <p className="mb-3 text-center text-sm text-muted-foreground">
+            Peak listening time: <span className="text-[#EC4899] font-medium">{formatHour(peakHour.hour)}</span>
           </p>
           <div className="flex items-end justify-center gap-1 h-24">
             {byHour.map((item, index) => (
@@ -515,12 +512,12 @@ function SlideListeningPatterns({
                 initial={{ height: 0 }}
                 animate={{ height: `${(item.count / maxHourCount) * 100}%` }}
                 transition={{ delay: index * 0.02, duration: 0.3 }}
-                className="w-2 min-h-[2px] rounded-t bg-gradient-to-t from-[#ff00ff] to-[#00f5ff]"
+                className="w-2 min-h-[2px] rounded-t bg-gradient-to-t from-[#EC4899] to-[#8B5CF6]"
                 title={`${formatHour(item.hour)}: ${item.count} plays`}
               />
             ))}
           </div>
-          <div className="mt-1 flex justify-between font-mono text-xs text-[#555555]">
+          <div className="mt-1 flex justify-between text-xs text-muted-foreground">
             <span>12AM</span>
             <span>12PM</span>
             <span>11PM</span>
@@ -530,7 +527,7 @@ function SlideListeningPatterns({
 
       {byDay.length > 0 && (
         <div>
-          <p className="mb-3 text-center font-mono text-sm text-[#888888]">By Day of Week</p>
+          <p className="mb-3 text-center text-sm text-muted-foreground">By Day of Week</p>
           <div className="flex justify-center gap-3">
             {byDay.map((item, index) => (
               <motion.div
@@ -541,15 +538,15 @@ function SlideListeningPatterns({
                 className="text-center"
               >
                 <div
-                  className="mx-auto mb-1 w-8 h-8 rounded-full flex items-center justify-center font-terminal text-xs"
+                  className="mx-auto mb-1 w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium"
                   style={{
-                    backgroundColor: `rgba(255, 0, 255, ${0.1 + (item.count / maxDayCount) * 0.4})`,
-                    color: item.count > maxDayCount * 0.5 ? '#ff00ff' : '#888888',
+                    backgroundColor: `rgba(236, 72, 153, ${0.1 + (item.count / maxDayCount) * 0.4})`,
+                    color: item.count > maxDayCount * 0.5 ? '#EC4899' : 'var(--muted-foreground)',
                   }}
                 >
                   {item.count}
                 </div>
-                <span className="font-mono text-xs text-[#555555]">{item.day}</span>
+                <span className="text-xs text-muted-foreground">{item.day}</span>
               </motion.div>
             ))}
           </div>
@@ -557,11 +554,11 @@ function SlideListeningPatterns({
       )}
 
       {byHour.length === 0 && byDay.length === 0 && (
-        <p className="text-center font-mono text-sm text-[#555555]">
+        <p className="text-center text-sm text-muted-foreground">
           Sync more history to see patterns
         </p>
       )}
-    </TerminalCard>
+    </ModernCard>
   );
 }
 
@@ -570,8 +567,8 @@ function SlideStats({ stats }: { stats: { uniqueArtists: number; uniqueTracks: n
   const minutes = stats.totalMinutes % 60;
 
   return (
-    <TerminalCard className="py-8 text-center">
-      <h2 className="mb-8 font-terminal text-2xl text-[#00ff41]">
+    <ModernCard className="py-8 text-center">
+      <h2 className="mb-8 text-2xl font-bold text-[#1DB954]">
         Your Stats
       </h2>
       <div className="grid grid-cols-2 gap-6">
@@ -582,10 +579,10 @@ function SlideStats({ stats }: { stats: { uniqueArtists: number; uniqueTracks: n
             transition={{ delay: 0.1 }}
             className="col-span-2"
           >
-            <p className="font-terminal text-5xl text-[#ffb000]">
+            <p className="text-5xl font-bold text-[#F59E0B]">
               {hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`}
             </p>
-            <p className="mt-2 font-mono text-sm text-[#888888]">Time Listened</p>
+            <p className="mt-2 text-sm text-muted-foreground">Time Listened</p>
           </motion.div>
         )}
         {stats.totalTracks > 0 && (
@@ -594,8 +591,8 @@ function SlideStats({ stats }: { stats: { uniqueArtists: number; uniqueTracks: n
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <p className="font-terminal text-4xl text-[#00ff41]">{stats.totalTracks.toLocaleString()}</p>
-            <p className="mt-2 font-mono text-sm text-[#888888]">Tracks Played</p>
+            <p className="text-4xl font-bold text-[#1DB954]">{stats.totalTracks.toLocaleString()}</p>
+            <p className="mt-2 text-sm text-muted-foreground">Tracks Played</p>
           </motion.div>
         )}
         <motion.div
@@ -603,18 +600,18 @@ function SlideStats({ stats }: { stats: { uniqueArtists: number; uniqueTracks: n
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="font-terminal text-4xl text-[#00f5ff]">{stats.uniqueArtists}</p>
-          <p className="mt-2 font-mono text-sm text-[#888888]">Unique Artists</p>
+          <p className="text-4xl font-bold text-[#3B82F6]">{stats.uniqueArtists}</p>
+          <p className="mt-2 text-sm text-muted-foreground">Unique Artists</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <p className="font-terminal text-4xl text-[#ff00ff]">{stats.uniqueTracks}</p>
-          <p className="mt-2 font-mono text-sm text-[#888888]">Unique Tracks</p>
+          <p className="text-4xl font-bold text-[#EC4899]">{stats.uniqueTracks}</p>
+          <p className="mt-2 text-sm text-muted-foreground">Unique Tracks</p>
         </motion.div>
       </div>
-    </TerminalCard>
+    </ModernCard>
   );
 }

@@ -43,11 +43,42 @@
       "concerts": "Carregando descoberta de shows",
       "auth": "Aguardando autenticação..."
     },
+    "hero": {
+      "tagline": "Seu Painel do Spotify",
+      "titlePart1": "Descubra Sua",
+      "titleHighlight": "Vibe",
+      "titlePart2": "Musical",
+      "cta": "Conectar com Spotify"
+    },
+    "sections": {
+      "whatYouGet": "O que você ganha",
+      "everythingAbout": "Tudo sobre seus",
+      "listeningHabits": "hábitos musicais",
+      "quote1": "Música é a",
+      "quote2": "trilha sonora",
+      "quote3": "da sua vida. Torne-a",
+      "quote4": "inesquecível",
+      "quoteSubtitle": "Comece sua jornada hoje",
+      "readyToExplore": "Pronto para explorar?",
+      "readyDescription": "Conecte sua conta do Spotify e desbloqueie insights sobre sua jornada musical.",
+      "getStarted": "Começar Grátis"
+    },
     "features": {
       "stats": "Estatísticas",
+      "statsDescription": "Mergulhe nos seus padrões de audição. Veja seus artistas, músicas e álbuns favoritos em diferentes períodos.",
       "ai": "IA Discover",
+      "aiDescription": "Com IA, receba recomendações personalizadas baseadas no seu perfil único de gosto e histórico de audição.",
       "concerts": "Shows",
-      "share": "Compartilhar"
+      "concertsDescription": "Nunca perca seus artistas favoritos ao vivo. Descubra shows e turnês próximos da sua localização.",
+      "share": "Compartilhar",
+      "shareDescription": "Crie lindos cards compartilháveis mostrando seu gosto musical. Perfeito para redes sociais.",
+      "tryItNow": "Experimente"
+    },
+    "stats": {
+      "topTracks": "Músicas Favoritas",
+      "topArtists": "Artistas Favoritos",
+      "history": "Histórico de Audição",
+      "aiRecommendations": "Recomendações"
     },
     "system": {
       "ready": "SIS: PRONTO",
@@ -124,6 +155,7 @@
       "tracksPlayed": "Músicas Tocadas",
       "mostActive": "Horário mais ativo",
       "peakHour": "Horário de Pico",
+      "avgPerDay": "Média Por Dia",
       "dataFrom": "Dados das últimas 4 semanas"
     },
     "timeRanges": {

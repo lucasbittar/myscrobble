@@ -1,9 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { CRTWrapper, GlowText, TerminalButton, TerminalCard } from '@/components/crt';
+import { useEffect, useState, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 // Spotify icon component
@@ -15,16 +14,439 @@ function SpotifyIcon({ className }: { className?: string }) {
   );
 }
 
-// Terminal line animation
-function TerminalLine({ delay, children }: { delay: number; children: React.ReactNode }) {
+// Flowing organic shape component with depth blur support
+function FlowingShape({
+  className,
+  gradient,
+  delay = 0,
+  blur = 0,
+  floatDirection = 'up'
+}: {
+  className?: string;
+  gradient: string;
+  delay?: number;
+  blur?: number;
+  floatDirection?: 'up' | 'down' | 'left' | 'right';
+}) {
+  const floatAnimations = {
+    up: { y: [0, -30, 0], x: [0, 15, 0] },
+    down: { y: [0, 30, 0], x: [0, -15, 0] },
+    left: { x: [0, -30, 0], y: [0, 15, 0] },
+    right: { x: [0, 30, 0], y: [0, -15, 0] },
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay, duration: 0.3 }}
-      className="font-mono text-sm md:text-base"
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{
+        opacity: 1,
+        scale: 1,
+        ...floatAnimations[floatDirection],
+      }}
+      transition={{
+        opacity: { duration: 1.5, delay },
+        scale: { duration: 1.5, delay },
+        x: { duration: 12, repeat: Infinity, ease: 'easeInOut' },
+        y: { duration: 12, repeat: Infinity, ease: 'easeInOut' },
+      }}
+      className={className}
+      style={{ filter: blur > 0 ? `blur(${blur}px)` : undefined }}
+    >
+      <motion.svg
+        viewBox="0 0 200 200"
+        className="w-full h-full"
+        animate={{
+          rotate: [0, 8, -8, 0],
+          scale: [1, 1.08, 0.95, 1],
+        }}
+        transition={{
+          duration: 18,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      >
+        <defs>
+          <linearGradient id={`grad-${gradient}-${blur}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            {gradient === 'purple-pink' && (
+              <>
+                <stop offset="0%" stopColor="#8B5CF6" />
+                <stop offset="50%" stopColor="#EC4899" />
+                <stop offset="100%" stopColor="#F59E0B" />
+              </>
+            )}
+            {gradient === 'teal-blue' && (
+              <>
+                <stop offset="0%" stopColor="#14B8A6" />
+                <stop offset="50%" stopColor="#3B82F6" />
+                <stop offset="100%" stopColor="#8B5CF6" />
+              </>
+            )}
+            {gradient === 'spotify' && (
+              <>
+                <stop offset="0%" stopColor="#1DB954" />
+                <stop offset="100%" stopColor="#14B8A6" />
+              </>
+            )}
+            {gradient === 'warm' && (
+              <>
+                <stop offset="0%" stopColor="#F59E0B" />
+                <stop offset="50%" stopColor="#EF4444" />
+                <stop offset="100%" stopColor="#EC4899" />
+              </>
+            )}
+            {gradient === 'blue-cyan' && (
+              <>
+                <stop offset="0%" stopColor="#3B82F6" />
+                <stop offset="50%" stopColor="#06B6D4" />
+                <stop offset="100%" stopColor="#14B8A6" />
+              </>
+            )}
+          </linearGradient>
+        </defs>
+        <motion.path
+          d="M40,-62.6C52.2,-54.5,62.9,-43.9,69.8,-31.1C76.7,-18.3,79.8,-3.3,77.5,10.8C75.2,24.9,67.4,38.1,56.7,48.1C46,58.1,32.4,64.9,17.8,69.1C3.2,73.3,-12.4,74.9,-26.6,70.9C-40.8,66.9,-53.6,57.3,-63.1,45C-72.6,32.7,-78.8,17.7,-79.5,2.1C-80.2,-13.5,-75.4,-29.7,-66.1,-42.3C-56.8,-54.9,-43,-64,-28.8,-70.4C-14.6,-76.8,0,-80.5,13.8,-77.4C27.6,-74.3,27.8,-70.7,40,-62.6Z"
+          transform="translate(100 100)"
+          fill={`url(#grad-${gradient}-${blur})`}
+          animate={{
+            d: [
+              "M40,-62.6C52.2,-54.5,62.9,-43.9,69.8,-31.1C76.7,-18.3,79.8,-3.3,77.5,10.8C75.2,24.9,67.4,38.1,56.7,48.1C46,58.1,32.4,64.9,17.8,69.1C3.2,73.3,-12.4,74.9,-26.6,70.9C-40.8,66.9,-53.6,57.3,-63.1,45C-72.6,32.7,-78.8,17.7,-79.5,2.1C-80.2,-13.5,-75.4,-29.7,-66.1,-42.3C-56.8,-54.9,-43,-64,-28.8,-70.4C-14.6,-76.8,0,-80.5,13.8,-77.4C27.6,-74.3,27.8,-70.7,40,-62.6Z",
+              "M44.7,-71.3C57.6,-63.8,67.3,-50.9,73.5,-36.7C79.7,-22.5,82.4,-7,80.1,7.6C77.8,22.2,70.5,35.9,60.3,46.8C50.1,57.7,37,65.8,22.6,70.8C8.2,75.8,-7.5,77.7,-21.9,74.1C-36.3,70.5,-49.4,61.4,-59.3,49.5C-69.2,37.6,-75.9,22.9,-77.8,7.3C-79.7,-8.3,-76.8,-24.8,-68.8,-38.1C-60.8,-51.4,-47.7,-61.5,-33.8,-68.3C-19.9,-75.1,-5.2,-78.6,8.9,-76.6C23,-74.6,31.8,-78.8,44.7,-71.3Z",
+              "M40,-62.6C52.2,-54.5,62.9,-43.9,69.8,-31.1C76.7,-18.3,79.8,-3.3,77.5,10.8C75.2,24.9,67.4,38.1,56.7,48.1C46,58.1,32.4,64.9,17.8,69.1C3.2,73.3,-12.4,74.9,-26.6,70.9C-40.8,66.9,-53.6,57.3,-63.1,45C-72.6,32.7,-78.8,17.7,-79.5,2.1C-80.2,-13.5,-75.4,-29.7,-66.1,-42.3C-56.8,-54.9,-43,-64,-28.8,-70.4C-14.6,-76.8,0,-80.5,13.8,-77.4C27.6,-74.3,27.8,-70.7,40,-62.6Z",
+            ],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      </motion.svg>
+    </motion.div>
+  );
+}
+
+// Section reveal wrapper
+function RevealSection({
+  children,
+  className,
+  delay = 0
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.3 });
+
+  return (
+    <motion.section
+      ref={ref}
+      initial={{ opacity: 0, y: 80 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }}
+      transition={{ duration: 0.8, delay, ease: 'easeOut' }}
+      className={className}
     >
       {children}
+    </motion.section>
+  );
+}
+
+// Highlighted text component
+function Highlight({
+  children,
+  color = 'green'
+}: {
+  children: React.ReactNode;
+  color?: 'green' | 'purple' | 'pink' | 'blue';
+}) {
+  const colors = {
+    green: 'bg-[#1DB954]/20',
+    purple: 'bg-[#8B5CF6]/20',
+    pink: 'bg-[#EC4899]/20',
+    blue: 'bg-[#3B82F6]/20',
+  };
+
+  return (
+    <span className={`relative inline-block px-2 -mx-2 ${colors[color]} rounded-lg`}>
+      {children}
+    </span>
+  );
+}
+
+// Feature item for scroll section
+function FeatureItem({
+  number,
+  title,
+  description,
+  color,
+  delay,
+  ctaLabel,
+  onCtaClick
+}: {
+  number: string;
+  title: string;
+  description: string;
+  color: string;
+  delay: number;
+  ctaLabel: string;
+  onCtaClick: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.5 });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, x: -60 }}
+      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -60 }}
+      transition={{ duration: 0.6, delay, ease: 'easeOut' }}
+      className="flex flex-col md:flex-row items-start gap-8 py-12 group"
+    >
+      <span
+        className="text-[100px] md:text-[180px] font-black leading-none -mt-4 md:-mt-8 transition-all duration-500 group-hover:scale-110"
+        style={{ color, opacity: 0.15 }}
+      >
+        {number}
+      </span>
+      <div className="pt-0 md:pt-8 flex-1">
+        <h3 className="text-3xl md:text-5xl font-bold text-foreground mb-4 group-hover:text-[var(--accent)] transition-colors" style={{ '--accent': color } as React.CSSProperties}>
+          {title}
+        </h3>
+        <p className="text-lg md:text-xl text-muted-foreground max-w-md leading-relaxed mb-6">{description}</p>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={onCtaClick}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all cursor-pointer"
+          style={{ backgroundColor: `${color}15`, color }}
+        >
+          <SpotifyIcon className="w-4 h-4" />
+          <span>{ctaLabel}</span>
+          <span>→</span>
+        </motion.button>
+      </div>
+    </motion.div>
+  );
+}
+
+// Animated stat icon components
+function StatsIcon({ type, color }: { type: 'tracks' | 'artists' | 'history' | 'ai'; color: string }) {
+  if (type === 'tracks') {
+    return (
+      <svg className="w-full h-full" viewBox="0 0 80 80" fill="none">
+        <motion.circle
+          cx="40"
+          cy="40"
+          r="30"
+          stroke={color}
+          strokeWidth="3"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1, rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+        />
+        <motion.rect
+          x="30"
+          y="25"
+          width="4"
+          height="30"
+          rx="2"
+          fill={color}
+          animate={{ height: [20, 30, 25, 30, 20] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        />
+        <motion.rect
+          x="38"
+          y="20"
+          width="4"
+          height="40"
+          rx="2"
+          fill={color}
+          animate={{ height: [30, 40, 35, 25, 30] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
+        />
+        <motion.rect
+          x="46"
+          y="28"
+          width="4"
+          height="24"
+          rx="2"
+          fill={color}
+          animate={{ height: [24, 18, 28, 22, 24] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
+        />
+      </svg>
+    );
+  }
+
+  if (type === 'artists') {
+    return (
+      <svg className="w-full h-full" viewBox="0 0 80 80" fill="none">
+        <motion.circle
+          cx="40"
+          cy="30"
+          r="12"
+          fill={color}
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+        <motion.path
+          d="M20 65c0-11 9-20 20-20s20 9 20 20"
+          stroke={color}
+          strokeWidth="3"
+          fill="none"
+          strokeLinecap="round"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse' }}
+        />
+        {/* Orbiting music notes */}
+        {[0, 120, 240].map((angle, i) => (
+          <motion.circle
+            key={angle}
+            cx="40"
+            cy="40"
+            r="3"
+            fill={color}
+            animate={{
+              cx: [
+                40 + 28 * Math.cos((angle * Math.PI) / 180),
+                40 + 28 * Math.cos(((angle + 120) * Math.PI) / 180),
+                40 + 28 * Math.cos(((angle + 240) * Math.PI) / 180),
+                40 + 28 * Math.cos((angle * Math.PI) / 180),
+              ],
+              cy: [
+                40 + 28 * Math.sin((angle * Math.PI) / 180),
+                40 + 28 * Math.sin(((angle + 120) * Math.PI) / 180),
+                40 + 28 * Math.sin(((angle + 240) * Math.PI) / 180),
+                40 + 28 * Math.sin((angle * Math.PI) / 180),
+              ],
+            }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'linear', delay: i * 0.3 }}
+          />
+        ))}
+      </svg>
+    );
+  }
+
+  if (type === 'history') {
+    return (
+      <svg className="w-full h-full" viewBox="0 0 80 80" fill="none">
+        <motion.circle
+          cx="40"
+          cy="40"
+          r="28"
+          stroke={color}
+          strokeWidth="3"
+          fill="none"
+          strokeDasharray="8 4"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
+        />
+        <motion.line
+          x1="40"
+          y1="40"
+          x2="40"
+          y2="22"
+          stroke={color}
+          strokeWidth="3"
+          strokeLinecap="round"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+          style={{ transformOrigin: '40px 40px' }}
+        />
+        <motion.line
+          x1="40"
+          y1="40"
+          x2="52"
+          y2="40"
+          stroke={color}
+          strokeWidth="2"
+          strokeLinecap="round"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+          style={{ transformOrigin: '40px 40px' }}
+        />
+        <circle cx="40" cy="40" r="4" fill={color} />
+      </svg>
+    );
+  }
+
+  if (type === 'ai') {
+    return (
+      <svg className="w-full h-full" viewBox="0 0 80 80" fill="none">
+        <motion.path
+          d="M40 15l5 10 10 2-7 7 2 10-10-5-10 5 2-10-7-7 10-2z"
+          fill={color}
+          animate={{ scale: [1, 1.2, 1], rotate: [0, 15, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          style={{ transformOrigin: '40px 35px' }}
+        />
+        <motion.circle
+          cx="25"
+          cy="55"
+          r="8"
+          stroke={color}
+          strokeWidth="2"
+          fill="none"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
+        />
+        <motion.circle
+          cx="55"
+          cy="55"
+          r="8"
+          stroke={color}
+          strokeWidth="2"
+          fill="none"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 0.6 }}
+        />
+        <motion.path
+          d="M25 55h30"
+          stroke={color}
+          strokeWidth="2"
+          strokeDasharray="4 2"
+          animate={{ pathLength: [0, 1, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+      </svg>
+    );
+  }
+
+  return null;
+}
+
+// Stat item component with cool visuals
+function StatItem({
+  value,
+  label,
+  delay,
+  icon,
+  color
+}: {
+  value: string;
+  label: string;
+  delay: number;
+  icon: 'tracks' | 'artists' | 'history' | 'ai';
+  color: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.5 });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+      transition={{ duration: 0.6, delay, ease: 'easeOut' }}
+      className="flex flex-col items-center group"
+    >
+      <div className="w-20 h-20 md:w-24 md:h-24 mb-4 transition-transform duration-300 group-hover:scale-110">
+        <StatsIcon type={icon} color={color} />
+      </div>
+      <p className="text-4xl md:text-6xl font-black mb-2" style={{ color }}>{value}</p>
+      <p className="text-sm md:text-base text-muted-foreground uppercase tracking-wider">{label}</p>
     </motion.div>
   );
 }
@@ -32,10 +454,18 @@ function TerminalLine({ delay, children }: { delay: number; children: React.Reac
 export default function HomePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
   const t = useTranslations('landing');
-  const tCommon = useTranslations('common');
 
-  // Check for session on mount
+  // Handle scroll for header background
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   useEffect(() => {
     const checkSession = async () => {
       try {
@@ -54,399 +484,257 @@ export default function HomePage() {
   }, [router]);
 
   const handleSpotifyLogin = () => {
-    // Use custom OAuth route instead of NextAuth's signIn
     router.push('/api/auth/signin/spotify');
   };
 
   if (isLoading) {
     return (
-      <CRTWrapper>
-        <div className="flex min-h-screen items-center justify-center">
-          <motion.div
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="font-terminal text-2xl text-[#00ff41]"
-          >
-            {tCommon('loadingSystem')}
-          </motion.div>
-        </div>
-      </CRTWrapper>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          className="w-8 h-8 border-2 border-[#1DB954] border-t-transparent rounded-full"
+        />
+      </div>
     );
   }
 
   return (
-    <CRTWrapper>
-      <div className="relative flex min-h-screen flex-col items-center justify-center px-4">
-        {/* Background grid effect */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-5"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(0,255,65,0.3) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0,255,65,0.3) 1px, transparent 1px)
-            `,
-            backgroundSize: '50px 50px',
-          }}
+    <div className="bg-background min-h-screen overflow-x-hidden">
+      {/* Fixed organic shapes in background with subtle depth field */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {/* Background - slight blur for depth */}
+        <FlowingShape
+          className="absolute -top-48 -right-48 w-[700px] h-[700px] opacity-25"
+          gradient="purple-pink"
+          delay={0}
+          blur={20}
+          floatDirection="up"
         />
 
-        {/* Main content */}
-        <div className="relative z-10 w-full max-w-2xl">
-          {/* Logo / Title */}
+        {/* Sharp foreground blobs */}
+        <FlowingShape
+          className="absolute -bottom-32 right-1/4 w-[450px] h-[450px] opacity-25"
+          gradient="warm"
+          delay={0.3}
+          blur={0}
+          floatDirection="left"
+        />
+        <FlowingShape
+          className="absolute top-1/2 -right-24 w-[350px] h-[350px] opacity-35"
+          gradient="spotify"
+          delay={0.4}
+          blur={0}
+          floatDirection="up"
+        />
+        <FlowingShape
+          className="absolute top-20 left-1/3 w-[280px] h-[280px] opacity-20"
+          gradient="teal-blue"
+          delay={0.5}
+          blur={0}
+          floatDirection="down"
+        />
+      </div>
+
+      {/* Header - White translucent */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
+          scrolled
+            ? 'bg-white/80 dark:bg-white/10 backdrop-blur-xl border-border/50 shadow-sm'
+            : 'bg-transparent border-transparent'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-4">
           <motion.div
-            initial={{ opacity: 0, y: -30 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="mb-8 text-center"
+            className="flex items-baseline gap-1"
           >
-            <h1 className="font-terminal text-5xl md:text-7xl">
-              <GlowText color="phosphor" size="lg">
-                {t('title')}
-              </GlowText>
-            </h1>
-            <p className="mt-2 font-terminal text-lg text-[#888888]">
-              <span className="text-[#00f5ff]">{t('version')}</span> // {t('subtitle')}
-            </p>
+            <span className="text-xl md:text-2xl font-black tracking-tight text-foreground">MyScrobble</span>
+            <span className="text-sm text-muted-foreground">.fm</span>
           </motion.div>
+        </div>
+      </header>
 
-          {/* Terminal Card */}
-          <TerminalCard title="system.init" className="mb-8">
-            <div className="space-y-2">
-              <TerminalLine delay={0.2}>
-                <span className="text-[#00ff41]">&gt;</span>{' '}
-                <span className="text-[#888888]">{t('init.loading')}</span>
-              </TerminalLine>
-              <TerminalLine delay={0.4}>
-                <span className="text-[#00ff41]">&gt;</span>{' '}
-                <span className="text-[#00f5ff]">{t('init.spotify')}</span>{' '}
-                <span className="text-[#00ff41]">[OK]</span>
-              </TerminalLine>
-              <TerminalLine delay={0.6}>
-                <span className="text-[#00ff41]">&gt;</span>{' '}
-                <span className="text-[#00f5ff]">{t('init.ai')}</span>{' '}
-                <span className="text-[#00ff41]">[OK]</span>
-              </TerminalLine>
-              <TerminalLine delay={0.8}>
-                <span className="text-[#00ff41]">&gt;</span>{' '}
-                <span className="text-[#00f5ff]">{t('init.concerts')}</span>{' '}
-                <span className="text-[#00ff41]">[OK]</span>
-              </TerminalLine>
-              <TerminalLine delay={1.0}>
-                <span className="text-[#00ff41]">&gt;</span>{' '}
-                <span className="text-[#ff00ff]">{t('init.auth')}</span>
-                <motion.span
-                  className="inline-block w-2 h-4 ml-1 bg-[#ff00ff] align-middle"
-                  animate={{ opacity: [1, 1, 0, 0] }}
-                  transition={{ duration: 1, repeat: Infinity, times: [0, 0.5, 0.5, 1] }}
-                  style={{ boxShadow: '0 0 8px #ff00ff' }}
-                />
-              </TerminalLine>
-            </div>
-          </TerminalCard>
-
-          {/* Features Grid */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.5 }}
-            className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4"
-          >
-            <FeatureCard iconType="stats" label={t('features.stats')} color="phosphor" />
-            <FeatureCard iconType="ai" label={t('features.ai')} color="cyan" />
-            <FeatureCard iconType="concerts" label={t('features.concerts')} color="magenta" />
-            <FeatureCard iconType="share" label={t('features.share')} color="amber" />
-          </motion.div>
-
-          {/* Login Button */}
-          <motion.div
+      {/* Hero Section - Full viewport */}
+      <section className="min-h-screen flex flex-col items-center justify-center px-6 md:px-12 relative">
+        <div className="max-w-6xl mx-auto text-center relative z-10">
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.4, duration: 0.5 }}
-            className="flex justify-center"
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-sm md:text-base uppercase tracking-[0.3em] text-muted-foreground mb-8"
           >
-            <TerminalButton
-              onClick={handleSpotifyLogin}
-              size="lg"
-              glow
-              icon={<SpotifyIcon className="h-5 w-5" />}
-              className="w-full md:w-auto"
-            >
-              {t('login')}
-            </TerminalButton>
-          </motion.div>
-
-          {/* Footer info */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.6, duration: 0.5 }}
-            className="mt-6 text-center font-mono text-xs text-[#555555]"
-          >
-            {t('privacy')}
+            {t('hero.tagline')}
           </motion.p>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-[clamp(3rem,12vw,10rem)] font-black leading-[0.85] tracking-tight text-foreground mb-12"
+          >
+            {t('hero.titlePart1')}
+            <br />
+            <Highlight color="green">{t('hero.titleHighlight')}</Highlight> {t('hero.titlePart2')}
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-16 leading-relaxed"
+          >
+            {t('subtitle')}
+          </motion.p>
+
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleSpotifyLogin}
+            className="group inline-flex items-center gap-3 bg-[#1DB954] text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-[#1ed760] transition-all shadow-lg shadow-[#1DB954]/25 cursor-pointer"
+          >
+            <SpotifyIcon className="w-6 h-6" />
+            <span>{t('hero.cta')}</span>
+            <motion.span
+              animate={{ x: [0, 4, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              →
+            </motion.span>
+          </motion.button>
         </div>
 
-        {/* Decorative elements */}
+        {/* Scroll indicator */}
         <motion.div
-          className="pointer-events-none absolute bottom-4 left-4 font-terminal text-xs text-[#333333]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2 }}
+          transition={{ delay: 1.2 }}
+          className="absolute bottom-12 left-1/2 -translate-x-1/2"
         >
-          <div>{t('system.ready')}</div>
-          <div>{t('system.memory')}</div>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="w-6 h-10 border-2 border-muted-foreground/30 rounded-full flex justify-center pt-2"
+          >
+            <motion.div className="w-1 h-2 bg-muted-foreground/50 rounded-full" />
+          </motion.div>
         </motion.div>
+      </section>
 
-        <motion.div
-          className="pointer-events-none absolute bottom-4 right-4 font-terminal text-xs text-[#333333]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2 }}
-        >
-          <div>{t('system.build')}</div>
-          <div>{t('system.node')}</div>
-        </motion.div>
-      </div>
-    </CRTWrapper>
-  );
-}
+      {/* Features Section - Staggered reveals */}
+      <section className="py-32 md:py-48 px-6 md:px-12">
+        <div className="max-w-6xl mx-auto">
+          <RevealSection className="mb-24 md:mb-40">
+            <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-4">{t('sections.whatYouGet')}</p>
+            <h2 className="text-4xl md:text-7xl font-black text-foreground leading-tight">
+              {t('sections.everythingAbout')}<br />
+              <Highlight color="purple">{t('sections.listeningHabits')}</Highlight>
+            </h2>
+          </RevealSection>
 
-// === CUSTOM FEATURE ICONS ===
+          <div className="space-y-8 md:space-y-0">
+            <FeatureItem
+              number="01"
+              title={t('features.stats')}
+              description={t('features.statsDescription')}
+              color="#1DB954"
+              delay={0}
+              ctaLabel={t('features.tryItNow')}
+              onCtaClick={handleSpotifyLogin}
+            />
+            <FeatureItem
+              number="02"
+              title={t('features.ai')}
+              description={t('features.aiDescription')}
+              color="#8B5CF6"
+              delay={0.1}
+              ctaLabel={t('features.tryItNow')}
+              onCtaClick={handleSpotifyLogin}
+            />
+            <FeatureItem
+              number="03"
+              title={t('features.concerts')}
+              description={t('features.concertsDescription')}
+              color="#EC4899"
+              delay={0.2}
+              ctaLabel={t('features.tryItNow')}
+              onCtaClick={handleSpotifyLogin}
+            />
+            <FeatureItem
+              number="04"
+              title={t('features.share')}
+              description={t('features.shareDescription')}
+              color="#3B82F6"
+              delay={0.3}
+              ctaLabel={t('features.tryItNow')}
+              onCtaClick={handleSpotifyLogin}
+            />
+          </div>
+        </div>
+      </section>
 
-// Listening Stats Icon - Animated frequency bars (equalizer)
-function ListeningStatsIcon() {
-  const barHeights = [0.4, 0.7, 1, 0.6, 0.8];
-  return (
-    <div className="relative w-8 h-8 flex items-end justify-center gap-[3px]">
-      {/* Scanline overlay */}
-      <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,255,65,0.03)_2px,rgba(0,255,65,0.03)_4px)] pointer-events-none rounded" />
-      {barHeights.map((height, i) => (
-        <motion.div
-          key={i}
-          className="w-[4px] rounded-t-sm origin-bottom"
-          style={{
-            background: 'linear-gradient(to top, #00ff41, rgba(0,255,65,0.6))',
-            boxShadow: '0 0 8px rgba(0,255,65,0.6)',
-          }}
-          animate={{
-            height: [`${height * 100}%`, `${height * 60}%`, `${height * 100}%`],
-          }}
-          transition={{
-            duration: 0.8 + i * 0.1,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: i * 0.1,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+      {/* Stats Section with cool visuals */}
+      <section className="py-32 md:py-48 px-6 md:px-12 relative">
+        <div className="max-w-6xl mx-auto relative z-10">
+          <RevealSection className="grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8">
+            <StatItem value="50+" label={t('stats.topTracks')} delay={0} icon="tracks" color="#1DB954" />
+            <StatItem value="50+" label={t('stats.topArtists')} delay={0.1} icon="artists" color="#8B5CF6" />
+            <StatItem value="∞" label={t('stats.history')} delay={0.2} icon="history" color="#EC4899" />
+            <StatItem value="AI" label={t('stats.aiRecommendations')} delay={0.3} icon="ai" color="#F59E0B" />
+          </RevealSection>
+        </div>
+      </section>
 
-// AI Discover Icon - Neural spark with synaptic pulses
-function AIDiscoverIcon() {
-  return (
-    <div className="relative w-8 h-8 flex items-center justify-center">
-      {/* Central node */}
-      <motion.div
-        className="absolute w-3 h-3 rounded-full"
-        style={{
-          background: 'radial-gradient(circle, #00f5ff 0%, rgba(0,245,255,0.4) 70%)',
-          boxShadow: '0 0 12px rgba(0,245,255,0.8), 0 0 24px rgba(0,245,255,0.4)',
-        }}
-        animate={{ scale: [1, 1.2, 1] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-      />
-      {/* Orbiting sparks */}
-      {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1.5 h-1.5 rounded-full"
-          style={{
-            background: '#00f5ff',
-            boxShadow: '0 0 6px #00f5ff',
-            transformOrigin: 'center',
-          }}
-          animate={{
-            x: [
-              Math.cos((angle * Math.PI) / 180) * 10,
-              Math.cos(((angle + 30) * Math.PI) / 180) * 12,
-              Math.cos((angle * Math.PI) / 180) * 10,
-            ],
-            y: [
-              Math.sin((angle * Math.PI) / 180) * 10,
-              Math.sin(((angle + 30) * Math.PI) / 180) * 12,
-              Math.sin((angle * Math.PI) / 180) * 10,
-            ],
-            opacity: [0.4, 1, 0.4],
-          }}
-          transition={{
-            duration: 2 + i * 0.2,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: i * 0.15,
-          }}
-        />
-      ))}
-      {/* Connection lines */}
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 32 32">
-        {[0, 120, 240].map((angle, i) => (
-          <motion.line
-            key={i}
-            x1="16"
-            y1="16"
-            x2={16 + Math.cos((angle * Math.PI) / 180) * 12}
-            y2={16 + Math.sin((angle * Math.PI) / 180) * 12}
-            stroke="#00f5ff"
-            strokeWidth="1"
-            strokeOpacity="0.3"
-            animate={{ strokeOpacity: [0.2, 0.6, 0.2] }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
-          />
-        ))}
-      </svg>
-    </div>
-  );
-}
+      {/* Quote Section */}
+      <section className="py-32 md:py-48 px-6 md:px-12">
+        <RevealSection className="max-w-5xl mx-auto text-center">
+          <blockquote className="text-3xl md:text-6xl font-bold text-foreground leading-tight mb-8">
+            &ldquo;{t('sections.quote1')} <Highlight color="pink">{t('sections.quote2')}</Highlight> {t('sections.quote3')} <Highlight color="blue">{t('sections.quote4')}</Highlight>.&rdquo;
+          </blockquote>
+          <p className="text-muted-foreground text-lg">{t('sections.quoteSubtitle')}</p>
+        </RevealSection>
+      </section>
 
-// Concerts Icon - Stage spotlights converging
-function ConcertsIcon() {
-  return (
-    <div className="relative w-8 h-8 flex items-center justify-center overflow-hidden">
-      {/* Left spotlight beam */}
-      <motion.div
-        className="absolute bottom-0 left-1 w-3 h-6 origin-bottom"
-        style={{
-          background: 'linear-gradient(to top, rgba(255,0,255,0.8), transparent)',
-          clipPath: 'polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%)',
-          filter: 'blur(1px)',
-        }}
-        animate={{
-          rotate: [-15, -10, -15],
-          opacity: [0.7, 1, 0.7]
-        }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-      />
-      {/* Right spotlight beam */}
-      <motion.div
-        className="absolute bottom-0 right-1 w-3 h-6 origin-bottom"
-        style={{
-          background: 'linear-gradient(to top, rgba(255,0,255,0.8), transparent)',
-          clipPath: 'polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%)',
-          filter: 'blur(1px)',
-        }}
-        animate={{
-          rotate: [15, 10, 15],
-          opacity: [0.7, 1, 0.7]
-        }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-      />
-      {/* Center glow burst */}
-      <motion.div
-        className="absolute bottom-1 w-4 h-4 rounded-full"
-        style={{
-          background: 'radial-gradient(circle, #ff00ff 0%, rgba(255,0,255,0) 70%)',
-          boxShadow: '0 0 16px rgba(255,0,255,0.8)',
-        }}
-        animate={{ scale: [0.8, 1.2, 0.8], opacity: [0.6, 1, 0.6] }}
-        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-      />
-      {/* Stage floor line */}
-      <div
-        className="absolute bottom-1 left-1 right-1 h-[2px] rounded-full"
-        style={{
-          background: 'linear-gradient(90deg, transparent, #ff00ff, transparent)',
-          boxShadow: '0 0 4px #ff00ff'
-        }}
-      />
-    </div>
-  );
-}
+      {/* CTA Section */}
+      <section className="py-32 md:py-48 px-6 md:px-12 relative">
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <RevealSection>
+            <h2 className="text-4xl md:text-7xl font-black text-foreground mb-8">
+              {t('sections.readyToExplore')}
+            </h2>
+            <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
+              {t('sections.readyDescription')}
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleSpotifyLogin}
+              className="inline-flex items-center gap-3 bg-foreground text-background px-10 py-5 rounded-full text-xl font-semibold hover:opacity-90 transition-all cursor-pointer"
+            >
+              <SpotifyIcon className="w-7 h-7" />
+              <span>{t('sections.getStarted')}</span>
+            </motion.button>
+          </RevealSection>
+        </div>
+      </section>
 
-// Share Icon - Broadcasting signal arcs
-function ShareIcon() {
-  return (
-    <div className="relative w-8 h-8 flex items-center justify-center">
-      {/* Central broadcast point */}
-      <motion.div
-        className="absolute w-2 h-2 rounded-full"
-        style={{
-          background: '#ffb000',
-          boxShadow: '0 0 8px #ffb000',
-        }}
-        animate={{ scale: [1, 1.3, 1] }}
-        transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
-      />
-      {/* Signal arcs */}
-      {[0, 1, 2].map((i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full border-2 border-transparent"
-          style={{
-            width: 12 + i * 8,
-            height: 12 + i * 8,
-            borderTopColor: '#ffb000',
-            borderRightColor: '#ffb000',
-            transform: 'rotate(-45deg)',
-            boxShadow: `0 0 ${4 + i * 2}px rgba(255,176,0,0.4)`,
-          }}
-          animate={{
-            opacity: [0, 1, 0],
-            scale: [0.8, 1.1, 0.8],
-          }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            ease: "easeOut",
-            delay: i * 0.3,
-          }}
-        />
-      ))}
-      {/* Upward arrow hint */}
-      <motion.div
-        className="absolute -top-0.5 w-0 h-0"
-        style={{
-          borderLeft: '3px solid transparent',
-          borderRight: '3px solid transparent',
-          borderBottom: '4px solid #ffb000',
-          filter: 'drop-shadow(0 0 3px #ffb000)',
-        }}
-        animate={{ y: [0, -2, 0], opacity: [0.6, 1, 0.6] }}
-        transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
-      />
-    </div>
-  );
-}
-
-// Feature card icon mapping
-const featureIcons = {
-  stats: <ListeningStatsIcon />,
-  ai: <AIDiscoverIcon />,
-  concerts: <ConcertsIcon />,
-  share: <ShareIcon />,
-};
-
-function FeatureCard({
-  iconType,
-  label,
-  color,
-}: {
-  iconType: 'stats' | 'ai' | 'concerts' | 'share';
-  label: string;
-  color: 'phosphor' | 'cyan' | 'magenta' | 'amber';
-}) {
-  const colorClasses = {
-    phosphor: 'border-[rgba(0,255,65,0.3)] hover:border-[#00ff41] hover:shadow-[0_0_10px_rgba(0,255,65,0.3)]',
-    cyan: 'border-[rgba(0,245,255,0.3)] hover:border-[#00f5ff] hover:shadow-[0_0_10px_rgba(0,245,255,0.3)]',
-    magenta: 'border-[rgba(255,0,255,0.3)] hover:border-[#ff00ff] hover:shadow-[0_0_10px_rgba(255,0,255,0.3)]',
-    amber: 'border-[rgba(255,176,0,0.3)] hover:border-[#ffb000] hover:shadow-[0_0_10px_rgba(255,176,0,0.3)]',
-  };
-
-  return (
-    <div
-      className={`flex flex-col items-center justify-center rounded-lg border bg-[#0d0d0d] p-4 transition-all duration-300 ${colorClasses[color]}`}
-    >
-      {featureIcons[iconType]}
-      <span className="mt-2 font-terminal text-xs text-[#888888]">{label}</span>
+      {/* Footer - White translucent */}
+      <footer className="py-12 px-6 md:px-12 bg-white/60 dark:bg-white/5 backdrop-blur-xl border-t border-border/50">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-baseline gap-1">
+            <span className="text-lg font-bold text-foreground">MyScrobble</span>
+            <span className="text-sm text-muted-foreground">.fm</span>
+          </div>
+          <p className="text-sm text-muted-foreground text-center md:text-right">
+            {t('privacy')}
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

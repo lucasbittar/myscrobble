@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
 import { useTranslations } from 'next-intl';
+import { ModernCard, ModernButton, ModernBadge, Heading, ScrollReveal } from '@/components/modern';
 
 interface HistoryItem {
   id: string;
@@ -65,7 +65,6 @@ export default function HistoryPage() {
   const t = useTranslations('history');
   const tCommon = useTranslations('common');
 
-  // Calculate date filter
   const getDateFilter = () => {
     const now = new Date();
     switch (dateRange) {
@@ -83,7 +82,6 @@ export default function HistoryPage() {
     }
   };
 
-  // Fetch sync status
   const { data: syncStatus } = useQuery<SyncStatus>({
     queryKey: ['syncStatus'],
     queryFn: async () => {
@@ -92,8 +90,7 @@ export default function HistoryPage() {
     },
   });
 
-  // Fetch history from Supabase
-  const { data: history, isLoading, error } = useQuery<HistoryResponse>({
+  const { data: history, isLoading } = useQuery<HistoryResponse>({
     queryKey: ['history', dateRange, offset],
     queryFn: async () => {
       const filters = getDateFilter();
@@ -108,7 +105,6 @@ export default function HistoryPage() {
     enabled: syncStatus?.synced === true,
   });
 
-  // Sync mutation
   const syncMutation = useMutation({
     mutationFn: async () => {
       const res = await fetch('/api/sync/history', { method: 'POST' });
@@ -124,89 +120,77 @@ export default function HistoryPage() {
   const currentPage = Math.floor(offset / limit) + 1;
 
   return (
-    <div className="space-y-6">
+    <div className="py-12 md:py-24 px-6 md:px-12">
+      <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-wrap items-center justify-between gap-4"
-      >
-        <div>
-          <h1 className="font-terminal text-3xl">
-            <GlowText color="phosphor" size="sm">
-              <span className="text-[#888888]">◎</span> {t('title')}
-            </GlowText>
-          </h1>
-          <p className="mt-1 font-mono text-sm text-[#888888]">
-            {t('tracksSynced', { count: syncStatus?.history_count || 0 })}
-            {syncStatus?.user?.last_synced_at && (
-              <span className="ml-2 text-[#555555]">
-                • {t('lastSync', { date: new Date(syncStatus.user.last_synced_at).toLocaleString() })}
-              </span>
-            )}
-          </p>
-        </div>
+      <ScrollReveal>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Heading level={2}>{t('title')}</Heading>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t('tracksSynced', { count: syncStatus?.history_count || 0 })}
+              {syncStatus?.user?.last_synced_at && (
+                <span className="ml-2 text-muted-foreground/60">
+                  • {t('lastSync', { date: new Date(syncStatus.user.last_synced_at).toLocaleString() })}
+                </span>
+              )}
+            </p>
+          </div>
 
-        <TerminalButton
-          onClick={() => syncMutation.mutate()}
-          disabled={syncMutation.isPending}
-          glow
-        >
-          {syncMutation.isPending ? tCommon('syncing') : tCommon('syncNow')}
-        </TerminalButton>
-      </motion.div>
+          <ModernButton
+            onClick={() => syncMutation.mutate()}
+            loading={syncMutation.isPending}
+          >
+            {syncMutation.isPending ? tCommon('syncing') : tCommon('syncNow')}
+          </ModernButton>
+        </div>
+      </ScrollReveal>
 
       {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.1 }}
-        className="flex flex-wrap gap-2"
-      >
-        {(['all', 'today', 'week', 'month'] as const).map((range) => (
-          <button
-            key={range}
-            onClick={() => {
-              setDateRange(range);
-              setOffset(0);
-            }}
-            className={`cursor-pointer rounded-md border px-3 py-1 font-terminal text-xs transition-all ${
-              dateRange === range
-                ? 'border-[#00ff41] bg-[rgba(0,255,65,0.1)] text-[#00ff41]'
-                : 'border-[rgba(0,255,65,0.2)] text-[#888888] hover:border-[#00ff41] hover:text-[#e0e0e0]'
-            }`}
-          >
-            {t(`filters.${range}`)}
-          </button>
-        ))}
-      </motion.div>
+      <ScrollReveal delay={0.1}>
+        <div className="flex flex-wrap gap-2">
+          {(['all', 'today', 'week', 'month'] as const).map((range) => (
+            <button
+              key={range}
+              onClick={() => {
+                setDateRange(range);
+                setOffset(0);
+              }}
+              className={`cursor-pointer rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
+                dateRange === range
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border text-muted-foreground hover:border-primary/50 hover:text-foreground'
+              }`}
+            >
+              {t(`filters.${range}`)}
+            </button>
+          ))}
+        </div>
+      </ScrollReveal>
 
       {/* Sync prompt if not synced */}
       {!syncStatus?.synced && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <TerminalCard title={t('sync.required')}>
-            <div className="space-y-4 text-center">
-              <p className="font-mono text-sm text-[#888888]">
+        <ScrollReveal delay={0.2}>
+          <ModernCard className="text-center py-12">
+            <div className="space-y-4">
+              <div className="text-5xl opacity-50">🎵</div>
+              <Heading level={4}>{t('sync.required')}</Heading>
+              <p className="text-muted-foreground max-w-md mx-auto">
                 {t('sync.description')}
               </p>
-              <p className="font-mono text-xs text-[#555555]">
+              <p className="text-sm text-muted-foreground/60">
                 {t('sync.hint')}
               </p>
-              <TerminalButton
+              <ModernButton
                 onClick={() => syncMutation.mutate()}
-                disabled={syncMutation.isPending}
-                glow
+                loading={syncMutation.isPending}
                 size="lg"
               >
                 {syncMutation.isPending ? tCommon('syncing') : tCommon('startSync')}
-              </TerminalButton>
+              </ModernButton>
             </div>
-          </TerminalCard>
-        </motion.div>
+          </ModernCard>
+        </ScrollReveal>
       )}
 
       {/* Loading state */}
@@ -215,37 +199,34 @@ export default function HistoryPage() {
           <motion.div
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="font-terminal text-[#00ff41]"
+            className="flex items-center gap-3"
           >
-            {t('loading')}
+            <div className="h-6 w-6 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+            <span className="text-muted-foreground">{t('loading')}</span>
           </motion.div>
         </div>
       )}
 
       {/* History list */}
       {syncStatus?.synced && history?.items && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <TerminalCard title="listening_history.log">
+        <ScrollReveal delay={0.2}>
+          <ModernCard padding="none">
             {history.items.length === 0 ? (
-              <p className="py-8 text-center font-mono text-sm text-[#888888]">
-                {t('noTracks')}
-              </p>
+              <div className="py-12 text-center">
+                <p className="text-muted-foreground">{t('noTracks')}</p>
+              </div>
             ) : (
-              <div className="divide-y divide-[rgba(0,255,65,0.1)]">
+              <div className="divide-y divide-border">
                 {history.items.map((item, index) => (
                   <motion.div
                     key={item.id}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.02 }}
-                    className="flex items-center gap-4 py-3 transition-colors hover:bg-[rgba(0,255,65,0.02)]"
+                    className="flex items-center gap-4 p-4 transition-colors hover:bg-secondary/30"
                   >
                     {/* Album art */}
-                    <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded border border-[rgba(0,255,65,0.2)]">
+                    <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg">
                       {item.album_art_url ? (
                         <Image
                           src={item.album_art_url}
@@ -254,7 +235,7 @@ export default function HistoryPage() {
                           className="object-cover"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-[#1a1a1a] text-[#555555]">
+                        <div className="flex h-full w-full items-center justify-center bg-secondary text-muted-foreground">
                           ♪
                         </div>
                       )}
@@ -262,20 +243,20 @@ export default function HistoryPage() {
 
                     {/* Track info */}
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-terminal text-sm text-[#e0e0e0]">
+                      <p className="truncate font-medium text-foreground">
                         {item.track_name}
                       </p>
-                      <p className="truncate font-mono text-xs text-[#888888]">
+                      <p className="truncate text-sm text-muted-foreground">
                         {item.artist_name}
                       </p>
                     </div>
 
                     {/* Duration & time */}
                     <div className="flex-shrink-0 text-right">
-                      <p className="font-mono text-xs text-[#00f5ff]">
+                      <p className="text-sm text-primary font-medium">
                         {formatDuration(item.duration_ms)}
                       </p>
-                      <p className="font-mono text-xs text-[#555555]">
+                      <p className="text-xs text-muted-foreground">
                         {formatDate(item.played_at)}
                       </p>
                     </div>
@@ -286,28 +267,30 @@ export default function HistoryPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="mt-4 flex items-center justify-between border-t border-[rgba(0,255,65,0.1)] pt-4">
-                <button
+              <div className="flex items-center justify-between border-t border-border p-4">
+                <ModernButton
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setOffset(Math.max(0, offset - limit))}
                   disabled={offset === 0}
-                  className="font-terminal text-xs text-[#00ff41] disabled:opacity-30"
                 >
                   {tCommon('prev')}
-                </button>
-                <span className="font-mono text-xs text-[#888888]">
+                </ModernButton>
+                <span className="text-sm text-muted-foreground">
                   {tCommon('page', { current: currentPage, total: totalPages })}
                 </span>
-                <button
+                <ModernButton
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setOffset(offset + limit)}
                   disabled={currentPage >= totalPages}
-                  className="font-terminal text-xs text-[#00ff41] disabled:opacity-30"
                 >
                   {tCommon('next')}
-                </button>
+                </ModernButton>
               </div>
             )}
-          </TerminalCard>
-        </motion.div>
+          </ModernCard>
+        </ScrollReveal>
       )}
 
       {/* Sync result message */}
@@ -315,13 +298,13 @@ export default function HistoryPage() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-lg border border-[rgba(0,255,65,0.3)] bg-[rgba(0,255,65,0.05)] p-3"
         >
-          <p className="font-mono text-xs text-[#00ff41]">
+          <ModernBadge color="success" size="lg">
             {tCommon('synced', { count: syncMutation.data?.synced || 0 })}
-          </p>
+          </ModernBadge>
         </motion.div>
       )}
+      </div>
     </div>
   );
 }

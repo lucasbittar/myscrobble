@@ -3,8 +3,8 @@
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TerminalCard, GlowText } from '@/components/crt';
 import { useTranslations } from 'next-intl';
+import { ModernCard } from '@/components/modern';
 
 interface NowPlayingData {
   is_playing: boolean;
@@ -45,33 +45,33 @@ export function NowPlaying() {
 
   if (isLoading) {
     return (
-      <TerminalCard title="now_playing.tsx" animate={false}>
+      <ModernCard>
         <div className="flex items-center justify-center py-8">
           <motion.div
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="font-terminal text-sm text-[#00ff41]"
+            className="text-sm font-medium text-primary"
           >
-            SCANNING PLAYBACK...
+            Scanning playback...
           </motion.div>
         </div>
-      </TerminalCard>
+      </ModernCard>
     );
   }
 
   if (!data?.is_playing || !data.item) {
     return (
-      <TerminalCard title="now_playing.tsx" animate={false}>
+      <ModernCard>
         <div className="flex flex-col items-center justify-center py-8 text-center">
           <div className="mb-2 text-4xl opacity-30">🎵</div>
-          <p className="font-terminal text-sm text-[#555555]">
+          <p className="text-sm font-medium text-muted-foreground">
             {t('notPlaying')}
           </p>
-          <p className="mt-1 font-mono text-xs text-[#333333]">
+          <p className="mt-1 text-xs text-muted-foreground/70">
             {t('hint')}
           </p>
         </div>
-      </TerminalCard>
+      </ModernCard>
     );
   }
 
@@ -80,7 +80,7 @@ export function NowPlaying() {
   const albumArt = track.album.images[0]?.url;
 
   return (
-    <TerminalCard title="now_playing.tsx" glow animate={false}>
+    <ModernCard className="bg-gradient-to-br from-primary/5 to-transparent border-primary/20">
       <AnimatePresence mode="wait">
         <motion.div
           key={track.id}
@@ -90,7 +90,7 @@ export function NowPlaying() {
           className="flex gap-4"
         >
           {/* Album art */}
-          <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-[rgba(0,255,65,0.3)]">
+          <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl shadow-soft">
             {albumArt && (
               <Image
                 src={albumArt}
@@ -100,11 +100,11 @@ export function NowPlaying() {
               />
             )}
             {/* Playing indicator */}
-            <div className="absolute bottom-1 right-1 flex items-end gap-0.5">
+            <div className="absolute bottom-1.5 right-1.5 flex items-end gap-0.5">
               {[1, 2, 3].map((i) => (
                 <motion.div
                   key={i}
-                  className="w-1 rounded-sm bg-[#00ff41]"
+                  className="w-1 rounded-sm bg-primary"
                   animate={{ height: ['4px', '12px', '4px'] }}
                   transition={{
                     duration: 0.5,
@@ -119,11 +119,11 @@ export function NowPlaying() {
           {/* Track info */}
           <div className="min-w-0 flex-1">
             <div className="mb-1 flex items-center gap-2">
-              <span className="font-terminal text-xs text-[#00ff41]">{t('title').toUpperCase()}</span>
+              <span className="text-xs font-medium text-primary uppercase">{t('title')}</span>
               <motion.span
                 animate={{ opacity: [1, 0.3, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
-                className="h-2 w-2 rounded-full bg-[#00ff41]"
+                className="h-2 w-2 rounded-full bg-primary"
               />
             </div>
 
@@ -133,32 +133,30 @@ export function NowPlaying() {
               rel="noopener noreferrer"
               className="block"
             >
-              <h3 className="truncate font-terminal text-lg text-[#e0e0e0] hover:text-[#00f5ff]">
-                <GlowText color="phosphor" size="sm">
-                  {track.name}
-                </GlowText>
+              <h3 className="truncate text-lg font-semibold text-foreground hover:text-primary transition-colors">
+                {track.name}
               </h3>
             </a>
 
-            <p className="truncate font-mono text-sm text-[#888888]">
+            <p className="truncate text-sm text-muted-foreground">
               {track.artists.map((a) => a.name).join(', ')}
             </p>
 
-            <p className="truncate font-mono text-xs text-[#555555]">
+            <p className="truncate text-xs text-muted-foreground/70">
               {track.album.name}
             </p>
 
             {/* Progress bar */}
             <div className="mt-3">
-              <div className="relative h-1 overflow-hidden rounded-full bg-[rgba(0,255,65,0.2)]">
+              <div className="relative h-1.5 overflow-hidden rounded-full bg-primary/20">
                 <motion.div
-                  className="absolute inset-y-0 left-0 rounded-full bg-[#00ff41]"
+                  className="absolute inset-y-0 left-0 rounded-full bg-primary"
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5 }}
                 />
               </div>
-              <div className="mt-1 flex justify-between font-mono text-xs text-[#555555]">
+              <div className="mt-1 flex justify-between text-xs text-muted-foreground">
                 <span>{formatTime(data.progress_ms)}</span>
                 <span>{formatTime(track.duration_ms)}</span>
               </div>
@@ -166,6 +164,6 @@ export function NowPlaying() {
           </div>
         </motion.div>
       </AnimatePresence>
-    </TerminalCard>
+    </ModernCard>
   );
 }

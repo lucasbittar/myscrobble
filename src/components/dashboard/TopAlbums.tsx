@@ -3,8 +3,8 @@
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { TerminalCard } from '@/components/crt';
 import { useTranslations } from 'next-intl';
+import { ModernCard } from '@/components/modern';
 
 interface Album {
   id: string;
@@ -32,33 +32,6 @@ interface TopAlbumsProps {
   showTitle?: boolean;
 }
 
-// Vinyl Record Component
-function VinylDisc({ className = "", visible = false }: { className?: string; visible?: boolean }) {
-  return (
-    <div className={`absolute rounded-full bg-[#1a1a1a] ${className}`}>
-      {/* Outer groove */}
-      <div className="absolute inset-[8%] rounded-full border border-[#333]" />
-      {/* Middle grooves */}
-      <div className="absolute inset-[15%] rounded-full border border-[#2a2a2a]" />
-      <div className="absolute inset-[25%] rounded-full border border-[#333]" />
-      <div className="absolute inset-[35%] rounded-full border border-[#2a2a2a]" />
-      {/* Label */}
-      <div
-        className="absolute inset-[40%] rounded-full"
-        style={{
-          background: visible
-            ? 'linear-gradient(135deg, var(--crt-magenta) 0%, #aa00aa 100%)'
-            : 'linear-gradient(135deg, #444 0%, #333 100%)'
-        }}
-      />
-      {/* Center hole */}
-      <div className="absolute inset-[47%] rounded-full bg-[#1a1a1a]" />
-      {/* Shine */}
-      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/5 via-transparent to-transparent" />
-    </div>
-  );
-}
-
 export function TopAlbums({
   limit = 20,
   timeRange = 'medium_term',
@@ -73,32 +46,32 @@ export function TopAlbums({
 
   if (isLoading) {
     return (
-      <TerminalCard title={showTitle ? "top_albums.data" : undefined} animate={false}>
+      <ModernCard>
         <div className="space-y-6">
           {/* Loading skeleton for featured */}
           <div className="grid grid-cols-3 gap-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="aspect-square animate-pulse rounded-lg bg-secondary" />
+              <div key={i} className="aspect-square animate-pulse rounded-xl bg-secondary" />
             ))}
           </div>
           {/* Loading skeleton for grid */}
           <div className="grid grid-cols-4 gap-3">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="aspect-square animate-pulse rounded-lg bg-secondary" />
+              <div key={i} className="aspect-square animate-pulse rounded-xl bg-secondary" />
             ))}
           </div>
         </div>
-      </TerminalCard>
+      </ModernCard>
     );
   }
 
   if (error) {
     return (
-      <TerminalCard title={showTitle ? "top_albums.data" : undefined} animate={false}>
+      <ModernCard>
         <div className="py-4 text-center">
-          <p className="font-terminal text-sm text-destructive">{t('errorLoading')}</p>
+          <p className="text-sm font-medium text-destructive">{t('errorLoading')}</p>
         </div>
-      </TerminalCard>
+      </ModernCard>
     );
   }
 
@@ -107,14 +80,14 @@ export function TopAlbums({
   const gridAlbums = albums.slice(3);
 
   return (
-    <TerminalCard title={showTitle ? "top_albums.data" : undefined} animate={false}>
+    <ModernCard>
       <div className="space-y-8">
         {/* Featured Top 3 */}
         {featuredAlbums.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-[var(--crt-magenta)]">★</span>
-              <span className="font-terminal text-sm text-muted-foreground uppercase tracking-wider">{t('featured')}</span>
+              <span className="text-[#EC4899]">★</span>
+              <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('featured')}</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -129,19 +102,14 @@ export function TopAlbums({
                   transition={{ delay: index * 0.1 }}
                   className="group relative"
                 >
-                  {/* Vinyl peeking from right */}
-                  <div className="absolute inset-0 translate-x-3 transition-transform duration-500 group-hover:translate-x-6">
-                    <VinylDisc className="w-full h-full" visible />
-                  </div>
-
                   {/* Album cover */}
-                  <div className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+                  <div className={`relative aspect-square rounded-xl overflow-hidden transition-all duration-300 ${
                     index === 0
-                      ? 'border-[var(--crt-magenta)] shadow-[0_0_30px_rgba(255,0,255,0.3)]'
+                      ? 'shadow-[0_0_30px_rgba(236,72,153,0.3)] ring-2 ring-[#EC4899]'
                       : index === 1
-                      ? 'border-[var(--crt-magenta)]/60 shadow-[0_0_20px_rgba(255,0,255,0.2)]'
-                      : 'border-[var(--crt-magenta)]/40 shadow-[0_0_10px_rgba(255,0,255,0.1)]'
-                  } group-hover:shadow-[0_0_40px_rgba(255,0,255,0.4)] group-hover:-translate-x-2 group-hover:-translate-y-1`}>
+                      ? 'shadow-[0_0_20px_rgba(236,72,153,0.2)] ring-1 ring-[#EC4899]/60'
+                      : 'shadow-[0_0_10px_rgba(236,72,153,0.1)] ring-1 ring-[#EC4899]/40'
+                  } group-hover:shadow-[0_0_40px_rgba(236,72,153,0.4)] group-hover:scale-[1.02]`}>
                     {album.image ? (
                       <Image
                         src={album.image}
@@ -150,23 +118,23 @@ export function TopAlbums({
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="w-full h-full bg-secondary flex items-center justify-center text-[var(--crt-magenta)]/50 text-4xl">
+                      <div className="w-full h-full bg-secondary flex items-center justify-center text-[#EC4899]/50 text-4xl">
                         ♪
                       </div>
                     )}
 
                     {/* Rank badge */}
-                    <div className={`absolute top-2 left-2 px-2 py-1 rounded font-terminal text-sm font-bold ${
+                    <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-sm font-bold ${
                       index === 0
-                        ? 'bg-[var(--crt-magenta)] text-white shadow-[0_0_15px_var(--crt-magenta)]'
-                        : 'bg-background/90 text-[var(--crt-magenta)] border border-[var(--crt-magenta)]/50'
+                        ? 'bg-[#EC4899] text-white shadow-soft'
+                        : 'bg-background/90 text-[#EC4899] border border-[#EC4899]/50'
                     }`}>
                       #{index + 1}
                     </div>
 
                     {/* Track count badge */}
-                    <div className="absolute top-2 right-2 px-2 pb-1 rounded bg-background/80 backdrop-blur-sm leading-none">
-                      <span className="font-mono text-xs text-[var(--crt-magenta)]">
+                    <div className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-background/80 backdrop-blur-sm">
+                      <span className="text-xs font-medium text-[#EC4899]">
                         {album.trackCount} {album.trackCount === 1 ? tCommon('track') : tCommon('tracks')}
                       </span>
                     </div>
@@ -176,8 +144,8 @@ export function TopAlbums({
 
                     {/* Info overlay on hover */}
                     <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                      <p className="font-terminal text-sm text-foreground truncate">{album.name}</p>
-                      <p className="font-mono text-xs text-[var(--crt-magenta)] truncate">{album.artist}</p>
+                      <p className="text-sm font-medium text-foreground truncate">{album.name}</p>
+                      <p className="text-xs text-[#EC4899] truncate">{album.artist}</p>
                     </div>
                   </div>
                 </motion.a>
@@ -186,17 +154,17 @@ export function TopAlbums({
           </div>
         )}
 
-        {/* Album Grid - The Crate */}
+        {/* Album Grid - Collection */}
         {gridAlbums.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-4">
               <span className="text-muted-foreground">◉</span>
-              <span className="font-terminal text-sm text-muted-foreground uppercase tracking-wider">{t('collection')}</span>
+              <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('collection')}</span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {gridAlbums.map((album, index) => {
-                const actualRank = index + 4; // Since we start from position 4
+                const actualRank = index + 4;
 
                 return (
                   <motion.a
@@ -209,13 +177,8 @@ export function TopAlbums({
                     transition={{ delay: 0.3 + index * 0.03 }}
                     className="group relative"
                   >
-                    {/* Vinyl behind - peeks on hover */}
-                    <div className="absolute inset-0 translate-y-0 transition-transform duration-300 group-hover:-translate-y-2">
-                      <VinylDisc className="w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </div>
-
                     {/* Album cover */}
-                    <div className="relative aspect-square rounded-md overflow-hidden border border-[var(--crt-magenta)]/20 transition-all duration-300 group-hover:border-[var(--crt-magenta)]/60 group-hover:shadow-[0_8px_30px_rgba(255,0,255,0.2)] group-hover:-translate-y-3">
+                    <div className="relative aspect-square rounded-xl overflow-hidden shadow-soft transition-all duration-300 group-hover:shadow-soft-lg group-hover:scale-[1.02]">
                       {album.image ? (
                         <Image
                           src={album.image}
@@ -224,30 +187,25 @@ export function TopAlbums({
                           className="object-cover transition-transform duration-500 group-hover:scale-110"
                         />
                       ) : (
-                        <div className="w-full h-full bg-secondary flex items-center justify-center text-[var(--crt-magenta)]/30">
+                        <div className="w-full h-full bg-secondary flex items-center justify-center text-[#EC4899]/30">
                           ♪
                         </div>
                       )}
 
-                      {/* Rank badge - corner ribbon style */}
-                      <div className="absolute top-0 left-0 w-8 h-8 overflow-hidden">
-                        <div className="absolute top-1 -left-3 w-12 bg-[var(--crt-magenta)]/80 text-center transform -rotate-45">
-                          <span className="font-terminal text-[10px] text-white">{actualRank}</span>
-                        </div>
+                      {/* Rank badge */}
+                      <div className="absolute top-1.5 left-1.5 w-6 h-6 rounded-md bg-[#EC4899]/80 flex items-center justify-center">
+                        <span className="text-[10px] font-bold text-white">{actualRank}</span>
                       </div>
 
                       {/* Hover overlay with info */}
                       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-2">
-                        <p className="font-terminal text-xs text-foreground truncate">{album.name}</p>
-                        <p className="font-mono text-[10px] text-[var(--crt-magenta)] truncate">{album.artist}</p>
+                        <p className="text-xs font-medium text-foreground truncate">{album.name}</p>
+                        <p className="text-[10px] text-[#EC4899] truncate">{album.artist}</p>
                         <div className="mt-1 flex items-center gap-1">
-                          <span className="text-[var(--crt-magenta)] text-[10px]">♫</span>
-                          <span className="font-mono text-[10px] text-muted-foreground">{album.trackCount} {album.trackCount === 1 ? tCommon('track') : tCommon('tracks')}</span>
+                          <span className="text-[#EC4899] text-[10px]">♫</span>
+                          <span className="text-[10px] text-muted-foreground">{album.trackCount} {album.trackCount === 1 ? tCommon('track') : tCommon('tracks')}</span>
                         </div>
                       </div>
-
-                      {/* Shine effect */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                     </div>
                   </motion.a>
                 );
@@ -258,11 +216,11 @@ export function TopAlbums({
 
         {albums.length === 0 && (
           <div className="py-8 text-center">
-            <p className="font-mono text-base text-muted-foreground">{t('noAlbums')}</p>
+            <p className="text-muted-foreground">{t('noAlbums')}</p>
           </div>
         )}
       </div>
-    </TerminalCard>
+    </ModernCard>
   );
 }
 
@@ -292,12 +250,7 @@ export function TopAlbumsList({
           transition={{ delay: index * 0.05 }}
           className="group relative"
         >
-          {/* Vinyl peek on hover */}
-          <div className="absolute inset-0 transition-transform duration-300 group-hover:-translate-y-1">
-            <VinylDisc className="w-full h-full opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
-
-          <div className="relative aspect-square rounded-md overflow-hidden border border-[var(--crt-magenta)]/20 transition-all duration-300 group-hover:border-[var(--crt-magenta)]/50 group-hover:-translate-y-2 group-hover:shadow-[0_8px_20px_rgba(255,0,255,0.15)]">
+          <div className="relative aspect-square rounded-lg overflow-hidden shadow-soft transition-all duration-300 group-hover:shadow-soft-lg group-hover:scale-[1.02]">
             {album.image ? (
               <Image
                 src={album.image}
@@ -306,20 +259,20 @@ export function TopAlbumsList({
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
             ) : (
-              <div className="w-full h-full bg-secondary flex items-center justify-center text-[var(--crt-magenta)]/30 text-xs">
+              <div className="w-full h-full bg-secondary flex items-center justify-center text-[#EC4899]/30 text-xs">
                 ♪
               </div>
             )}
 
             {/* Rank badge */}
-            <div className="absolute top-1 left-1 w-5 h-5 rounded bg-[var(--crt-magenta)]/90 flex items-center justify-center">
-              <span className="font-terminal text-[10px] text-white font-bold">{index + 1}</span>
+            <div className="absolute top-1 left-1 w-5 h-5 rounded-md bg-[#EC4899]/90 flex items-center justify-center">
+              <span className="text-[10px] text-white font-bold">{index + 1}</span>
             </div>
 
             {/* Hover info */}
             <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-1.5">
-              <p className="font-terminal text-[10px] text-foreground truncate">{album.name}</p>
-              <p className="font-mono text-[8px] text-[var(--crt-magenta)] truncate">{album.artist}</p>
+              <p className="text-[10px] font-medium text-foreground truncate">{album.name}</p>
+              <p className="text-[8px] text-[#EC4899] truncate">{album.artist}</p>
             </div>
           </div>
         </motion.a>

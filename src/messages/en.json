@@ -43,11 +43,42 @@
       "concerts": "Loading concert discovery",
       "auth": "Awaiting authentication..."
     },
+    "hero": {
+      "tagline": "Your Spotify Dashboard",
+      "titlePart1": "Discover Your",
+      "titleHighlight": "Music",
+      "titlePart2": "Story",
+      "cta": "Connect with Spotify"
+    },
+    "sections": {
+      "whatYouGet": "What you get",
+      "everythingAbout": "Everything about",
+      "listeningHabits": "listening habits",
+      "quote1": "Music is the",
+      "quote2": "soundtrack",
+      "quote3": "of your life. Make it",
+      "quote4": "unforgettable",
+      "quoteSubtitle": "Start your journey today",
+      "readyToExplore": "Ready to explore?",
+      "readyDescription": "Connect your Spotify account and unlock insights into your musical journey.",
+      "getStarted": "Get Started Free"
+    },
     "features": {
       "stats": "Listening Stats",
+      "statsDescription": "Deep dive into your listening patterns. See your top artists, tracks, and albums across different time periods.",
       "ai": "AI Discover",
+      "aiDescription": "Powered by AI, get personalized recommendations based on your unique taste profile and listening history.",
       "concerts": "Concerts",
-      "share": "Share"
+      "concertsDescription": "Never miss your favorite artists live. Discover upcoming concerts and tours near your location.",
+      "share": "Share",
+      "shareDescription": "Create beautiful shareable cards showcasing your music taste. Perfect for social media.",
+      "tryItNow": "Try it now"
+    },
+    "stats": {
+      "topTracks": "Top Tracks",
+      "topArtists": "Top Artists",
+      "history": "Listening History",
+      "aiRecommendations": "Recommendations"
     },
     "system": {
       "ready": "SYS: READY",
@@ -124,6 +155,7 @@
       "tracksPlayed": "Tracks Played",
       "mostActive": "Most active time",
       "peakHour": "Peak Hour",
+      "avgPerDay": "Avg Per Day",
       "dataFrom": "Data from the last 4 weeks"
     },
     "timeRanges": {

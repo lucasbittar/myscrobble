@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
 import { useTranslations } from 'next-intl';
 import { getLargestImage, type SpotifyShow, type SpotifyEpisode } from '@/lib/spotify';
+import { ModernCard, ModernButton, ModernBadge, Heading, ScrollReveal } from '@/components/modern';
 
 type Tab = 'shows' | 'episodes';
 
@@ -70,42 +70,43 @@ export default function PodcastsPage() {
   const episodesTotalPages = Math.ceil((episodesData?.total || 0) / ITEMS_PER_PAGE);
 
   return (
-    <div className="space-y-6">
+    <div className="py-12 md:py-24 px-6 md:px-12">
+      <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-wrap items-start justify-between gap-4"
-      >
-        <div>
-          <h1 className="font-terminal text-3xl">
-            <GlowText color="purple" size="sm">
-              <span className="text-muted-foreground">◉</span> {t('title')}
-            </GlowText>
-          </h1>
-          <p className="mt-1 font-mono text-sm text-muted-foreground">
-            {t('subtitle')}
-          </p>
-        </div>
+      <ScrollReveal>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <Heading level={2}>{t('title')}</Heading>
+            <p className="mt-1 text-muted-foreground">
+              {t('subtitle')}
+            </p>
+          </div>
 
-        {/* Tab Selector */}
-        <div className="flex gap-2">
-          <TerminalButton
-            variant={activeTab === 'shows' ? 'primary' : 'ghost'}
-            size="sm"
-            onClick={() => setActiveTab('shows')}
-          >
-            {t('tabs.shows')}
-          </TerminalButton>
-          <TerminalButton
-            variant={activeTab === 'episodes' ? 'primary' : 'ghost'}
-            size="sm"
-            onClick={() => setActiveTab('episodes')}
-          >
-            {t('tabs.episodes')}
-          </TerminalButton>
+          {/* Tab Selector */}
+          <div className="flex gap-2 p-1 bg-secondary rounded-xl">
+            <button
+              onClick={() => setActiveTab('shows')}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                activeTab === 'shows'
+                  ? 'bg-background text-foreground shadow-soft'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {t('tabs.shows')}
+            </button>
+            <button
+              onClick={() => setActiveTab('episodes')}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                activeTab === 'episodes'
+                  ? 'bg-background text-foreground shadow-soft'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {t('tabs.episodes')}
+            </button>
+          </div>
         </div>
-      </motion.div>
+      </ScrollReveal>
 
       {/* Content */}
       {activeTab === 'shows' ? (
@@ -115,20 +116,20 @@ export default function PodcastsPage() {
           animate={{ opacity: 1 }}
         >
           {showsLoading ? (
-            <TerminalCard>
+            <ModernCard>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                 {[...Array(10)].map((_, i) => (
                   <div key={i} className="animate-pulse">
-                    <div className="aspect-square rounded-lg bg-secondary" />
+                    <div className="aspect-square rounded-xl bg-secondary" />
                     <div className="mt-2 h-4 w-3/4 rounded bg-secondary" />
                     <div className="mt-1 h-3 w-1/2 rounded bg-secondary" />
                   </div>
                 ))}
               </div>
-            </TerminalCard>
+            </ModernCard>
           ) : showsData?.items && showsData.items.length > 0 ? (
             <>
-              <TerminalCard>
+              <ModernCard>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                   {showsData.items.map((item, index) => (
                     <motion.a
@@ -141,7 +142,7 @@ export default function PodcastsPage() {
                       transition={{ delay: index * 0.03 }}
                       className="group block"
                     >
-                      <div className="relative aspect-square overflow-hidden rounded-lg border border-[rgba(168,85,247,0.2)] transition-all group-hover:border-[#a855f7] group-hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+                      <div className="relative aspect-square overflow-hidden rounded-xl shadow-soft transition-all group-hover:shadow-soft-lg group-hover:scale-[1.02]">
                         {getLargestImage(item.show.images) ? (
                           <Image
                             src={getLargestImage(item.show.images)!}
@@ -156,57 +157,55 @@ export default function PodcastsPage() {
                             <span className="text-3xl opacity-30">🎙️</span>
                           </div>
                         )}
-                        {/* Episode count badge */}
-                        <div className="absolute bottom-2 right-2 rounded bg-background/80 px-2 py-0.5 font-mono text-xs text-[#a855f7]">
-                          {t('episodeCount', { count: item.show.total_episodes })}
+                        <div className="absolute bottom-2 right-2">
+                          <ModernBadge color="purple" size="sm" variant="solid">
+                            {t('episodeCount', { count: item.show.total_episodes })}
+                          </ModernBadge>
                         </div>
                       </div>
-                      <p className="mt-2 truncate font-terminal text-sm text-foreground group-hover:text-[#a855f7]">
+                      <p className="mt-2 truncate font-medium text-foreground group-hover:text-[#8B5CF6]">
                         {item.show.name}
                       </p>
-                      <p className="truncate font-mono text-xs text-muted-foreground">
+                      <p className="truncate text-sm text-muted-foreground">
                         {item.show.publisher}
                       </p>
                     </motion.a>
                   ))}
                 </div>
-              </TerminalCard>
+              </ModernCard>
 
-              {/* Pagination */}
               {showsTotalPages > 1 && (
                 <div className="flex items-center justify-center gap-4 pt-4">
-                  <TerminalButton
+                  <ModernButton
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowsPage((p) => Math.max(0, p - 1))}
                     disabled={showsPage === 0}
                   >
                     {tCommon('prev')}
-                  </TerminalButton>
-                  <span className="font-mono text-sm text-muted-foreground">
+                  </ModernButton>
+                  <span className="text-sm text-muted-foreground">
                     {tCommon('page', { current: showsPage + 1, total: showsTotalPages })}
                   </span>
-                  <TerminalButton
+                  <ModernButton
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowsPage((p) => Math.min(showsTotalPages - 1, p + 1))}
                     disabled={showsPage >= showsTotalPages - 1}
                   >
                     {tCommon('next')}
-                  </TerminalButton>
+                  </ModernButton>
                 </div>
               )}
             </>
           ) : (
-            <TerminalCard>
-              <div className="py-16 text-center">
-                <span className="text-5xl opacity-30">🎙️</span>
-                <p className="mt-4 font-terminal text-lg text-muted-foreground">{t('noShows')}</p>
-                <p className="mt-2 font-mono text-sm text-muted-foreground/70">
-                  Save podcasts on Spotify to see them here
-                </p>
-              </div>
-            </TerminalCard>
+            <ModernCard className="text-center py-16">
+              <span className="text-5xl opacity-30">🎙️</span>
+              <p className="mt-4 text-lg font-medium text-muted-foreground">{t('noShows')}</p>
+              <p className="mt-2 text-sm text-muted-foreground/70">
+                Save podcasts on Spotify to see them here
+              </p>
+            </ModernCard>
           )}
         </motion.div>
       ) : (
@@ -216,11 +215,11 @@ export default function PodcastsPage() {
           animate={{ opacity: 1 }}
         >
           {episodesLoading ? (
-            <TerminalCard>
+            <ModernCard>
               <div className="space-y-3">
                 {[...Array(10)].map((_, i) => (
                   <div key={i} className="flex gap-3 animate-pulse">
-                    <div className="w-20 h-20 rounded-lg bg-secondary" />
+                    <div className="w-20 h-20 rounded-xl bg-secondary" />
                     <div className="flex-1 space-y-2 py-1">
                       <div className="h-4 w-3/4 rounded bg-secondary" />
                       <div className="h-3 w-1/2 rounded bg-secondary" />
@@ -229,11 +228,11 @@ export default function PodcastsPage() {
                   </div>
                 ))}
               </div>
-            </TerminalCard>
+            </ModernCard>
           ) : episodesData?.items && episodesData.items.length > 0 ? (
             <>
-              <TerminalCard>
-                <div className="space-y-3">
+              <ModernCard padding="none">
+                <div className="divide-y divide-border">
                   {episodesData.items.map((item, index) => (
                     <motion.a
                       key={item.episode.id}
@@ -243,10 +242,9 @@ export default function PodcastsPage() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.03 }}
-                      className="group flex gap-4 rounded-lg p-3 transition-colors hover:bg-[rgba(168,85,247,0.05)]"
+                      className="group flex gap-4 p-4 transition-colors hover:bg-secondary/30"
                     >
-                      {/* Episode image */}
-                      <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-lg border border-[rgba(168,85,247,0.2)] transition-all group-hover:border-[#a855f7]">
+                      <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-xl">
                         {getLargestImage(item.episode.images) ? (
                           <Image
                             src={getLargestImage(item.episode.images)!}
@@ -261,25 +259,23 @@ export default function PodcastsPage() {
                             <span className="text-xl opacity-30">🎙️</span>
                           </div>
                         )}
-                        {/* Play overlay */}
                         <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <span className="text-[#a855f7] text-2xl">▶</span>
+                          <span className="text-[#8B5CF6] text-2xl">▶</span>
                         </div>
                       </div>
 
-                      {/* Episode info */}
                       <div className="flex-1 min-w-0 py-1">
-                        <p className="font-terminal text-base text-foreground group-hover:text-[#a855f7] line-clamp-1">
+                        <p className="font-medium text-foreground group-hover:text-[#8B5CF6] line-clamp-1">
                           {item.episode.name}
                         </p>
-                        <p className="mt-1 font-mono text-sm text-muted-foreground line-clamp-1">
+                        <p className="mt-1 text-sm text-muted-foreground line-clamp-1">
                           {item.episode.show.name}
                         </p>
                         <div className="flex items-center gap-3 mt-2">
-                          <span className="inline-flex items-center gap-1 rounded-full bg-[rgba(168,85,247,0.1)] px-2 py-0.5 font-mono text-xs text-[#a855f7]">
+                          <ModernBadge color="purple" size="sm">
                             {formatDuration(item.episode.duration_ms)}
-                          </span>
-                          <span className="font-mono text-xs text-muted-foreground">
+                          </ModernBadge>
+                          <span className="text-xs text-muted-foreground">
                             {formatReleaseDate(item.episode.release_date)}
                           </span>
                         </div>
@@ -287,46 +283,44 @@ export default function PodcastsPage() {
                     </motion.a>
                   ))}
                 </div>
-              </TerminalCard>
+              </ModernCard>
 
-              {/* Pagination */}
               {episodesTotalPages > 1 && (
                 <div className="flex items-center justify-center gap-4 pt-4">
-                  <TerminalButton
+                  <ModernButton
                     variant="ghost"
                     size="sm"
                     onClick={() => setEpisodesPage((p) => Math.max(0, p - 1))}
                     disabled={episodesPage === 0}
                   >
                     {tCommon('prev')}
-                  </TerminalButton>
-                  <span className="font-mono text-sm text-muted-foreground">
+                  </ModernButton>
+                  <span className="text-sm text-muted-foreground">
                     {tCommon('page', { current: episodesPage + 1, total: episodesTotalPages })}
                   </span>
-                  <TerminalButton
+                  <ModernButton
                     variant="ghost"
                     size="sm"
                     onClick={() => setEpisodesPage((p) => Math.min(episodesTotalPages - 1, p + 1))}
                     disabled={episodesPage >= episodesTotalPages - 1}
                   >
                     {tCommon('next')}
-                  </TerminalButton>
+                  </ModernButton>
                 </div>
               )}
             </>
           ) : (
-            <TerminalCard>
-              <div className="py-16 text-center">
-                <span className="text-5xl opacity-30">🎧</span>
-                <p className="mt-4 font-terminal text-lg text-muted-foreground">{t('noEpisodes')}</p>
-                <p className="mt-2 font-mono text-sm text-muted-foreground/70">
-                  Save episodes on Spotify to see them here
-                </p>
-              </div>
-            </TerminalCard>
+            <ModernCard className="text-center py-16">
+              <span className="text-5xl opacity-30">🎧</span>
+              <p className="mt-4 text-lg font-medium text-muted-foreground">{t('noEpisodes')}</p>
+              <p className="mt-2 text-sm text-muted-foreground/70">
+                Save episodes on Spotify to see them here
+              </p>
+            </ModernCard>
           )}
         </motion.div>
       )}
+      </div>
     </div>
   );
 }
