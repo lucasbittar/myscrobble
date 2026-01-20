@@ -6,6 +6,11 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { GlowText, TerminalCard } from '@/components/crt';
+import { OnTourBadge } from '@/components/ui/OnTourBadge';
+import { UpcomingConcerts } from '@/components/dashboard/UpcomingConcerts';
+import { AIDiscoverIcon, ShareIcon, WrappedIcon, ConcertsIcon, ListeningStatsIcon } from '@/components/icons/FeatureIcons';
+import { useTourStatusBatch } from '@/hooks/useTourStatus';
+import { useGeolocation } from '@/hooks/useGeolocation';
 import { useTranslations } from 'next-intl';
 
 interface NowPlayingData {
@@ -207,6 +212,15 @@ export default function DashboardPage() {
     queryFn: fetchListeningStats,
   });
 
+  // Geolocation and tour status for badges
+  const { location } = useGeolocation();
+  const artistNames = topArtists?.map((a) => a.name) || [];
+  const { data: tourStatus } = useTourStatusBatch(
+    artistNames,
+    location?.lat,
+    location?.lng
+  );
+
   return (
     <div className="space-y-8">
       {/* Hero Section - Now Playing */}
@@ -362,20 +376,28 @@ export default function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <FeatureCard
             href="/dashboard/discover"
             title={t('featureCards.aiDiscover.title')}
             description={t('featureCards.aiDiscover.description')}
-            icon="✦"
+            icon={<AIDiscoverIcon />}
             gradient="from-[#00f5ff] to-[#0066ff]"
             accentColor="#00f5ff"
+          />
+          <FeatureCard
+            href="/dashboard/top"
+            title={t('featureCards.charts.title')}
+            description={t('featureCards.charts.description')}
+            icon={<ListeningStatsIcon />}
+            gradient="from-[#00ff41] to-[#00aa41]"
+            accentColor="#00ff41"
           />
           <FeatureCard
             href="/dashboard/wrapped"
             title={t('featureCards.wrapped.title')}
             description={t('featureCards.wrapped.description')}
-            icon="◆"
+            icon={<WrappedIcon />}
             gradient="from-[#ffb000] to-[#ff6600]"
             accentColor="#ffb000"
           />
@@ -383,12 +405,17 @@ export default function DashboardPage() {
             href="/dashboard/share"
             title={t('featureCards.share.title')}
             description={t('featureCards.share.description')}
-            icon="◫"
+            icon={<ShareIcon />}
             gradient="from-[#ff00ff] to-[#aa00ff]"
             accentColor="#ff00ff"
           />
         </div>
       </motion.section>
+
+      {/* Upcoming Concerts Section */}
+      {topArtists && topArtists.length > 0 && (
+        <UpcomingConcerts topArtists={topArtists} />
+      )}
 
       {/* Recent Activity - Horizontal Timeline */}
       <motion.section
@@ -712,9 +739,16 @@ export default function DashboardPage() {
                     transition={{ delay: 0.1 }}
                     className="flex flex-col items-center"
                   >
-                    <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-accent/30 mb-2">
-                      {topArtists[1]?.image && (
-                        <Image src={topArtists[1].image} alt={topArtists[1].name} fill className="object-cover" />
+                    <div className="relative mb-2">
+                      <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-accent/30">
+                        {topArtists[1]?.image && (
+                          <Image src={topArtists[1].image} alt={topArtists[1].name} fill className="object-cover" />
+                        )}
+                      </div>
+                      {tourStatus?.[topArtists[1]?.name]?.onTour && (
+                        <div className="absolute -bottom-0.5 -right-0.5">
+                          <OnTourBadge variant="indicator" />
+                        </div>
                       )}
                     </div>
                     <p className="font-terminal text-xs text-foreground text-center truncate w-20">{topArtists[1]?.name}</p>
@@ -730,9 +764,16 @@ export default function DashboardPage() {
                     transition={{ delay: 0.05 }}
                     className="flex flex-col items-center"
                   >
-                    <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-accent mb-2 shadow-[0_0_20px_rgba(var(--accent),0.3)]">
-                      {topArtists[0]?.image && (
-                        <Image src={topArtists[0].image} alt={topArtists[0].name} fill className="object-cover" />
+                    <div className="relative mb-2">
+                      <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-accent shadow-[0_0_20px_rgba(var(--accent),0.3)]">
+                        {topArtists[0]?.image && (
+                          <Image src={topArtists[0].image} alt={topArtists[0].name} fill className="object-cover" />
+                        )}
+                      </div>
+                      {tourStatus?.[topArtists[0]?.name]?.onTour && (
+                        <div className="absolute -bottom-0.5 -right-0.5">
+                          <OnTourBadge variant="indicator" />
+                        </div>
                       )}
                     </div>
                     <p className="font-terminal text-sm text-foreground text-center truncate w-24">{topArtists[0]?.name}</p>
@@ -748,9 +789,16 @@ export default function DashboardPage() {
                     transition={{ delay: 0.15 }}
                     className="flex flex-col items-center"
                   >
-                    <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-accent/20 mb-2">
-                      {topArtists[2]?.image && (
-                        <Image src={topArtists[2].image} alt={topArtists[2].name} fill className="object-cover" />
+                    <div className="relative mb-2">
+                      <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-accent/20">
+                        {topArtists[2]?.image && (
+                          <Image src={topArtists[2].image} alt={topArtists[2].name} fill className="object-cover" />
+                        )}
+                      </div>
+                      {tourStatus?.[topArtists[2]?.name]?.onTour && (
+                        <div className="absolute -bottom-0.5 -right-0.5">
+                          <OnTourBadge variant="indicator" />
+                        </div>
                       )}
                     </div>
                     <p className="font-terminal text-xs text-foreground text-center truncate w-16">{topArtists[2]?.name}</p>
@@ -772,9 +820,16 @@ export default function DashboardPage() {
                         className="flex items-center gap-2"
                       >
                         <span className="font-terminal text-sm text-muted-foreground">{index + 4}</span>
-                        <div className="relative w-8 h-8 rounded-full overflow-hidden border border-border">
-                          {artist.image && (
-                            <Image src={artist.image} alt={artist.name} fill className="object-cover" />
+                        <div className="relative">
+                          <div className="w-8 h-8 rounded-full overflow-hidden border border-border">
+                            {artist.image && (
+                              <Image src={artist.image} alt={artist.name} fill className="object-cover" />
+                            )}
+                          </div>
+                          {tourStatus?.[artist.name]?.onTour && (
+                            <div className="absolute -bottom-0.5 -right-0.5">
+                              <OnTourBadge variant="indicator" />
+                            </div>
                           )}
                         </div>
                         <span className="font-mono text-xs text-muted-foreground truncate max-w-[80px]">{artist.name}</span>
@@ -1038,6 +1093,7 @@ export default function DashboardPage() {
           )}
         </div>
       </motion.section>
+
     </div>
   );
 }
@@ -1054,7 +1110,7 @@ function FeatureCard({
   href: string;
   title: string;
   description: string;
-  icon: string;
+  icon: React.ReactNode;
   gradient: string;
   accentColor: string;
 }) {
@@ -1079,10 +1135,9 @@ function FeatureCard({
 
         <div className="relative z-10">
           <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center text-xl mb-4 transition-transform duration-300 group-hover:scale-110"
+            className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
             style={{
               backgroundColor: `${accentColor}15`,
-              color: accentColor,
             }}
           >
             {icon}

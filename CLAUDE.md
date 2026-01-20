@@ -42,7 +42,8 @@ npm run lint
 - `/api/auth/[...nextauth]` - NextAuth handler
 - `/api/spotify/*` - Spotify API proxies (now-playing, recent-tracks, top-artists, top-tracks, me)
 - `/api/ai/recommendations` - Gemini AI recommendations
-- `/api/concerts` - Bandsintown concert data
+- `/api/tour-status` - AI-powered tour date lookup (single artist)
+- `/api/tour-status/batch` - AI-powered tour dates for multiple artists
 
 **Pages**:
 - `/` - Landing page with Spotify login
@@ -64,8 +65,7 @@ npm run lint
 
 **External APIs**:
 - Spotify Web API for user data, playback, top artists/tracks
-- Google Gemini API for AI recommendations
-- Bandsintown API for concert discovery
+- Google Gemini API for AI recommendations and tour date discovery (with Google Search)
 
 **Database**: Supabase (PostgreSQL) for:
 - User profiles synced from Spotify
@@ -84,7 +84,6 @@ NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
 SUPABASE_SERVICE_ROLE_KEY
 GEMINI_API_KEY
-BANDSINTOWN_APP_ID
 ```
 
 ## Component Library
@@ -101,3 +100,7 @@ Dashboard components in `src/components/dashboard/`:
 - `RecentTracks` - Recent listening history list
 - `TopArtists` - Top artists grid/list
 - `TopTracks` - Top tracks list
+- `UpcomingConcerts` - AI-powered concert discovery section
+
+UI components in `src/components/ui/`:
+- `OnTourBadge` - Animated badge for artists on tour

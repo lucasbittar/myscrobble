@@ -142,7 +142,15 @@
     "featureCards": {
       "aiDiscover": {
         "title": "IA Discover",
-        "description": "Receba recomendações personalizadas de artistas com IA"
+        "description": "Receba recomendações personalizadas"
+      },
+      "charts": {
+        "title": "Seus Rankings",
+        "description": "Veja seus artistas, músicas e álbuns favoritos"
+      },
+      "concerts": {
+        "title": "Shows",
+        "description": "Encontre shows dos seus artistas favoritos"
       },
       "wrapped": {
         "title": "Seu Wrapped",
@@ -271,18 +279,22 @@
   "concerts": {
     "title": "Shows",
     "subtitle": "Próximos shows dos seus artistas favoritos",
-    "searchPlaceholder": "Digite uma cidade ou local...",
-    "search": "Buscar",
-    "apiNote": "NOTA: Os dados de shows requerem uma chave da API Bandsintown. Configure BANDSINTOWN_APP_ID nas suas variáveis de ambiente.",
-    "finding": "Buscando shows...",
-    "failed": "Falha ao carregar shows",
-    "apiHint": "Certifique-se de que sua chave da API Bandsintown está configurada",
-    "noConcerts": "Nenhum show encontrado",
-    "noConcertsHint": "Tente um local diferente ou volte mais tarde",
     "tracking": "Rastreando:"
   },
   "meta": {
     "title": "MyScrobble.fm | Seu Painel do Spotify",
     "description": "Acompanhe seu histórico de músicas do Spotify, descubra novas músicas com IA e encontre shows."
+  },
+  "tour": {
+    "onTour": "EM TURNÊ",
+    "upcoming": "Próximos Shows",
+    "noUpcoming": "Nenhum show próximo na sua região",
+    "nearYou": "Perto de você",
+    "kmAway": "{distance}km de distância",
+    "getTickets": "Comprar Ingressos",
+    "viewAll": "Ver Todos os Shows",
+    "locationPermission": "Ative a localização para shows próximos",
+    "searching": "Buscando shows...",
+    "fromTopArtists": "Baseado nos seus artistas favoritos"
   }
 }

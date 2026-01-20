@@ -1,54 +1,89 @@
 'use client';
 
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { GlowText, TerminalCard, TerminalButton, TerminalInput } from '@/components/crt';
+import Image from 'next/image';
+import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
+import { OnTourBadge } from '@/components/ui/OnTourBadge';
+import { useTourStatusBatch } from '@/hooks/useTourStatus';
+import { useGeolocation } from '@/hooks/useGeolocation';
 import { useTranslations } from 'next-intl';
+import type { TourEvent } from '@/types/tour';
 
-interface Concert {
+interface TopArtist {
   id: string;
-  artist: string;
-  venue: {
-    name: string;
-    city: string;
-    region: string;
-    country: string;
-  };
-  datetime: string;
-  url: string;
-  lineup: string[];
+  name: string;
+  images: { url: string }[];
 }
 
-interface ConcertsResponse {
-  concerts: Concert[];
-  artists: string[];
+interface ConcertWithArtist extends TourEvent {
+  artistName: string;
+  artistImage?: string;
 }
 
-async function fetchConcerts(location?: string): Promise<ConcertsResponse> {
-  const params = new URLSearchParams();
-  if (location) params.set('location', location);
-
-  const res = await fetch(`/api/concerts?${params}`);
-  if (!res.ok) throw new Error('Failed to fetch concerts');
-  return res.json();
+async function fetchTopArtists(): Promise<TopArtist[]> {
+  const res = await fetch('/api/spotify/top-artists?time_range=medium_term&limit=20');
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.items || [];
 }
 
 export default function ConcertsPage() {
-  const [location, setLocation] = useState('');
-  const [searchLocation, setSearchLocation] = useState('');
   const t = useTranslations('concerts');
-  const tCommon = useTranslations('common');
+  const tTour = useTranslations('tour');
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['concerts', searchLocation],
-    queryFn: () => fetchConcerts(searchLocation),
-    staleTime: 1000 * 60 * 30, // 30 minutes
+  // Fetch user's top artists
+  const { data: topArtists, isLoading: artistsLoading } = useQuery({
+    queryKey: ['top-artists-concerts'],
+    queryFn: fetchTopArtists,
   });
 
-  const handleSearch = () => {
-    setSearchLocation(location);
-  };
+  // Get geolocation
+  const { location, loading: locationLoading, permissionDenied, requestPermission } = useGeolocation();
+
+  // Get tour status for all top artists
+  const artistNames = topArtists?.map((a) => a.name) || [];
+  const { data: tourStatus, isLoading: tourLoading } = useTourStatusBatch(
+    artistNames,
+    location?.lat,
+    location?.lng
+  );
+
+  // Combine all concerts from all artists and deduplicate
+  const concertsMap = new Map<string, ConcertWithArtist>();
+  if (tourStatus && topArtists) {
+    for (const artist of topArtists) {
+      const status = tourStatus[artist.name];
+      if (status?.events) {
+        for (const event of status.events) {
+          // Create unique key: artist + date (ignore venue differences for same day)
+          const dateKey = event.date.split('T')[0]; // Use only date part
+          const uniqueKey = `${artist.name}-${dateKey}`;
+
+          // Only add if not already present (keeps first occurrence)
+          if (!concertsMap.has(uniqueKey)) {
+            concertsMap.set(uniqueKey, {
+              ...event,
+              artistName: artist.name,
+              artistImage: artist.images[0]?.url,
+            });
+          }
+        }
+      }
+    }
+  }
+
+  // Convert map to array and sort by date
+  const allConcerts = Array.from(concertsMap.values()).sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+
+  // Artists who are on tour
+  const artistsOnTour = topArtists?.filter(
+    (a) => tourStatus?.[a.name]?.onTour
+  ) || [];
+
+  const isLoading = artistsLoading || locationLoading || tourLoading;
 
   return (
     <div className="space-y-6">
@@ -67,37 +102,22 @@ export default function ConcertsPage() {
         </p>
       </motion.div>
 
-      {/* Location Search */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.1 }}
-        className="flex gap-3"
-      >
-        <div className="flex-1">
-          <TerminalInput
-            placeholder={t('searchPlaceholder')}
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          />
-        </div>
-        <TerminalButton onClick={handleSearch} disabled={isLoading}>
-          {t('search')}
-        </TerminalButton>
-      </motion.div>
-
-      {/* Info */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15 }}
-        className="rounded-lg border border-[rgba(255,0,255,0.2)] bg-[rgba(255,0,255,0.05)] p-4"
-      >
-        <p className="font-mono text-xs text-[#ff00ff]">
-          {t('apiNote')}
-        </p>
-      </motion.div>
+      {/* Location Permission Banner */}
+      {permissionDenied && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="rounded-lg border border-[rgba(255,0,255,0.2)] bg-[rgba(255,0,255,0.05)] p-4 flex items-center justify-between"
+        >
+          <p className="font-mono text-xs text-[#ff00ff]">
+            {tTour('locationPermission')}
+          </p>
+          <TerminalButton variant="secondary" size="sm" onClick={requestPermission}>
+            Enable
+          </TerminalButton>
+        </motion.div>
+      )}
 
       {/* Loading State */}
       {isLoading && (
@@ -109,124 +129,149 @@ export default function ConcertsPage() {
           >
             ♪
           </motion.div>
-          <p className="font-terminal text-[#ff00ff]">{t('finding')}</p>
+          <p className="font-terminal text-[#ff00ff]">{tTour('searching')}</p>
         </div>
       )}
 
-      {/* Error State */}
-      {error && !isLoading && (
-        <TerminalCard>
-          <div className="py-8 text-center">
-            <p className="mb-4 font-terminal text-[#ff4444]">
-              {t('failed')}
-            </p>
-            <p className="font-mono text-xs text-[#888888]">
-              {t('apiHint')}
-            </p>
-          </div>
-        </TerminalCard>
-      )}
-
-      {/* Empty State */}
-      {data && data.concerts.length === 0 && !isLoading && (
-        <TerminalCard>
-          <div className="py-8 text-center">
-            <div className="mb-4 text-4xl opacity-30">🎤</div>
-            <p className="font-terminal text-[#888888]">
-              {t('noConcerts')}
-            </p>
-            <p className="mt-2 font-mono text-xs text-[#555555]">
-              {t('noConcertsHint')}
-            </p>
-          </div>
-        </TerminalCard>
-      )}
-
-      {/* Concerts List */}
-      {data && data.concerts.length > 0 && !isLoading && (
+      {/* Content */}
+      {!isLoading && (
         <>
-          {/* Artists being tracked */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <p className="mb-4 font-mono text-xs text-[#888888]">
-              <span className="text-[#ff00ff]">{t('tracking')}</span> {data.artists.join(', ')}
-            </p>
-          </motion.div>
-
-          {/* Concert Cards */}
-          <div className="grid gap-4 md:grid-cols-2">
-            {data.concerts.map((concert, index) => (
-              <motion.div
-                key={concert.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + index * 0.05 }}
-              >
-                <TerminalCard className="h-full">
-                  <div className="space-y-3">
-                    {/* Artist */}
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-terminal text-lg text-[#ff00ff]">
-                        {concert.artist}
-                      </h3>
-                      <span className="rounded-full bg-[rgba(255,0,255,0.2)] px-2 py-0.5 font-terminal text-xs text-[#ff00ff]">
-                        {tCommon('onTour')}
-                      </span>
+          {/* Artists On Tour Section */}
+          {artistsOnTour.length > 0 && (
+            <motion.section
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <h2 className="mb-4 font-terminal text-lg text-foreground">
+                {t('tracking')} <span className="text-[#ff00ff]">{artistsOnTour.length}</span> artists
+              </h2>
+              <div className="flex flex-wrap gap-3">
+                {artistsOnTour.map((artist) => (
+                  <motion.div
+                    key={artist.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex items-center gap-2 rounded-full border border-[rgba(255,0,255,0.3)] bg-[rgba(255,0,255,0.1)] pl-1 pr-3 py-1"
+                  >
+                    <div className="relative w-6 h-6 rounded-full overflow-hidden">
+                      {artist.images[0]?.url && (
+                        <Image
+                          src={artist.images[0].url}
+                          alt={artist.name}
+                          fill
+                          className="object-cover"
+                        />
+                      )}
                     </div>
+                    <span className="font-terminal text-xs text-[#ff00ff]">
+                      {artist.name}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
+          )}
 
-                    {/* Venue */}
-                    <div>
-                      <p className="font-terminal text-sm text-[#e0e0e0]">
-                        {concert.venue.name}
-                      </p>
-                      <p className="font-mono text-xs text-[#888888]">
-                        {concert.venue.city}, {concert.venue.region || concert.venue.country}
-                      </p>
-                    </div>
+          {/* Empty State */}
+          {allConcerts.length === 0 && (
+            <TerminalCard>
+              <div className="py-12 text-center">
+                <div className="mb-4 text-4xl opacity-30">🎤</div>
+                <p className="font-terminal text-[#888888]">
+                  {tTour('noUpcoming')}
+                </p>
+                <p className="mt-2 font-mono text-xs text-[#555555]">
+                  {tTour('fromTopArtists')}
+                </p>
+              </div>
+            </TerminalCard>
+          )}
 
-                    {/* Date */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-terminal text-[#00f5ff]">
-                          {new Date(concert.datetime).toLocaleDateString('en-US', {
-                            weekday: 'short',
-                            month: 'short',
-                            day: 'numeric',
-                          })}
-                        </p>
-                        <p className="font-mono text-xs text-[#555555]">
-                          {new Date(concert.datetime).toLocaleTimeString('en-US', {
-                            hour: 'numeric',
-                            minute: '2-digit',
-                          })}
-                        </p>
+          {/* Concerts Grid */}
+          {allConcerts.length > 0 && (
+            <motion.section
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <div className="grid gap-4 md:grid-cols-2">
+                {allConcerts.map((concert, index) => (
+                  <motion.div
+                    key={`${concert.artistName}-${concert.date}-${concert.venue}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 + index * 0.05 }}
+                  >
+                    <TerminalCard className="h-full">
+                      <div className="space-y-3">
+                        {/* Artist Header */}
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-3">
+                            {concert.artistImage && (
+                              <div className="relative w-10 h-10 rounded-full overflow-hidden border border-[rgba(255,0,255,0.3)]">
+                                <Image
+                                  src={concert.artistImage}
+                                  alt={concert.artistName}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                            )}
+                            <h3 className="font-terminal text-lg text-[#ff00ff]">
+                              {concert.artistName}
+                            </h3>
+                          </div>
+                          <OnTourBadge variant="badge" />
+                        </div>
+
+                        {/* Venue */}
+                        <div>
+                          <p className="font-terminal text-sm text-[#e0e0e0]">
+                            {concert.venue}
+                          </p>
+                          <p className="font-mono text-xs text-[#888888]">
+                            {concert.city}
+                          </p>
+                        </div>
+
+                        {/* Date and Distance */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-terminal text-[#00f5ff]">
+                              {new Date(concert.date).toLocaleDateString(undefined, {
+                                weekday: 'short',
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                              })}
+                            </p>
+                            {concert.distanceKm !== undefined && (
+                              <p className="font-mono text-xs text-[#555555]">
+                                {tTour('kmAway', { distance: concert.distanceKm })}
+                              </p>
+                            )}
+                          </div>
+
+                          {concert.ticketUrl && (
+                            <a
+                              href={concert.ticketUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <TerminalButton variant="secondary" size="sm">
+                                {tTour('getTickets')}
+                              </TerminalButton>
+                            </a>
+                          )}
+                        </div>
                       </div>
-
-                      <a
-                        href={concert.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <TerminalButton variant="secondary" size="sm">
-                          {tCommon('tickets')}
-                        </TerminalButton>
-                      </a>
-                    </div>
-
-                    {/* Lineup */}
-                    {concert.lineup.length > 1 && (
-                      <p className="font-mono text-xs text-[#555555]">
-                        {tCommon('with')} {concert.lineup.slice(1).join(', ')}
-                      </p>
-                    )}
-                  </div>
-                </TerminalCard>
-              </motion.div>
-            ))}
-          </div>
+                    </TerminalCard>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
+          )}
         </>
       )}
     </div>

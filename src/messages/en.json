@@ -142,7 +142,15 @@
     "featureCards": {
       "aiDiscover": {
         "title": "AI Discover",
-        "description": "Get personalized artist recommendations powered by AI"
+        "description": "Get personalized artist recommendations"
+      },
+      "charts": {
+        "title": "Your Charts",
+        "description": "View your top artists, tracks, and albums"
+      },
+      "concerts": {
+        "title": "Concerts",
+        "description": "Find upcoming shows from your favorite artists"
       },
       "wrapped": {
         "title": "Your Wrapped",
@@ -271,18 +279,22 @@
   "concerts": {
     "title": "Concerts",
     "subtitle": "Upcoming shows from your favorite artists",
-    "searchPlaceholder": "Enter city or location...",
-    "search": "Search",
-    "apiNote": "NOTE: Concert data requires a Bandsintown API key. Configure BANDSINTOWN_APP_ID in your environment variables.",
-    "finding": "Finding concerts...",
-    "failed": "Failed to load concerts",
-    "apiHint": "Make sure your Bandsintown API key is configured",
-    "noConcerts": "No upcoming concerts found",
-    "noConcertsHint": "Try a different location or check back later",
     "tracking": "Tracking:"
   },
   "meta": {
     "title": "MyScrobble.fm | Your Spotify Dashboard",
     "description": "Track your Spotify listening history, discover new music with AI, and find upcoming concerts."
+  },
+  "tour": {
+    "onTour": "ON TOUR",
+    "upcoming": "Upcoming Concerts",
+    "noUpcoming": "No upcoming concerts nearby",
+    "nearYou": "Near you",
+    "kmAway": "{distance}km away",
+    "getTickets": "Get Tickets",
+    "viewAll": "View All Concerts",
+    "locationPermission": "Enable location for nearby concerts",
+    "searching": "Searching for concerts...",
+    "fromTopArtists": "Based on your top artists"
   }
 }

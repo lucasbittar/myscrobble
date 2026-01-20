@@ -5,6 +5,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
+import { OnTourBadge } from '@/components/ui/OnTourBadge';
+import { useTourStatusBatch } from '@/hooks/useTourStatus';
+import { useGeolocation } from '@/hooks/useGeolocation';
 import { useTranslations } from 'next-intl';
 
 interface Recommendation {
@@ -43,6 +46,15 @@ export default function DiscoverPage() {
     staleTime: 1000 * 60 * 60, // 1 hour
     retry: false,
   });
+
+  // Tour status for badges
+  const { location } = useGeolocation();
+  const artistNames = data?.recommendations?.map((r) => r.artist) || [];
+  const { data: tourStatus } = useTourStatusBatch(
+    artistNames,
+    location?.lat,
+    location?.lng
+  );
 
   const handleRegenerate = async () => {
     setIsGenerating(true);
@@ -165,9 +177,14 @@ export default function DiscoverPage() {
                         </div>
                       )}
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-terminal text-lg text-[#00ff41]">
-                          {rec.artist}
-                        </h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-terminal text-lg text-[#00ff41]">
+                            {rec.artist}
+                          </h3>
+                          {tourStatus?.[rec.artist]?.onTour && (
+                            <OnTourBadge variant="badge" />
+                          )}
+                        </div>
                         {rec.genres.length > 0 && (
                           <p className="mt-1 truncate font-mono text-xs text-[#555555]">
                             {rec.genres.slice(0, 2).join(' • ')}

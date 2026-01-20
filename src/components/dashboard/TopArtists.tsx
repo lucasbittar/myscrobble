@@ -4,6 +4,9 @@ import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { TerminalCard } from '@/components/crt';
+import { OnTourBadge } from '@/components/ui/OnTourBadge';
+import { useTourStatusBatch } from '@/hooks/useTourStatus';
+import { useGeolocation } from '@/hooks/useGeolocation';
 
 interface Artist {
   id: string;
@@ -40,6 +43,15 @@ export function TopArtists({
     queryKey: ['top-artists', timeRange, limit],
     queryFn: () => fetchTopArtists(timeRange, limit),
   });
+
+  // Tour status for badges
+  const { location } = useGeolocation();
+  const artistNames = data?.items?.map((a) => a.name) || [];
+  const { data: tourStatus } = useTourStatusBatch(
+    artistNames,
+    location?.lat,
+    location?.lng
+  );
 
   if (isLoading) {
     return (
@@ -102,6 +114,12 @@ export function TopArtists({
                 <div className="absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#0a0a0a]/80 font-terminal text-xs text-[#00ff41]">
                   {index + 1}
                 </div>
+                {/* On Tour badge */}
+                {tourStatus?.[artist.name]?.onTour && (
+                  <div className="absolute bottom-2 right-2">
+                    <OnTourBadge variant="compact" />
+                  </div>
+                )}
               </div>
 
               {/* Artist name */}
@@ -131,6 +149,15 @@ export function TopArtistsList({
     queryKey: ['top-artists', timeRange, limit],
     queryFn: () => fetchTopArtists(timeRange, limit),
   });
+
+  // Tour status for badges
+  const { location } = useGeolocation();
+  const artistNames = data?.items?.map((a) => a.name) || [];
+  const { data: tourStatus } = useTourStatusBatch(
+    artistNames,
+    location?.lat,
+    location?.lng
+  );
 
   if (isLoading || error || !data?.items) {
     return null;
@@ -179,6 +206,11 @@ export function TopArtistsList({
                 </p>
               )}
             </div>
+
+            {/* On Tour badge */}
+            {tourStatus?.[artist.name]?.onTour && (
+              <OnTourBadge variant="badge" />
+            )}
           </a>
         </motion.div>
       ))}

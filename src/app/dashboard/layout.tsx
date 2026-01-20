@@ -129,7 +129,7 @@ export default function DashboardLayout({
 
   return (
     <CRTWrapper scanlines flicker={false}>
-      <div className="min-h-screen">
+      <div className="min-h-screen flex flex-col">
         {/* Top Navigation Bar */}
         <header className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -278,7 +278,7 @@ export default function DashboardLayout({
         </AnimatePresence>
 
         {/* Main content */}
-        <main className="pt-16 pb-20">
+        <main className="flex-1 pt-16 pb-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8">
             {children}
           </div>
