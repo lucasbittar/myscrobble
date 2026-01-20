@@ -223,20 +223,23 @@
   },
   "history": {
     "title": "Histórico de Músicas",
+    "subtitle": "Seu Diário Musical",
     "tracksSynced": "{count} músicas sincronizadas",
-    "lastSync": "Última sincronização: {date}",
+    "lastSync": "Última sincronização {date}",
+    "today": "Hoje",
+    "yesterday": "Ontem",
     "filters": {
-      "all": "TUDO",
-      "today": "HOJE",
-      "week": "SEMANA",
-      "month": "MÊS"
+      "all": "Todo Período",
+      "today": "Hoje",
+      "week": "Esta Semana",
+      "month": "Este Mês"
     },
     "sync": {
-      "required": "sincronização.necessária",
+      "required": "Sincronização Necessária",
       "description": "Sincronize seu histórico de músicas para visualizar e filtrar suas faixas.",
       "hint": "Isso salvará suas últimas 50 músicas tocadas no banco de dados. Execute periodicamente para construir seu histórico completo."
     },
-    "loading": "CARREGANDO HISTÓRICO...",
+    "loading": "Carregando histórico...",
     "noTracks": "Nenhuma música encontrada para este período"
   },
   "discover": {

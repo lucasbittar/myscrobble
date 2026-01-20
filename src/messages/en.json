@@ -223,20 +223,23 @@
   },
   "history": {
     "title": "Listening History",
+    "subtitle": "Your Music Journal",
     "tracksSynced": "{count} tracks synced",
-    "lastSync": "Last sync: {date}",
+    "lastSync": "Last sync {date}",
+    "today": "Today",
+    "yesterday": "Yesterday",
     "filters": {
-      "all": "ALL TIME",
-      "today": "TODAY",
-      "week": "WEEK",
-      "month": "MONTH"
+      "all": "All Time",
+      "today": "Today",
+      "week": "This Week",
+      "month": "This Month"
     },
     "sync": {
-      "required": "sync.required",
+      "required": "Sync Required",
       "description": "Sync your listening history to view and filter your tracks.",
       "hint": "This will save your last 50 played tracks to the database. Run it periodically to build your complete history."
     },
-    "loading": "LOADING HISTORY...",
+    "loading": "Loading history...",
     "noTracks": "No tracks found for this period"
   },
   "discover": {
