@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { TopArtists, TopTracks, TopAlbums } from '@/components/dashboard';
 import { useTranslations } from 'next-intl';
-import { Heading, ModernButton, ScrollReveal } from '@/components/modern';
 
 type TimeRange = 'short_term' | 'medium_term' | 'long_term';
 type ViewMode = 'artists' | 'tracks' | 'albums';
@@ -60,66 +59,97 @@ export default function TopChartsPage() {
   }, [searchParams, viewMode, timeRange]);
 
   return (
-    <div className="py-12 md:py-24 px-6 md:px-12">
-      <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header */}
-      <ScrollReveal>
-        <Heading level={2}>{t('title')}</Heading>
-        <p className="mt-1 text-muted-foreground">
-          {t('subtitle')}
-        </p>
-      </ScrollReveal>
+    <div className="min-h-screen py-12 md:py-24 px-6 md:px-12">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section - Matching History page style */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-12"
+        >
+          {/* Title Row */}
+          <div className="flex flex-wrap items-start justify-between gap-6 mb-8">
+            <div>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-xs font-medium tracking-[0.3em] text-[#1DB954] uppercase mb-2"
+              >
+                {t('subtitle')}
+              </motion.p>
+              <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tight">
+                {t('title')}
+              </h1>
+            </div>
 
-      {/* Controls */}
-      <ScrollReveal delay={0.1}>
-        <div className="flex flex-wrap items-center gap-4">
+            {/* Time Range Pills */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+              className="flex gap-2"
+            >
+              {(Object.keys(timeRangeLabels) as TimeRange[]).map((range, index) => (
+                <motion.button
+                  key={range}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 + index * 0.05 }}
+                  onClick={() => handleTimeChange(range)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                    timeRange === range
+                      ? 'relative z-10 bg-[#1DB954] text-white shadow-lg shadow-[#1DB954]/25'
+                      : 'bg-white/60 dark:bg-white/10 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-white/80 dark:hover:bg-white/20'
+                  }`}
+                >
+                  {timeRangeLabels[range]}
+                </motion.button>
+              ))}
+            </motion.div>
+          </div>
+
           {/* View Mode Toggle */}
-          <div className="flex gap-2 p-1 bg-secondary rounded-xl">
-            {(['artists', 'tracks', 'albums'] as ViewMode[]).map((view) => (
-              <button
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex gap-2"
+          >
+            {(['artists', 'tracks', 'albums'] as ViewMode[]).map((view, index) => (
+              <motion.button
                 key={view}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4 + index * 0.05 }}
                 onClick={() => handleViewChange(view)}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer ${
                   viewMode === view
-                    ? 'bg-background text-foreground shadow-soft'
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? 'relative z-10 bg-foreground text-background shadow-lg'
+                    : 'bg-white/60 dark:bg-white/10 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-white/80 dark:hover:bg-white/20'
                 }`}
               >
                 {t(`tabs.${view}`)}
-              </button>
+              </motion.button>
             ))}
-          </div>
+          </motion.div>
+        </motion.div>
 
-          {/* Time Range Selector */}
-          <div className="flex gap-2">
-            {(Object.keys(timeRangeLabels) as TimeRange[]).map((range) => (
-              <button
-                key={range}
-                onClick={() => handleTimeChange(range)}
-                className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${
-                  timeRange === range
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/50'
-                }`}
-              >
-                {timeRangeLabels[range]}
-              </button>
-            ))}
-          </div>
-        </div>
-      </ScrollReveal>
-
-      {/* Content */}
-      <motion.div
-        key={`${viewMode}-${timeRange}`}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        {viewMode === 'artists' && <TopArtists limit={20} timeRange={timeRange} />}
-        {viewMode === 'tracks' && <TopTracks limit={20} timeRange={timeRange} />}
-        {viewMode === 'albums' && <TopAlbums limit={20} timeRange={timeRange} />}
-      </motion.div>
+        {/* Content */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${viewMode}-${timeRange}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            {viewMode === 'artists' && <TopArtists limit={20} timeRange={timeRange} />}
+            {viewMode === 'tracks' && <TopTracks limit={20} timeRange={timeRange} />}
+            {viewMode === 'albums' && <TopAlbums limit={20} timeRange={timeRange} />}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );
