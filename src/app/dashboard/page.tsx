@@ -412,9 +412,16 @@ export default function DashboardPage() {
             </div>
             <Link
               href="/dashboard/top?view=artists"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-[#1DB954] transition-colors"
             >
-              {tCommon('viewAll')}
+              <span>{tCommon('viewAll')}</span>
+              <motion.span
+                className="inline-block"
+                animate={{ x: [0, 4, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                →
+              </motion.span>
             </Link>
           </div>
 
@@ -448,13 +455,20 @@ export default function DashboardPage() {
                 {t('sections.topTracks')}
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
-                Your most played tracks this month. These are the songs that defined your listening.
+                {t('sections.topTracksDescription')}
               </p>
               <Link
                 href="/dashboard/top?view=tracks"
-                className="inline-flex items-center gap-2 text-foreground font-medium hover:text-[#1DB954] transition-colors"
+                className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-[#1DB954] transition-colors"
               >
-                {tCommon('viewAll')}
+                <span>{tCommon('viewAll')}</span>
+                <motion.span
+                  className="inline-block"
+                  animate={{ x: [0, 4, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  →
+                </motion.span>
               </Link>
             </div>
 
@@ -485,13 +499,13 @@ export default function DashboardPage() {
         </RevealSection>
       )}
 
-      {/* Recent Activity - Horizontal scroll */}
-      <RevealSection className="py-24 md:py-32 border-t border-border/30">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 mb-8">
-          <div className="flex items-end justify-between">
+      {/* Recent Activity - Bento Grid */}
+      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-t border-border/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-end justify-between mb-12">
             <div>
               <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-2">
-                Just played
+                {t('sections.justPlayed')}
               </p>
               <h2 className="text-4xl md:text-5xl font-black text-foreground">
                 {t('sections.recentActivity')}
@@ -499,29 +513,43 @@ export default function DashboardPage() {
             </div>
             <Link
               href="/dashboard/history"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-[#1DB954] transition-colors"
             >
-              {tCommon('viewAll')}
+              <span>{tCommon('viewAll')}</span>
+              <motion.span
+                className="inline-block"
+                animate={{ x: [0, 4, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                →
+              </motion.span>
             </Link>
           </div>
-        </div>
 
-        {recentTracks && recentTracks.length > 0 ? (
-          <div className="overflow-x-auto scrollbar-hide">
-            <div className="flex gap-6 px-6 md:px-12 pb-4" style={{ width: 'max-content' }}>
-              {recentTracks.map((track, index) => (
-                <RecentTrackCard
+          {recentTracks && recentTracks.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 auto-rows-[140px] md:auto-rows-[180px]">
+              {/* Hero card - most recent track */}
+              <RecentTrackBento
+                track={recentTracks[0]}
+                index={0}
+                variant="hero"
+                formatTimeAgo={createTimeAgoFormatter(tCommon)}
+              />
+              {/* Remaining tracks in smaller cards */}
+              {recentTracks.slice(1, 7).map((track, index) => (
+                <RecentTrackBento
                   key={`${track.id}-${track.playedAt}`}
                   track={track}
-                  index={index}
+                  index={index + 1}
+                  variant={index === 1 ? 'tall' : 'normal'}
                   formatTimeAgo={createTimeAgoFormatter(tCommon)}
                 />
               ))}
             </div>
-          </div>
-        ) : (
-          <p className="px-6 md:px-12 text-muted-foreground">{t('empty.noTracks')}</p>
-        )}
+          ) : (
+            <p className="text-muted-foreground">{t('empty.noTracks')}</p>
+          )}
+        </div>
       </RevealSection>
 
       {/* Quick Links - Feature cards */}
@@ -529,10 +557,10 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4">
-              Explore <Highlight color="purple">More</Highlight>
+              {t('sections.exploreMore')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Discover all the ways to experience your music story
+              {t('sections.exploreMoreDescription')}
             </p>
           </div>
 
@@ -543,6 +571,7 @@ export default function DashboardPage() {
               description={t('featureCards.aiDiscover.description')}
               color="#8B5CF6"
               icon="ai"
+              exploreLabel={t('sections.explore')}
             />
             <FeatureLink
               href="/dashboard/wrapped"
@@ -550,6 +579,7 @@ export default function DashboardPage() {
               description={t('featureCards.wrapped.description')}
               color="#F59E0B"
               icon="wrapped"
+              exploreLabel={t('sections.explore')}
             />
             <FeatureLink
               href="/dashboard/share"
@@ -557,6 +587,7 @@ export default function DashboardPage() {
               description={t('featureCards.share.description')}
               color="#3B82F6"
               icon="share"
+              exploreLabel={t('sections.explore')}
             />
           </div>
         </div>
@@ -696,7 +727,7 @@ function TrackRow({
       initial={{ opacity: 0, x: 20 }}
       animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
       transition={{ duration: 0.5, delay }}
-      className="group flex items-center gap-4 py-4 border-b border-border/50 hover:border-[#1DB954] transition-colors"
+      className="group flex items-center gap-4 py-4 px-4 -mx-4 rounded-xl border-b border-transparent hover:border-transparent hover:bg-white/70 dark:hover:bg-white/10 hover:backdrop-blur-sm hover:shadow-sm transition-all"
     >
       <span className="text-3xl font-black text-muted-foreground/30 w-12 group-hover:text-[#1DB954] transition-colors">
         {rank.toString().padStart(2, '0')}
@@ -731,56 +762,115 @@ function TrackRow({
   );
 }
 
-// Recent track card
-function RecentTrackCard({
+// Recent track bento card - playful grid layout
+function RecentTrackBento({
   track,
   index,
+  variant = 'normal',
   formatTimeAgo
 }: {
   track: RecentTrack;
   index: number;
+  variant?: 'hero' | 'tall' | 'normal';
   formatTimeAgo: (date: string) => string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.5 });
+  const isInView = useInView(ref, { once: true, amount: 0.3 });
   const timeAgo = formatTimeAgo(track.playedAt);
+
+  const gridClasses = {
+    hero: 'col-span-2 row-span-2',
+    tall: 'col-span-1 row-span-2',
+    normal: 'col-span-1 row-span-1',
+  };
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.5, delay: index * 0.05 }}
-      className="w-48 flex-shrink-0 group"
+      className={`group relative rounded-2xl overflow-hidden cursor-pointer ${gridClasses[variant]}`}
     >
-      <div className="relative aspect-square rounded-xl overflow-hidden mb-3 shadow-lg">
+      {/* Album art background */}
+      <div className="absolute inset-0">
         {track.albumArt ? (
           <Image
             src={track.albumArt}
             alt={track.album}
             fill
-            sizes="192px"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes={variant === 'hero' ? '(max-width: 768px) 100vw, 50vw' : '(max-width: 768px) 50vw, 25vw'}
+            className="object-cover transition-transform duration-700 group-hover:scale-110"
           />
         ) : (
-          <div className="w-full h-full bg-secondary flex items-center justify-center">
-            <span className="text-3xl opacity-30">♪</span>
+          <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/20 to-[#8B5CF6]/20" />
+        )}
+      </div>
+
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+
+      {/* Animated border on hover */}
+      <div className="absolute inset-0 rounded-2xl border-2 border-white/0 group-hover:border-white/30 transition-colors duration-300" />
+
+      {/* Time badge - floating pill */}
+      <motion.div
+        className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md"
+        whileHover={{ scale: 1.05 }}
+      >
+        <span className="text-[10px] font-semibold text-white tracking-wide">
+          {timeAgo}
+        </span>
+      </motion.div>
+
+      {/* Content */}
+      <div className={`absolute inset-x-0 bottom-0 p-4 ${variant === 'hero' ? 'md:p-6' : ''}`}>
+        {/* Playing indicator for hero */}
+        {variant === 'hero' && index === 0 && (
+          <div className="flex items-center gap-2 mb-3">
+            <span className="flex gap-0.5">
+              {[1, 2, 3].map((i) => (
+                <motion.span
+                  key={i}
+                  className="w-0.5 bg-[#1DB954] rounded-full"
+                  animate={{ height: ['4px', '12px', '4px'] }}
+                  transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
+                />
+              ))}
+            </span>
+            <span className="text-[10px] font-medium text-[#1DB954] uppercase tracking-wider">
+              Latest
+            </span>
           </div>
         )}
-        {/* Time badge overlay */}
-        <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-black/70 backdrop-blur-sm">
-          <span className="text-[10px] font-medium text-white/90">
-            {timeAgo}
-          </span>
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+        <h4 className={`font-bold text-white truncate group-hover:text-[#1DB954] transition-colors ${
+          variant === 'hero' ? 'text-xl md:text-2xl' : 'text-sm'
+        }`}>
+          {track.name}
+        </h4>
+        <p className={`text-white/70 truncate mt-0.5 ${
+          variant === 'hero' ? 'text-base' : 'text-xs'
+        }`}>
+          {track.artist}
+        </p>
+
+        {/* Hover reveal - album name */}
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className={`text-white/50 truncate mt-1 opacity-0 group-hover:opacity-100 transition-opacity ${
+            variant === 'hero' ? 'text-sm' : 'text-[10px]'
+          }`}
+        >
+          {track.album}
+        </motion.p>
       </div>
-      <p className="font-medium text-foreground truncate group-hover:text-[#1DB954] transition-colors">
-        {track.name}
-      </p>
-      <p className="text-sm text-muted-foreground truncate">
-        {track.artist}
-      </p>
+
+      {/* Decorative corner accent */}
+      <div className="absolute top-0 left-0 w-16 h-16 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 border-[#1DB954]/50 rounded-tl-lg" />
+      </div>
     </motion.div>
   );
 }
@@ -791,13 +881,15 @@ function FeatureLink({
   title,
   description,
   color,
-  icon
+  icon,
+  exploreLabel
 }: {
   href: string;
   title: string;
   description: string;
   color: string;
   icon: 'ai' | 'wrapped' | 'share';
+  exploreLabel: string;
 }) {
   return (
     <Link
@@ -818,7 +910,7 @@ function FeatureLink({
         {description}
       </p>
       <div className="mt-4 flex items-center gap-2 text-sm font-medium text-muted-foreground group-hover:text-[var(--accent-color)] transition-colors">
-        <span>Explore</span>
+        <span>{exploreLabel}</span>
         <motion.span
           className="inline-block"
           animate={{ x: [0, 4, 0] }}

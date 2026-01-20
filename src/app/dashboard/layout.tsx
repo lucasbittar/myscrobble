@@ -259,7 +259,9 @@ export default function DashboardLayout({
             <div className="flex items-center gap-4">
               {session.user?.image && (
                 <div className="hidden sm:flex items-center gap-3">
-                  <span className="text-sm text-muted-foreground">
+                  <span className={`text-sm transition-colors ${
+                    scrolled ? 'text-muted-foreground' : 'text-white'
+                  }`}>
                     {session.user?.name?.split(' ')[0]}
                   </span>
                   <Image
@@ -273,7 +275,11 @@ export default function DashboardLayout({
               )}
               <button
                 onClick={handleSignOut}
-                className="hidden sm:block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className={`hidden sm:block text-sm transition-colors cursor-pointer ${
+                  scrolled
+                    ? 'text-muted-foreground hover:text-foreground'
+                    : 'text-white/80 hover:text-white'
+                }`}
               >
                 {t('signOut')}
               </button>
@@ -367,8 +373,8 @@ export default function DashboardLayout({
         {children}
       </main>
 
-      {/* Minimal footer */}
-      <footer className="py-12 px-6 md:px-12 border-t border-border/30">
+      {/* Minimal footer - White translucent */}
+      <footer className="py-12 px-6 md:px-12 bg-white/60 dark:bg-white/5 backdrop-blur-xl border-t border-border/50">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-baseline gap-1">
             <span className="text-lg font-bold text-foreground">MyScrobble</span>

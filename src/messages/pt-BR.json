@@ -3,7 +3,7 @@
     "loading": "Carregando...",
     "loadingSystem": "CARREGANDO SISTEMA...",
     "error": "Erro",
-    "viewAll": "Ver tudo →",
+    "viewAll": "Ver tudo",
     "tryAgain": "Tentar Novamente",
     "goHome": "Ir para Início",
     "prev": "← ANTERIOR",
@@ -147,8 +147,14 @@
       "topCharts": "Seus Mais Tocados",
       "topArtists": "Artistas Favoritos",
       "topTracks": "Músicas Favoritas",
+      "topTracksDescription": "Suas músicas mais tocadas este mês. Essas são as músicas que definiram sua audição.",
       "topAlbums": "Álbuns Favoritos",
-      "peakTime": "Horário de Pico"
+      "peakTime": "Horário de Pico",
+      "justPlayed": "Tocadas recentemente",
+      "liveEvents": "Eventos ao Vivo",
+      "exploreMore": "Explore Mais",
+      "exploreMoreDescription": "Descubra todas as formas de vivenciar sua história musical",
+      "explore": "Explorar"
     },
     "stats": {
       "minutesListened": "Minutos Ouvidos",

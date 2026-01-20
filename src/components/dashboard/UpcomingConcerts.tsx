@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useTourStatusBatch } from '@/hooks/useTourStatus';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import type { TourEvent } from '@/types/tour';
@@ -21,6 +21,8 @@ interface ConcertWithArtist extends TourEvent {
 export function UpcomingConcerts({ topArtists }: UpcomingConcertsProps) {
   const t = useTranslations('tour');
   const tCommon = useTranslations('common');
+  const tDashboard = useTranslations('dashboard');
+  const locale = useLocale();
   const { location, loading: locationLoading } = useGeolocation();
 
   const artistNames = topArtists.slice(0, 5).map((a) => a.name);
@@ -64,7 +66,7 @@ export function UpcomingConcerts({ topArtists }: UpcomingConcertsProps) {
             className="flex items-center gap-3 mb-2"
           >
             <span className="text-xs font-medium tracking-[0.2em] text-[#EC4899] uppercase">
-              Live Events
+              {tDashboard('sections.liveEvents')}
             </span>
             <div className="h-px flex-1 bg-gradient-to-r from-[#EC4899]/30 to-transparent" />
           </motion.div>
@@ -120,7 +122,7 @@ export function UpcomingConcerts({ topArtists }: UpcomingConcertsProps) {
           className="flex items-center gap-3 mb-2"
         >
           <span className="text-xs font-medium tracking-[0.2em] text-[#EC4899] uppercase">
-            Live Events
+            {tDashboard('sections.liveEvents')}
           </span>
           <div className="h-px flex-1 bg-gradient-to-r from-[#EC4899]/30 to-transparent" />
         </motion.div>
@@ -160,8 +162,8 @@ export function UpcomingConcerts({ topArtists }: UpcomingConcertsProps) {
           {displayConcerts.map((concert, index) => {
             const concertDate = new Date(concert.date);
             const day = concertDate.getDate();
-            const month = concertDate.toLocaleDateString(undefined, { month: 'short' }).toUpperCase();
-            const weekday = concertDate.toLocaleDateString(undefined, { weekday: 'short' }).toUpperCase();
+            const month = concertDate.toLocaleDateString(locale, { month: 'short' }).toUpperCase();
+            const weekday = concertDate.toLocaleDateString(locale, { weekday: 'short' }).toUpperCase();
 
             return (
               <motion.div

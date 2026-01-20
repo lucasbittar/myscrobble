@@ -147,8 +147,14 @@
       "topCharts": "Your Top Charts",
       "topArtists": "Top Artists",
       "topTracks": "Top Tracks",
+      "topTracksDescription": "Your most played tracks this month. These are the songs that defined your listening.",
       "topAlbums": "Top Albums",
-      "peakTime": "Peak Listening Time"
+      "peakTime": "Peak Listening Time",
+      "justPlayed": "Just played",
+      "liveEvents": "Live Events",
+      "exploreMore": "Explore More",
+      "exploreMoreDescription": "Discover all the ways to experience your music story",
+      "explore": "Explore"
     },
     "stats": {
       "minutesListened": "Minutes Listened",
