@@ -47,6 +47,56 @@ export interface SpotifyUser {
   external_urls: { spotify: string };
 }
 
+export interface SpotifyImage {
+  url: string;
+  width?: number;
+  height?: number;
+}
+
+export interface SpotifyShow {
+  id: string;
+  name: string;
+  description: string;
+  publisher: string;
+  images: SpotifyImage[];
+  total_episodes: number;
+  external_urls: { spotify: string };
+}
+
+export interface SpotifyEpisode {
+  id: string;
+  name: string;
+  description: string;
+  release_date: string;
+  duration_ms: number;
+  images: SpotifyImage[];
+  external_urls: { spotify: string };
+  show: {
+    id: string;
+    name: string;
+    publisher: string;
+    images: SpotifyImage[];
+  };
+}
+
+/**
+ * Get the largest image from a Spotify images array.
+ * Spotify sometimes returns images in inconsistent order, so we explicitly find the largest.
+ */
+export function getLargestImage(images: SpotifyImage[] | undefined): string | undefined {
+  if (!images || images.length === 0) return undefined;
+
+  // If images have width/height, sort by size and return largest
+  const imagesWithSize = images.filter(img => img.width && img.height);
+  if (imagesWithSize.length > 0) {
+    const sorted = imagesWithSize.sort((a, b) => (b.width || 0) - (a.width || 0));
+    return sorted[0].url;
+  }
+
+  // Fallback to first image if no size info available
+  return images[0]?.url;
+}
+
 class SpotifyClient {
   private accessToken: string;
 
@@ -147,6 +197,22 @@ class SpotifyClient {
     return this.fetch<{ artists: { items: SpotifyArtist[] } }>(
       `/search?q=${encodedQuery}&type=artist&limit=${limit}`
     );
+  }
+
+  async getSavedShows(limit = 50, offset = 0): Promise<{
+    items: { added_at: string; show: SpotifyShow }[];
+    total: number;
+    next: string | null;
+  }> {
+    return this.fetch(`/me/shows?limit=${limit}&offset=${offset}`);
+  }
+
+  async getSavedEpisodes(limit = 50, offset = 0): Promise<{
+    items: { added_at: string; episode: SpotifyEpisode }[];
+    total: number;
+    next: string | null;
+  }> {
+    return this.fetch(`/me/episodes?limit=${limit}&offset=${offset}`);
   }
 }
 

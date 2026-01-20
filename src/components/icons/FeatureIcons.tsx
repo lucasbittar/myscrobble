@@ -206,6 +206,66 @@ export function ShareIcon() {
   );
 }
 
+// Podcasts Icon - Microphone with pulsing sound waves
+export function PodcastsIcon() {
+  return (
+    <div className="relative w-8 h-8 flex items-center justify-center">
+      {/* Microphone base */}
+      <motion.div
+        className="absolute w-3.5 h-5 rounded-t-full"
+        style={{
+          background: "linear-gradient(180deg, #a855f7 0%, #7c3aed 100%)",
+          boxShadow: "0 0 10px rgba(168,85,247,0.5)",
+          top: "4px",
+        }}
+        animate={{ scale: [1, 1.05, 1] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      />
+      {/* Microphone stand */}
+      <div
+        className="absolute w-[2px] h-2 rounded-full"
+        style={{
+          background: "#a855f7",
+          bottom: "4px",
+        }}
+      />
+      <div
+        className="absolute w-3 h-[2px] rounded-full"
+        style={{
+          background: "#a855f7",
+          bottom: "4px",
+        }}
+      />
+      {/* Sound waves */}
+      {[0, 1, 2].map((i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full border border-transparent"
+          style={{
+            width: 16 + i * 6,
+            height: 16 + i * 6,
+            borderTopColor: "#a855f7",
+            borderRightColor: "#a855f7",
+            transform: "rotate(45deg)",
+            top: 6 - i * 3,
+            right: 2 - i * 3,
+          }}
+          animate={{
+            opacity: [0.3, 0.8, 0.3],
+            scale: [0.95, 1.05, 0.95],
+          }}
+          transition={{
+            duration: 1.2,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: i * 0.2,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 // Wrapped Icon - Spiral time rewind with sparkles
 export function WrappedIcon() {
   return (

@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
-type GlowColor = 'phosphor' | 'cyan' | 'magenta' | 'amber';
+type GlowColor = 'phosphor' | 'cyan' | 'magenta' | 'amber' | 'purple';
 type GlowSize = 'sm' | 'md' | 'lg';
 
 interface GlowTextProps {
@@ -20,6 +20,7 @@ const colorClasses: Record<GlowColor, string> = {
   cyan: 'text-accent',
   magenta: 'text-[var(--crt-magenta)]',
   amber: 'text-[var(--crt-amber)]',
+  purple: 'text-[#a855f7]',
 };
 
 const sizeClasses: Record<GlowSize, string> = {
