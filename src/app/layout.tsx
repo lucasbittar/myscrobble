@@ -5,6 +5,7 @@ import { Providers } from './providers';
 import { ThemeProvider } from '@/lib/theme';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
+import { Analytics } from '@vercel/analytics/next';
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: '--font-ibm-plex-mono',
@@ -72,6 +73,7 @@ export default async function RootLayout({
             <ThemeProvider>{children}</ThemeProvider>
           </Providers>
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );
