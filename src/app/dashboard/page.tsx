@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { GlowText, TerminalCard } from '@/components/crt';
 import { OnTourBadge } from '@/components/ui/OnTourBadge';
 import { UpcomingConcerts } from '@/components/dashboard/UpcomingConcerts';
-import { AIDiscoverIcon, ShareIcon, WrappedIcon, ConcertsIcon, ListeningStatsIcon } from '@/components/icons/FeatureIcons';
+import { AIDiscoverIcon, ShareIcon, WrappedIcon, ConcertsIcon, ListeningStatsIcon, PodcastsIcon } from '@/components/icons/FeatureIcons';
 import { useTourStatusBatch } from '@/hooks/useTourStatus';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useTranslations } from 'next-intl';
@@ -376,7 +376,7 @@ export default function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <FeatureCard
             href="/dashboard/discover"
             title={t('featureCards.aiDiscover.title')}
@@ -400,6 +400,14 @@ export default function DashboardPage() {
             icon={<WrappedIcon />}
             gradient="from-[#ffb000] to-[#ff6600]"
             accentColor="#ffb000"
+          />
+          <FeatureCard
+            href="/dashboard/podcasts"
+            title={t('featureCards.podcasts.title')}
+            description={t('featureCards.podcasts.description')}
+            icon={<PodcastsIcon />}
+            gradient="from-[#a855f7] to-[#7c3aed]"
+            accentColor="#a855f7"
           />
           <FeatureCard
             href="/dashboard/share"

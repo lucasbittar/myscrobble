@@ -102,6 +102,7 @@
       "home": "Home",
       "history": "History",
       "charts": "Charts",
+      "podcasts": "Podcasts",
       "discover": "Discover",
       "wrapped": "Wrapped",
       "share": "Share",
@@ -159,6 +160,10 @@
       "share": {
         "title": "Share",
         "description": "Create beautiful cards for Instagram Stories"
+      },
+      "podcasts": {
+        "title": "Podcasts",
+        "description": "View your saved shows and episodes"
       }
     }
   },
@@ -235,6 +240,9 @@
       "genres": {
         "title": "Your Top Genres"
       },
+      "topPodcasts": {
+        "title": "Your Top Podcasts"
+      },
       "listeningPatterns": {
         "title": "Your Listening Patterns",
         "peakTime": "Peak listening time:",
@@ -258,7 +266,9 @@
       "topArtist": "#1 Artist",
       "top5Artists": "Top 5 Artists",
       "topTrack": "#1 Track",
-      "statsCard": "Stats Card"
+      "statsCard": "Stats Card",
+      "topPodcast": "#1 Podcast",
+      "top5Podcasts": "Top 5 Podcasts"
     },
     "timeRange": "time_range",
     "download": "Download PNG",
@@ -270,6 +280,8 @@
       "top5Artists": "Top 5 Artists ({timeRange})",
       "myNumber1Track": "My #1 Track ({timeRange})",
       "myStats": "My Stats ({timeRange})",
+      "myNumber1Podcast": "My #1 Podcast ({timeRange})",
+      "top5Podcasts": "Top 5 Podcasts ({timeRange})",
       "timeListened": "Time Listened",
       "tracksPlayed": "Tracks Played",
       "artists": "Artists",
@@ -280,6 +292,19 @@
     "title": "Concerts",
     "subtitle": "Upcoming shows from your favorite artists",
     "tracking": "Tracking:"
+  },
+  "podcasts": {
+    "title": "Podcasts",
+    "subtitle": "Your saved shows and episodes",
+    "tabs": {
+      "shows": "Shows",
+      "episodes": "Episodes"
+    },
+    "episodeCount": "{count} episodes",
+    "noShows": "No saved podcasts yet",
+    "noEpisodes": "No saved episodes yet",
+    "byPublisher": "by {publisher}",
+    "duration": "{minutes}m"
   },
   "meta": {
     "title": "MyScrobble.fm | Your Spotify Dashboard",

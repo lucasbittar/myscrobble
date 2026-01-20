@@ -102,6 +102,7 @@
       "home": "Início",
       "history": "Histórico",
       "charts": "Rankings",
+      "podcasts": "Podcasts",
       "discover": "Descobrir",
       "wrapped": "Wrapped",
       "share": "Compartilhar",
@@ -159,6 +160,10 @@
       "share": {
         "title": "Compartilhar",
         "description": "Crie cards bonitos para Instagram Stories"
+      },
+      "podcasts": {
+        "title": "Podcasts",
+        "description": "Veja seus programas e episódios salvos"
       }
     }
   },
@@ -235,6 +240,9 @@
       "genres": {
         "title": "Seus Gêneros Favoritos"
       },
+      "topPodcasts": {
+        "title": "Seus Podcasts Favoritos"
+      },
       "listeningPatterns": {
         "title": "Seus Padrões de Audição",
         "peakTime": "Horário de pico:",
@@ -258,7 +266,9 @@
       "topArtist": "Artista #1",
       "top5Artists": "Top 5 Artistas",
       "topTrack": "Música #1",
-      "statsCard": "Card de Estatísticas"
+      "statsCard": "Card de Estatísticas",
+      "topPodcast": "Podcast #1",
+      "top5Podcasts": "Top 5 Podcasts"
     },
     "timeRange": "período",
     "download": "Baixar PNG",
@@ -270,6 +280,8 @@
       "top5Artists": "Top 5 Artistas ({timeRange})",
       "myNumber1Track": "Minha Música #1 ({timeRange})",
       "myStats": "Minhas Estatísticas ({timeRange})",
+      "myNumber1Podcast": "Meu Podcast #1 ({timeRange})",
+      "top5Podcasts": "Top 5 Podcasts ({timeRange})",
       "timeListened": "Tempo Ouvido",
       "tracksPlayed": "Músicas Tocadas",
       "artists": "Artistas",
@@ -280,6 +292,19 @@
     "title": "Shows",
     "subtitle": "Próximos shows dos seus artistas favoritos",
     "tracking": "Rastreando:"
+  },
+  "podcasts": {
+    "title": "Podcasts",
+    "subtitle": "Seus programas e episódios salvos",
+    "tabs": {
+      "shows": "Programas",
+      "episodes": "Episódios"
+    },
+    "episodeCount": "{count} episódios",
+    "noShows": "Nenhum podcast salvo ainda",
+    "noEpisodes": "Nenhum episódio salvo ainda",
+    "byPublisher": "por {publisher}",
+    "duration": "{minutes}min"
   },
   "meta": {
     "title": "MyScrobble.fm | Seu Painel do Spotify",

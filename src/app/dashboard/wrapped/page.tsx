@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
 import { useTranslations } from 'next-intl';
+import { getLargestImage } from '@/lib/spotify';
 
 type TimeRange = 'short_term' | 'medium_term' | 'long_term';
 
@@ -18,6 +19,11 @@ interface WrappedData {
   topTracks: Array<{
     name: string;
     artist: string;
+    image: string;
+  }>;
+  topPodcasts: Array<{
+    name: string;
+    publisher: string;
     image: string;
   }>;
   topGenres: string[];
@@ -54,20 +60,22 @@ async function fetchWrappedData(timeRange: TimeRange): Promise<WrappedData> {
   if (dateRange.start_date) statsParams.set('start_date', dateRange.start_date);
   if (dateRange.end_date) statsParams.set('end_date', dateRange.end_date);
 
-  const [artistsRes, tracksRes, statsRes] = await Promise.all([
+  const [artistsRes, tracksRes, statsRes, podcastsRes] = await Promise.all([
     fetch(`/api/spotify/top-artists?time_range=${timeRange}&limit=10`),
     fetch(`/api/spotify/top-tracks?time_range=${timeRange}&limit=10`),
     fetch(`/api/stats?${statsParams.toString()}`),
+    fetch('/api/spotify/saved-shows?limit=5'),
   ]);
 
   if (!artistsRes.ok || !tracksRes.ok) {
     throw new Error('Failed to fetch data');
   }
 
-  const [artists, tracks, stats] = await Promise.all([
+  const [artists, tracks, stats, podcasts] = await Promise.all([
     artistsRes.json(),
     tracksRes.json(),
     statsRes.ok ? statsRes.json() : null,
+    podcastsRes.ok ? podcastsRes.json() : { items: [] },
   ]);
 
   const allGenres = artists.items?.flatMap((a: { genres: string[] }) => a.genres) || [];
@@ -90,6 +98,11 @@ async function fetchWrappedData(timeRange: TimeRange): Promise<WrappedData> {
       artist: t.artists[0]?.name || '',
       image: t.album.images[0]?.url || '',
     })),
+    topPodcasts: (podcasts.items || []).map((item: { show: { name: string; publisher: string; images: { url: string; width?: number; height?: number }[] } }) => ({
+      name: item.show.name,
+      publisher: item.show.publisher,
+      image: getLargestImage(item.show.images) || '',
+    })),
     topGenres,
     stats: {
       uniqueArtists: stats?.unique_artists || artists.items?.length || 0,
@@ -102,7 +115,7 @@ async function fetchWrappedData(timeRange: TimeRange): Promise<WrappedData> {
   };
 }
 
-const slides = ['intro', 'topArtist', 'topArtists', 'topTracks', 'genres', 'listeningPatterns', 'stats'];
+const slides = ['intro', 'topArtist', 'topArtists', 'topTracks', 'genres', 'topPodcasts', 'listeningPatterns', 'stats'];
 
 export default function WrappedPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>('medium_term');
@@ -250,6 +263,9 @@ export default function WrappedPage() {
                 )}
                 {slides[currentSlide] === 'genres' && (
                   <SlideGenres genres={data.topGenres} />
+                )}
+                {slides[currentSlide] === 'topPodcasts' && data.topPodcasts.length > 0 && (
+                  <SlidePodcasts podcasts={data.topPodcasts} />
                 )}
                 {slides[currentSlide] === 'listeningPatterns' && (
                   <SlideListeningPatterns
@@ -422,6 +438,40 @@ function SlideGenres({ genres }: { genres: string[] }) {
           >
             {genre}
           </motion.span>
+        ))}
+      </div>
+    </TerminalCard>
+  );
+}
+
+function SlidePodcasts({ podcasts }: { podcasts: Array<{ name: string; publisher: string; image: string }> }) {
+  return (
+    <TerminalCard className="py-8">
+      <h2 className="mb-6 text-center font-terminal text-2xl text-[#a855f7]">
+        Your Top Podcasts
+      </h2>
+      <div className="space-y-3">
+        {podcasts.map((podcast, index) => (
+          <motion.div
+            key={podcast.name}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="flex items-center gap-4"
+          >
+            <span className="w-8 text-right font-terminal text-2xl text-[#a855f7]">
+              {index + 1}
+            </span>
+            {podcast.image && (
+              <div className="h-12 w-12 overflow-hidden rounded-lg border border-[rgba(168,85,247,0.3)]">
+                <Image src={podcast.image} alt={podcast.name} width={48} height={48} quality={100} className="h-full w-full object-cover" />
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-terminal text-[#e0e0e0]">{podcast.name}</p>
+              <p className="truncate font-mono text-xs text-[#888888]">{podcast.publisher}</p>
+            </div>
+          </motion.div>
         ))}
       </div>
     </TerminalCard>

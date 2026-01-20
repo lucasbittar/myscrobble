@@ -57,6 +57,7 @@ const navItemKeys = [
   { href: '/dashboard', key: 'home', icon: '⌂' },
   { href: '/dashboard/history', key: 'history', icon: '◎' },
   { href: '/dashboard/top', key: 'charts', icon: '▲' },
+  { href: '/dashboard/podcasts', key: 'podcasts', icon: '◉' },
   { href: '/dashboard/discover', key: 'discover', icon: '✦' },
   { href: '/dashboard/wrapped', key: 'wrapped', icon: '◆' },
   { href: '/dashboard/share', key: 'share', icon: '◫' },
@@ -79,7 +80,7 @@ export default function DashboardLayout({
   // Create navItems with translated labels
   const navItems = navItemKeys.map(item => ({
     ...item,
-    label: t(item.key as 'home' | 'history' | 'charts' | 'discover' | 'wrapped' | 'share'),
+    label: t(item.key as 'home' | 'history' | 'charts' | 'podcasts' | 'discover' | 'wrapped' | 'share'),
   }));
 
   useEffect(() => {

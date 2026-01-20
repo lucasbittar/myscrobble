@@ -7,13 +7,15 @@ import Image from 'next/image';
 import html2canvas from 'html2canvas';
 import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
 import { useTranslations } from 'next-intl';
+import { getLargestImage } from '@/lib/spotify';
 
-type Template = 'topArtist' | 'top5Artists' | 'topTrack' | 'stats';
+type Template = 'topArtist' | 'top5Artists' | 'topTrack' | 'stats' | 'topPodcast' | 'top5Podcasts';
 type TimeRange = 'short_term' | 'medium_term' | 'long_term';
 
 interface ShareData {
   topArtists: Array<{ name: string; image: string }>;
   topTracks: Array<{ name: string; artist: string; image: string }>;
+  topPodcasts: Array<{ name: string; publisher: string; image: string }>;
   stats: {
     uniqueArtists: number;
     uniqueTracks: number;
@@ -41,18 +43,20 @@ async function fetchShareData(timeRange: TimeRange): Promise<ShareData> {
   const statsParams = new URLSearchParams();
   if (dateRange.start_date) statsParams.set('start_date', dateRange.start_date);
 
-  const [artistsRes, tracksRes, userRes, statsRes] = await Promise.all([
+  const [artistsRes, tracksRes, userRes, statsRes, podcastsRes] = await Promise.all([
     fetch(`/api/spotify/top-artists?time_range=${timeRange}&limit=5`),
     fetch(`/api/spotify/top-tracks?time_range=${timeRange}&limit=5`),
     fetch('/api/spotify/me'),
     fetch(`/api/stats?${statsParams.toString()}`),
+    fetch('/api/spotify/saved-shows?limit=5'),
   ]);
 
-  const [artists, tracks, user, stats] = await Promise.all([
+  const [artists, tracks, user, stats, podcasts] = await Promise.all([
     artistsRes.ok ? artistsRes.json() : { items: [] },
     tracksRes.ok ? tracksRes.json() : { items: [] },
     userRes.ok ? userRes.json() : { display_name: 'User' },
     statsRes.ok ? statsRes.json() : null,
+    podcastsRes.ok ? podcastsRes.json() : { items: [] },
   ]);
 
   return {
@@ -64,6 +68,11 @@ async function fetchShareData(timeRange: TimeRange): Promise<ShareData> {
       name: t.name,
       artist: t.artists[0]?.name || '',
       image: t.album.images[0]?.url || '',
+    })),
+    topPodcasts: (podcasts.items || []).map((item: { show: { name: string; publisher: string; images: { url: string; width?: number; height?: number }[] } }) => ({
+      name: item.show.name,
+      publisher: item.show.publisher,
+      image: getLargestImage(item.show.images) || '',
     })),
     stats: {
       uniqueArtists: stats?.unique_artists || artists.items?.length || 0,
@@ -89,6 +98,8 @@ export default function SharePage() {
     top5Artists: t('templates.top5Artists'),
     topTrack: t('templates.topTrack'),
     stats: t('templates.statsCard'),
+    topPodcast: t('templates.topPodcast'),
+    top5Podcasts: t('templates.top5Podcasts'),
   };
 
   const timeRangeLabels: Record<TimeRange, string> = {
@@ -260,6 +271,8 @@ export default function SharePage() {
                   {template === 'top5Artists' && <Top5ArtistsCard data={data} timeRangeLabel={timeRangeLabels[timeRange]} />}
                   {template === 'topTrack' && <TopTrackCard data={data} timeRangeLabel={timeRangeLabels[timeRange]} />}
                   {template === 'stats' && <StatsCard data={data} timeRangeLabel={timeRangeLabels[timeRange]} t={t} />}
+                  {template === 'topPodcast' && <TopPodcastCard data={data} timeRangeLabel={timeRangeLabels[timeRange]} />}
+                  {template === 'top5Podcasts' && <Top5PodcastsCard data={data} timeRangeLabel={timeRangeLabels[timeRange]} />}
                 </>
               ) : null}
             </div>
@@ -400,6 +413,58 @@ function StatsCard({ data, timeRangeLabel, t }: { data: ShareData; timeRangeLabe
               <p className="mt-1 font-mono text-xs text-[#888888]">{t('cards.tracks')}</p>
             </div>
           </div>
+        </div>
+      </div>
+    </CardWrapper>
+  );
+}
+
+function TopPodcastCard({ data, timeRangeLabel }: { data: ShareData; timeRangeLabel: string }) {
+  const podcast = data.topPodcasts[0];
+  if (!podcast) return null;
+
+  return (
+    <CardWrapper userName={data.userName}>
+      <div className="flex h-full flex-col items-center justify-center text-center">
+        <p className="mb-4 font-terminal text-sm text-[#888888]">
+          My #1 Podcast ({timeRangeLabel})
+        </p>
+        {podcast.image && (
+          <div className="mb-6 h-40 w-40 overflow-hidden rounded-xl border-4 border-[#a855f7] shadow-[0_0_40px_rgba(168,85,247,0.3)]">
+            <Image src={podcast.image} alt={podcast.name} width={160} height={160} quality={100} className="h-full w-full object-cover" />
+          </div>
+        )}
+        <h2 className="font-terminal text-2xl text-[#a855f7]">{podcast.name}</h2>
+        <p className="mt-2 font-mono text-sm text-[#888888]">{podcast.publisher}</p>
+      </div>
+    </CardWrapper>
+  );
+}
+
+function Top5PodcastsCard({ data, timeRangeLabel }: { data: ShareData; timeRangeLabel: string }) {
+  return (
+    <CardWrapper userName={data.userName}>
+      <div className="flex h-full flex-col">
+        <p className="mb-6 text-center font-terminal text-sm text-[#888888]">
+          Top 5 Podcasts ({timeRangeLabel})
+        </p>
+        <div className="flex-1 space-y-3">
+          {data.topPodcasts.slice(0, 5).map((podcast, index) => (
+            <div key={podcast.name} className="flex items-center gap-3">
+              <span className="w-6 text-right font-terminal text-xl text-[#a855f7]">
+                {index + 1}
+              </span>
+              {podcast.image && (
+                <div className="h-10 w-10 overflow-hidden rounded-lg border border-[rgba(168,85,247,0.3)]">
+                  <Image src={podcast.image} alt={podcast.name} width={40} height={40} quality={100} className="h-full w-full object-cover" />
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <span className="truncate font-terminal text-sm text-[#e0e0e0] block">{podcast.name}</span>
+                <span className="truncate font-mono text-xs text-[#888888] block">{podcast.publisher}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </CardWrapper>
