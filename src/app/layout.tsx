@@ -24,6 +24,18 @@ export const metadata: Metadata = {
     'Visualize your Spotify listening history with AI-powered recommendations, concert discovery, and a retro CRT terminal aesthetic.',
   keywords: ['Spotify', 'music', 'dashboard', 'scrobble', 'listening history', 'analytics'],
   authors: [{ name: 'MyScrobble.fm' }],
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/android-chrome-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
   openGraph: {
     title: 'MyScrobble.fm | Your Spotify Dashboard',
     description: 'Visualize your Spotify listening history with AI-powered recommendations.',

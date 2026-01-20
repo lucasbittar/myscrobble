@@ -8,6 +8,12 @@ A modern Spotify dashboard that brings your listening data to life with AI-power
 
 MyScrobble transforms your Spotify listening data into meaningful insights. Connect your Spotify account and discover patterns in your music taste, get AI-powered recommendations, find concerts near you, and create shareable cards of your top artists and tracks.
 
+## Screenshots
+
+![MyScrobble Dashboard](screenshot-1.jpg)
+
+![MyScrobble Features](screenshot-2.jpg)
+
 ## Features
 
 ### Now Playing & Recent Activity
@@ -65,12 +71,6 @@ npm run dev
 ```
 
 Open [http://127.0.0.1:3000](http://127.0.0.1:3000) and connect your Spotify account.
-
-## Screenshots
-
-![MyScrobble Dashboard](screenshot-1.jpg)
-
-![MyScrobble Features](screenshot-2.jpg)
 
 ## Built With
 
