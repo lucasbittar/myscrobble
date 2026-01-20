@@ -358,6 +358,8 @@
     "viewAll": "View All Concerts",
     "locationPermission": "Enable location for nearby concerts",
     "searching": "Searching for concerts...",
-    "fromTopArtists": "Based on your top artists"
+    "fromTopArtists": "Based on your top artists",
+    "locationHint": "Enable location to see concerts near you and get distance information",
+    "enableLocation": "Enable Location"
   }
 }

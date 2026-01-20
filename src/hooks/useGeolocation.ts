@@ -9,6 +9,7 @@ interface GeolocationState {
   loading: boolean;
   error: string | null;
   permissionDenied: boolean;
+  usingActualLocation: boolean;
   requestPermission: () => void;
 }
 
@@ -25,6 +26,7 @@ export function useGeolocation(): GeolocationState {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
+  const [usingActualLocation, setUsingActualLocation] = useState(false);
 
   const setFallbackLocation = useCallback(() => {
     const locale = getLocaleFromCookie();
@@ -51,6 +53,7 @@ export function useGeolocation(): GeolocationState {
         });
         setLoading(false);
         setPermissionDenied(false);
+        setUsingActualLocation(true);
       },
       (err) => {
         console.error("Geolocation error:", err.message);
@@ -100,6 +103,7 @@ export function useGeolocation(): GeolocationState {
     loading,
     error,
     permissionDenied,
+    usingActualLocation,
     requestPermission,
   };
 }

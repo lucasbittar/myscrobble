@@ -101,22 +101,10 @@ function FlowingShape({
             )}
           </linearGradient>
         </defs>
-        <motion.path
+        <path
           d="M40,-62.6C52.2,-54.5,62.9,-43.9,69.8,-31.1C76.7,-18.3,79.8,-3.3,77.5,10.8C75.2,24.9,67.4,38.1,56.7,48.1C46,58.1,32.4,64.9,17.8,69.1C3.2,73.3,-12.4,74.9,-26.6,70.9C-40.8,66.9,-53.6,57.3,-63.1,45C-72.6,32.7,-78.8,17.7,-79.5,2.1C-80.2,-13.5,-75.4,-29.7,-66.1,-42.3C-56.8,-54.9,-43,-64,-28.8,-70.4C-14.6,-76.8,0,-80.5,13.8,-77.4C27.6,-74.3,27.8,-70.7,40,-62.6Z"
           transform="translate(100 100)"
           fill={`url(#grad-layout-${gradient})`}
-          animate={{
-            d: [
-              "M40,-62.6C52.2,-54.5,62.9,-43.9,69.8,-31.1C76.7,-18.3,79.8,-3.3,77.5,10.8C75.2,24.9,67.4,38.1,56.7,48.1C46,58.1,32.4,64.9,17.8,69.1C3.2,73.3,-12.4,74.9,-26.6,70.9C-40.8,66.9,-53.6,57.3,-63.1,45C-72.6,32.7,-78.8,17.7,-79.5,2.1C-80.2,-13.5,-75.4,-29.7,-66.1,-42.3C-56.8,-54.9,-43,-64,-28.8,-70.4C-14.6,-76.8,0,-80.5,13.8,-77.4C27.6,-74.3,27.8,-70.7,40,-62.6Z",
-              "M44.7,-71.3C57.6,-63.8,67.3,-50.9,73.5,-36.7C79.7,-22.5,82.4,-7,80.1,7.6C77.8,22.2,70.5,35.9,60.3,46.8C50.1,57.7,37,65.8,22.6,70.8C8.2,75.8,-7.5,77.7,-21.9,74.1C-36.3,70.5,-49.4,61.4,-59.3,49.5C-69.2,37.6,-75.9,22.9,-77.8,7.3C-79.7,-8.3,-76.8,-24.8,-68.8,-38.1C-60.8,-51.4,-47.7,-61.5,-33.8,-68.3C-19.9,-75.1,-5.2,-78.6,8.9,-76.6C23,-74.6,31.8,-78.8,44.7,-71.3Z",
-              "M40,-62.6C52.2,-54.5,62.9,-43.9,69.8,-31.1C76.7,-18.3,79.8,-3.3,77.5,10.8C75.2,24.9,67.4,38.1,56.7,48.1C46,58.1,32.4,64.9,17.8,69.1C3.2,73.3,-12.4,74.9,-26.6,70.9C-40.8,66.9,-53.6,57.3,-63.1,45C-72.6,32.7,-78.8,17.7,-79.5,2.1C-80.2,-13.5,-75.4,-29.7,-66.1,-42.3C-56.8,-54.9,-43,-64,-28.8,-70.4C-14.6,-76.8,0,-80.5,13.8,-77.4C27.6,-74.3,27.8,-70.7,40,-62.6Z",
-            ],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
         />
       </motion.svg>
     </motion.div>
@@ -192,7 +180,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden flex flex-col">
       {/* Fixed organic shapes in background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <FlowingShape
@@ -369,12 +357,12 @@ export default function DashboardLayout({
       </AnimatePresence>
 
       {/* Main content - No container constraints for full-bleed sections */}
-      <main className="pt-16">
+      <main className="pt-16 flex-1">
         {children}
       </main>
 
-      {/* Minimal footer - White translucent */}
-      <footer className="py-12 px-6 md:px-12 bg-white/60 dark:bg-white/5 backdrop-blur-xl border-t border-border/50">
+      {/* Minimal footer - White translucent, sticky to bottom */}
+      <footer className="mt-auto py-12 px-6 md:px-12 bg-white/60 dark:bg-white/5 backdrop-blur-xl border-t border-border/50">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-baseline gap-1">
             <span className="text-lg font-bold text-foreground">MyScrobble</span>

@@ -124,8 +124,8 @@
     },
     "nowPlaying": {
       "title": "Tocando Agora",
-      "live": "Ao Vivo",
-      "liveShort": "Ao Vivo",
+      "live": "Tocando",
+      "liveShort": "Tocando",
       "notPlaying": "Nada Tocando",
       "hint": "Toque algo no Spotify para ver aqui"
     },
@@ -358,6 +358,8 @@
     "viewAll": "Ver Todos os Shows",
     "locationPermission": "Ative a localização para shows próximos",
     "searching": "Buscando shows...",
-    "fromTopArtists": "Baseado nos seus artistas favoritos"
+    "fromTopArtists": "Baseado nos seus artistas favoritos",
+    "locationHint": "Ative sua localização para ver shows perto de você e obter informações de distância",
+    "enableLocation": "Ativar Localização"
   }
 }

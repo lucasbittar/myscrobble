@@ -23,7 +23,7 @@ export function UpcomingConcerts({ topArtists }: UpcomingConcertsProps) {
   const tCommon = useTranslations('common');
   const tDashboard = useTranslations('dashboard');
   const locale = useLocale();
-  const { location, loading: locationLoading } = useGeolocation();
+  const { location, loading: locationLoading, usingActualLocation, requestPermission } = useGeolocation();
 
   const artistNames = topArtists.slice(0, 5).map((a) => a.name);
 
@@ -156,6 +156,35 @@ export function UpcomingConcerts({ topArtists }: UpcomingConcertsProps) {
           </motion.div>
         </div>
       </div>
+
+      {/* Location permission prompt */}
+      {!usingActualLocation && !locationLoading && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 p-4 rounded-xl bg-gradient-to-r from-[#EC4899]/10 via-[#8B5CF6]/10 to-[#EC4899]/10 border border-[#EC4899]/20"
+        >
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#EC4899]/20 flex items-center justify-center">
+                <svg className="w-5 h-5 text-[#EC4899]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <p className="text-sm text-foreground/80">
+                {t('locationHint')}
+              </p>
+            </div>
+            <button
+              onClick={requestPermission}
+              className="flex-shrink-0 px-4 py-2 rounded-full bg-[#EC4899] text-white text-sm font-medium hover:bg-[#DB2777] transition-colors cursor-pointer"
+            >
+              {t('enableLocation')}
+            </button>
+          </div>
+        </motion.div>
+      )}
 
       {displayConcerts.length > 0 ? (
         <div className="space-y-4">

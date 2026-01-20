@@ -362,7 +362,7 @@ export default function DashboardPage() {
       </section>
 
       {/* Stats Section - Large numbers */}
-      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-t border-border/30">
+      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-border/30">
         <div className="max-w-7xl mx-auto">
           <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-4">
             {t('stats.dataFrom')}
@@ -444,7 +444,7 @@ export default function DashboardPage() {
       </RevealSection>
 
       {/* Top Tracks Section - List style */}
-      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-t border-border/30">
+      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-border/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <div>
@@ -500,7 +500,7 @@ export default function DashboardPage() {
       )}
 
       {/* Recent Activity - Bento Grid */}
-      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-t border-border/30">
+      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-border/30">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-12">
             <div>
@@ -553,7 +553,7 @@ export default function DashboardPage() {
       </RevealSection>
 
       {/* Quick Links - Feature cards */}
-      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-t border-border/30">
+      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-border/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4">
@@ -774,7 +774,7 @@ function RecentTrackBento({
   variant?: 'hero' | 'tall' | 'normal';
   formatTimeAgo: (date: string) => string;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLAnchorElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.3 });
   const timeAgo = formatTimeAgo(track.playedAt);
 
@@ -785,8 +785,11 @@ function RecentTrackBento({
   };
 
   return (
-    <motion.div
+    <motion.a
       ref={ref}
+      href={`https://open.spotify.com/track/${track.id}`}
+      target="_blank"
+      rel="noopener noreferrer"
       initial={{ opacity: 0, scale: 0.9 }}
       animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.5, delay: index * 0.05 }}
@@ -871,7 +874,7 @@ function RecentTrackBento({
       <div className="absolute top-0 left-0 w-16 h-16 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
         <div className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 border-[#1DB954]/50 rounded-tl-lg" />
       </div>
-    </motion.div>
+    </motion.a>
   );
 }
 
@@ -957,32 +960,36 @@ function FeatureIcon({ type, color }: { type: 'ai' | 'wrapped' | 'share'; color:
           transition={{ duration: 1.5, repeat: Infinity }}
         />
         {/* Orbiting dots */}
-        {[0, 90, 180, 270].map((angle, i) => (
-          <motion.circle
-            key={angle}
-            cx="16"
-            cy="16"
-            r="1.5"
-            fill={color}
-            animate={{
-              cx: [
-                16 + 10 * Math.cos((angle * Math.PI) / 180),
-                16 + 10 * Math.cos(((angle + 90) * Math.PI) / 180),
-                16 + 10 * Math.cos(((angle + 180) * Math.PI) / 180),
-                16 + 10 * Math.cos(((angle + 270) * Math.PI) / 180),
-                16 + 10 * Math.cos((angle * Math.PI) / 180),
-              ],
-              cy: [
-                16 + 10 * Math.sin((angle * Math.PI) / 180),
-                16 + 10 * Math.sin(((angle + 90) * Math.PI) / 180),
-                16 + 10 * Math.sin(((angle + 180) * Math.PI) / 180),
-                16 + 10 * Math.sin(((angle + 270) * Math.PI) / 180),
-                16 + 10 * Math.sin((angle * Math.PI) / 180),
-              ],
-            }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'linear', delay: i * 0.25 }}
-          />
-        ))}
+        {[0, 90, 180, 270].map((angle, i) => {
+          const startCx = 16 + 10 * Math.cos((angle * Math.PI) / 180);
+          const startCy = 16 + 10 * Math.sin((angle * Math.PI) / 180);
+          return (
+            <motion.circle
+              key={angle}
+              cx={startCx}
+              cy={startCy}
+              r="1.5"
+              fill={color}
+              animate={{
+                cx: [
+                  startCx,
+                  16 + 10 * Math.cos(((angle + 90) * Math.PI) / 180),
+                  16 + 10 * Math.cos(((angle + 180) * Math.PI) / 180),
+                  16 + 10 * Math.cos(((angle + 270) * Math.PI) / 180),
+                  startCx,
+                ],
+                cy: [
+                  startCy,
+                  16 + 10 * Math.sin(((angle + 90) * Math.PI) / 180),
+                  16 + 10 * Math.sin(((angle + 180) * Math.PI) / 180),
+                  16 + 10 * Math.sin(((angle + 270) * Math.PI) / 180),
+                  startCy,
+                ],
+              }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'linear', delay: i * 0.25 }}
+            />
+          );
+        })}
       </svg>
     );
   }
