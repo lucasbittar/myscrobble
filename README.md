@@ -68,7 +68,9 @@ Open [http://127.0.0.1:3000](http://127.0.0.1:3000) and connect your Spotify acc
 
 ## Screenshots
 
-*Coming soon*
+![MyScrobble Dashboard](screenshot-1.jpg)
+
+![MyScrobble Features](screenshot-2.jpg)
 
 ## Built With
 
