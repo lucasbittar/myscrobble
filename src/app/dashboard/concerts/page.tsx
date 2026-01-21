@@ -24,7 +24,7 @@ const VenueMapInteractive = dynamic(
         <div className="text-center">
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
             className="w-8 h-8 rounded-full border-2 border-[#EC4899] border-t-transparent mx-auto mb-3"
           />
           <p className="text-sm text-muted-foreground">Loading map...</p>
@@ -261,8 +261,8 @@ export default function ConcertsPage() {
               >
                 <motion.div
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-                  className="w-12 h-12 rounded-full border-3 border-[#EC4899] border-t-transparent mb-4"
+                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                  className="w-12 h-12 rounded-full border-2 border-[#EC4899] border-t-transparent mb-4"
                 />
                 <p className="text-lg font-medium text-[#EC4899]">
                   {tTour('searching')}
@@ -393,7 +393,7 @@ export default function ConcertsPage() {
                           <div className="text-center">
                             <motion.div
                               animate={{ rotate: 360 }}
-                              transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+                              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                               className="w-8 h-8 rounded-full border-2 border-[#EC4899] border-t-transparent mx-auto mb-3"
                             />
                             <p className="text-sm text-muted-foreground">{t('findingVenues')}</p>

@@ -283,8 +283,8 @@ export default function HistoryPage() {
           <div className="flex flex-col items-center justify-center py-20">
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-              className="w-12 h-12 rounded-full border-3 border-[#1DB954] border-t-transparent mb-4"
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              className="w-12 h-12 rounded-full border-2 border-[#1DB954] border-t-transparent mb-4"
             />
             <p className="text-muted-foreground">{t('loading')}</p>
           </div>
