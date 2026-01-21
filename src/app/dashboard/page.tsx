@@ -582,11 +582,11 @@ export default function DashboardPage() {
               exploreLabel={t('sections.explore')}
             />
             <FeatureLink
-              href="/dashboard/share"
-              title={t('featureCards.share.title')}
-              description={t('featureCards.share.description')}
-              color="#3B82F6"
-              icon="share"
+              href="/dashboard/concerts"
+              title={t('featureCards.concerts.title')}
+              description={t('featureCards.concerts.description')}
+              color="#EC4899"
+              icon="concerts"
               exploreLabel={t('sections.explore')}
             />
           </div>
@@ -891,7 +891,7 @@ function FeatureLink({
   title: string;
   description: string;
   color: string;
-  icon: 'ai' | 'wrapped' | 'share';
+  icon: 'ai' | 'wrapped' | 'concerts';
   exploreLabel: string;
 }) {
   return (
@@ -927,7 +927,7 @@ function FeatureLink({
 }
 
 // Flashy animated icons for features
-function FeatureIcon({ type, color }: { type: 'ai' | 'wrapped' | 'share'; color: string }) {
+function FeatureIcon({ type, color }: { type: 'ai' | 'wrapped' | 'concerts'; color: string }) {
   if (type === 'ai') {
     return (
       <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
@@ -1023,51 +1023,95 @@ function FeatureIcon({ type, color }: { type: 'ai' | 'wrapped' | 'share'; color:
     );
   }
 
-  if (type === 'share') {
+  if (type === 'concerts') {
     return (
       <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-        {/* Phone outline */}
-        <motion.rect
-          x="8"
-          y="4"
-          width="16"
-          height="24"
-          rx="3"
-          stroke={color}
-          strokeWidth="2"
-          fill="none"
-          animate={{ y: [4, 3, 4] }}
+        {/* Stage base */}
+        <motion.path
+          d="M4 24h24v4H4z"
+          fill={color}
+          fillOpacity={0.3}
+        />
+        {/* Stage platform */}
+        <motion.path
+          d="M6 20h20v4H6z"
+          fill={color}
+          fillOpacity={0.5}
+        />
+        {/* Center spotlight beam */}
+        <motion.path
+          d="M16 4l-6 16h12L16 4z"
+          fill={color}
+          fillOpacity={0.15}
+          animate={{ opacity: [0.15, 0.3, 0.15] }}
           transition={{ duration: 1.5, repeat: Infinity }}
         />
-        {/* Screen content - Instagram story simulation */}
-        <motion.rect
-          x="10"
-          y="8"
-          width="12"
-          height="16"
-          rx="1"
+        {/* Left spotlight beam */}
+        <motion.path
+          d="M8 6l-4 14h8L8 6z"
           fill={color}
-          fillOpacity={0.2}
+          fillOpacity={0.1}
+          animate={{ opacity: [0.1, 0.25, 0.1] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
         />
-        {/* Pulsing share indicator */}
+        {/* Right spotlight beam */}
+        <motion.path
+          d="M24 6l4 14h-8L24 6z"
+          fill={color}
+          fillOpacity={0.1}
+          animate={{ opacity: [0.1, 0.25, 0.1] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 0.6 }}
+        />
+        {/* Spotlight sources */}
         <motion.circle
           cx="16"
-          cy="16"
-          r="3"
+          cy="4"
+          r="2"
           fill={color}
-          animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
-          transition={{ duration: 1, repeat: Infinity }}
+          animate={{ scale: [1, 1.3, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
         />
-        {/* Share arrows */}
-        <motion.path
-          d="M16 13v-5M13 11l3-3 3 3"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          animate={{ y: [0, -2, 0] }}
-          transition={{ duration: 0.8, repeat: Infinity }}
+        <motion.circle
+          cx="8"
+          cy="6"
+          r="1.5"
+          fill={color}
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
         />
+        <motion.circle
+          cx="24"
+          cy="6"
+          r="1.5"
+          fill={color}
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 0.6 }}
+        />
+        {/* Sound waves emanating from stage */}
+        {[0, 1, 2].map((i) => (
+          <motion.path
+            key={i}
+            d={`M${14 - i * 2} ${16 - i * 2} Q16 ${14 - i * 3} ${18 + i * 2} ${16 - i * 2}`}
+            stroke={color}
+            strokeWidth="1"
+            fill="none"
+            strokeLinecap="round"
+            initial={{ opacity: 0, pathLength: 0 }}
+            animate={{ opacity: [0, 0.8, 0], pathLength: [0, 1, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
+          />
+        ))}
+        {/* Location pin */}
+        <motion.g
+          animate={{ y: [0, -1, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <motion.path
+            d="M16 10c-1.1 0-2 .9-2 2 0 1.1 2 4 2 4s2-2.9 2-4c0-1.1-.9-2-2-2z"
+            fill={color}
+          />
+          <circle cx="16" cy="12" r="0.8" fill="white" />
+        </motion.g>
       </svg>
     );
   }

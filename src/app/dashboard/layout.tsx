@@ -22,13 +22,12 @@ interface Session {
 }
 
 const navItemKeys = [
-  { href: '/dashboard', key: 'home' },
   { href: '/dashboard/history', key: 'history' },
   { href: '/dashboard/top', key: 'charts' },
+  { href: '/dashboard/concerts', key: 'concerts' },
   { href: '/dashboard/podcasts', key: 'podcasts' },
   { href: '/dashboard/discover', key: 'discover' },
   { href: '/dashboard/wrapped', key: 'wrapped' },
-  { href: '/dashboard/share', key: 'share' },
 ];
 
 // Flowing organic shape for background
@@ -135,7 +134,7 @@ export default function DashboardLayout({
 
   const navItems = navItemKeys.map(item => ({
     ...item,
-    label: t(item.key as 'home' | 'history' | 'charts' | 'podcasts' | 'discover' | 'wrapped' | 'share'),
+    label: t(item.key as 'history' | 'charts' | 'concerts' | 'podcasts' | 'discover' | 'wrapped'),
   }));
 
   useEffect(() => {
