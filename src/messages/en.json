@@ -3,7 +3,7 @@
     "loading": "Loading...",
     "loadingSystem": "LOADING SYSTEM...",
     "error": "Error",
-    "viewAll": "View all →",
+    "viewAll": "View all",
     "tryAgain": "Try Again",
     "goHome": "Go Home",
     "prev": "← PREV",
@@ -336,8 +336,21 @@
   },
   "podcasts": {
     "title": "Podcasts",
-    "subtitle": "Your saved shows and episodes",
+    "subtitle": "Your Audio Library",
+    "loading": "Loading podcasts...",
     "tabs": {
+      "shows": "Shows",
+      "episodes": "Episodes"
+    },
+    "hero": {
+      "featured": "Featured Show",
+      "openInSpotify": "Open in Spotify"
+    },
+    "sections": {
+      "yourShows": "Your Shows",
+      "savedEpisodes": "Saved Episodes"
+    },
+    "stats": {
       "shows": "Shows",
       "episodes": "Episodes"
     },

@@ -7,3 +7,4 @@ export { HighlightText, type HighlightTextProps } from './HighlightText';
 export { ModernCard, type ModernCardProps } from './ModernCard';
 export { ModernButton, type ModernButtonProps } from './ModernButton';
 export { ModernBadge, type ModernBadgeProps } from './ModernBadge';
+export { PageHeader, type PageHeaderProps } from './PageHeader';
