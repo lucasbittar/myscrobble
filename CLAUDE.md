@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-MyScrobble is a modern Spotify dashboard with AI-powered recommendations, concert discovery, and a retro CRT terminal aesthetic. Built with Next.js 14, it provides visualization of listening history, top artists/tracks, and shareable social media cards.
+MyScrobble is a modern Spotify dashboard with AI-powered recommendations, concert discovery, and a clean glass-morphism design. Built with Next.js 14, it provides visualization of listening history, top artists/tracks, and shareable social media cards.
 
 ## Build Commands
 
@@ -57,11 +57,11 @@ npm run lint
 - `/dashboard/wrapped` - Spotify Wrapped experience
 - `/dashboard/share` - Social media card generator
 
-**CRT Theme**: Custom retro terminal aesthetic with:
-- Green phosphor (#00ff41) as primary
-- Cyan (#00f5ff), Magenta (#ff00ff), Amber (#ffb000) accents
-- Scanline effects, glow text, screen flicker
-- VT323 and IBM Plex Mono fonts
+**Design Theme**: Modern glass-morphism with clean aesthetics:
+- Glass/blur backgrounds: `bg-white/60 dark:bg-white/10 backdrop-blur-xl`
+- Soft shadows and rounded corners (`rounded-2xl`, `rounded-full`)
+- Section-specific accent colors (see Color Palette below)
+- Smooth Framer Motion animations
 
 **External APIs**:
 - Spotify Web API for user data, playback, top artists/tracks
@@ -104,3 +104,132 @@ Dashboard components in `src/components/dashboard/`:
 
 UI components in `src/components/ui/`:
 - `OnTourBadge` - Animated badge for artists on tour
+
+Modern components in `src/components/modern/`:
+- `PageHeader` - Consistent page header with subtitle, title, and optional right content
+- `ModernButton` - Button with variants (primary, secondary, ghost) and sizes
+
+Concert components in `src/components/concerts/`:
+- `ConcertHero` - Hero card for the next upcoming concert
+- `ConcertTimeline` - Timeline view for upcoming concerts
+- `VenueMapInteractive` - Leaflet-based interactive map for venue discovery
+
+## Design System
+
+### Page Headers
+
+Always use the `PageHeader` component for page titles:
+
+```tsx
+import { PageHeader } from '@/components/modern';
+
+<PageHeader
+  subtitle={t('subtitle')}  // Small uppercase label
+  title={t('title')}        // Large bold title
+  rightContent={...}        // Optional right-aligned content
+/>
+```
+
+### Loading Indicators
+
+All loading spinners must follow these specs for consistency:
+
+| Property | Value |
+|----------|-------|
+| Border width | `border-2` |
+| Duration | `1s` (1 rotation per second) |
+| Easing | `ease: 'linear'` |
+| Shape | `rounded-full` with `border-t-transparent` |
+
+**Size tiers:**
+- Small (buttons): `w-4 h-4`
+- Medium (sections): `w-8 h-8`
+- Large (page-level): `w-12 h-12`
+
+**Example:**
+```tsx
+<motion.div
+  animate={{ rotate: 360 }}
+  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+  className="w-8 h-8 rounded-full border-2 border-[#1DB954] border-t-transparent"
+/>
+```
+
+### Color Palette by Section
+
+Each section uses a specific accent color:
+
+| Section | Color | Hex |
+|---------|-------|-----|
+| Dashboard/Layout | Spotify Green | `#1DB954` |
+| History | Spotify Green | `#1DB954` |
+| Top Charts | Purple | `#8B5CF6` |
+| Discover | Purple | `#8B5CF6` |
+| Concerts | Pink/Magenta | `#EC4899` |
+| Podcasts | Teal | `#14B8A6` |
+| Wrapped | Amber | `#F59E0B` |
+| Buttons (on colored bg) | White | `currentColor` |
+
+### Glass Effects
+
+Standard glass card pattern:
+```tsx
+className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20"
+```
+
+## Internationalization (i18n)
+
+**Always use translations** - never hardcode user-facing strings.
+
+### Usage
+
+```tsx
+import { useTranslations } from 'next-intl';
+
+export default function MyComponent() {
+  const t = useTranslations('namespace');
+  const tCommon = useTranslations('common');
+
+  return <h1>{t('title')}</h1>;
+}
+```
+
+### Translation Files
+
+- Location: `messages/en.json`, `messages/pt-BR.json`
+- Always add keys to both language files
+- Use nested namespaces matching page/component names
+
+### Checklist for New Features
+
+1. Check if translation keys already exist in the relevant namespace
+2. Add new keys to both `en.json` and `pt-BR.json`
+3. Use `useTranslations` hook with appropriate namespace
+4. For shared text (buttons, labels), use `common` namespace
+
+## Coding Standards
+
+### Animations
+
+Use Framer Motion for all animations:
+```tsx
+import { motion } from 'framer-motion';
+
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6 }}
+>
+```
+
+### Component Patterns
+
+- Use `'use client'` directive for components with hooks/interactivity
+- Prefer composition over props for complex layouts
+- Extract reusable patterns into `src/components/modern/`
+
+### Data Fetching
+
+- Use TanStack Query (`@tanstack/react-query`) for all API calls
+- Implement proper loading and error states
+- Use `staleTime` for caching where appropriate
