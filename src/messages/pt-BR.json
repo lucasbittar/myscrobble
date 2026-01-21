@@ -397,5 +397,13 @@
     "fromTopArtists": "Baseado nos seus artistas favoritos",
     "locationHint": "Ative sua localização para ver shows perto de você e obter informações de distância",
     "enableLocation": "Ativar Localização"
+  },
+  "mood": {
+    "title": "Sua Aura Sonora",
+    "subtitle": "Baseado nas últimas 4 semanas",
+    "refresh": "Nova Leitura",
+    "loading": "Lendo sua alma musical...",
+    "error": "Não foi possível ler as vibes",
+    "basedOnVibe": "Baseado na sua vibe, você pode curtir:"
   }
 }

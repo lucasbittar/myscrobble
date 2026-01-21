@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { OnTourBadge } from '@/components/ui/OnTourBadge';
 import { UpcomingConcerts } from '@/components/dashboard/UpcomingConcerts';
+import { MoodAnalysis } from '@/components/dashboard/MoodAnalysis';
 import { useTourStatusBatch } from '@/hooks/useTourStatus';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useTranslations } from 'next-intl';
@@ -397,6 +398,9 @@ export default function DashboardPage() {
           </div>
         </div>
       </RevealSection>
+
+      {/* Sonic Aura - Mood Analysis */}
+      <MoodAnalysis />
 
       {/* Top Artists Section - Editorial grid */}
       <RevealSection className="py-24 md:py-32 px-6 md:px-12">
