@@ -244,13 +244,16 @@
   },
   "discover": {
     "title": "IA Discover",
-    "subtitle": "Recomendações personalizadas com Gemini AI",
+    "subtitle": "Seu Laboratório Musical",
     "regenerate": "Regenerar",
     "analyzing": "Analisando seus padrões de audição...",
     "failed": "Falha ao gerar recomendações",
     "apiHint": "Certifique-se de que sua chave da API Gemini está configurada corretamente",
-    "basedOn": "Baseado nos seus artistas favoritos:",
-    "startWith": "Comece com:"
+    "basedOn": "Baseado nos seus favoritos",
+    "startWith": "Comece com:",
+    "featured": "Escolha Especial",
+    "moreDiscoveries": "Mais Descobertas",
+    "whyYouWillLove": "Por que você vai amar"
   },
   "wrapped": {
     "title": "Seu Wrapped",
