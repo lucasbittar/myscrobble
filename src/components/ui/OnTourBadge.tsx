@@ -91,9 +91,9 @@ export function OnTourBadge({
           />
           <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#EC4899]" />
         </span>
-        {/* Mini icon */}
+        {/* Mini text */}
         <span className="text-[8px] font-bold leading-none text-[#EC4899] tracking-tight uppercase">
-          LIVE
+          {t('onTour')}
         </span>
       </motion.div>
     );
