@@ -258,49 +258,92 @@
   "wrapped": {
     "title": "Your Wrapped",
     "subtitle": "Your personalized listening story",
-    "loading": "LOADING YOUR WRAPPED...",
+    "loading": "Loading your Wrapped...",
     "failed": "Failed to load data",
-    "journeyAwaits": "Your listening journey awaits",
-    "startWrapped": "START WRAPPED",
+    "tryAgain": "Try Again",
     "timeRanges": {
       "short": "Last 4 Weeks",
       "medium": "Last 6 Months",
       "long": "All Time"
     },
+    "landing": {
+      "ready": "Ready to feel something?",
+      "begin": "Begin Your Journey"
+    },
     "slides": {
       "intro": {
-        "title": "Your {timeRange}",
-        "subtitle": "Let's see what you've been listening to"
+        "subtitle": "Let's take a trip through your sound...",
+        "yourJourney": "Your Musical Journey"
       },
       "topArtist": {
-        "title": "Your #1 Artist"
+        "badge": "#1 Artist",
+        "highs": "They were there for your highs...",
+        "lows": "...and your lows.",
+        "rideOrDie": "Your ride or die.",
+        "streams": "Streams"
       },
       "topArtists": {
-        "title": "Your Top Artists"
+        "title": "Your Inner Circle",
+        "subtitle": "These artists defined your sound"
+      },
+      "topTrack": {
+        "badge": "#1 Track",
+        "hitDifferent": "This one hit different."
       },
       "topTracks": {
-        "title": "Your Top Tracks"
+        "title": "Your Soundtrack",
+        "subtitle": "The tracks that moved you"
+      },
+      "sonicAura": {
+        "title": "Your Sonic Aura",
+        "subtitle": "Based on your listening soul",
+        "analyzing": "Reading your musical soul...",
+        "therapist": "You're basically a {genre} therapist"
       },
       "genres": {
-        "title": "Your Top Genres"
+        "title": "Your Vibe",
+        "popVeins": "Pop runs through your veins",
+        "metalHead": "You're basically a metalhead",
+        "indieKid": "Indie kid at heart",
+        "hiphopSoul": "Hip-hop runs in your soul",
+        "electronicHeart": "Your heart beats electronic",
+        "jazzConnoisseur": "A true jazz connoisseur",
+        "classicalSoul": "Old soul, timeless taste",
+        "rnbVibes": "R&B vibes only",
+        "eclecticTaste": "Your taste? Beautifully eclectic"
       },
-      "topPodcasts": {
-        "title": "Your Top Podcasts"
+      "timeListened": {
+        "youSpent": "You spent...",
+        "thatsEnough": "That's enough to...",
+        "flightsTo": "fly to {destination} {count} times",
+        "watchMovies": "watch {count} movies",
+        "listenAudiobooks": "listen to {count} audiobooks",
+        "daysOfVibes": "{count} days of pure vibes",
+        "hoursOfMusic": "{count} hours of pure music",
+        "timeListening": "Time Listening"
       },
-      "listeningPatterns": {
-        "title": "Your Listening Patterns",
-        "peakTime": "Peak listening time:",
-        "byDay": "By Day of Week"
+      "patterns": {
+        "title": "When You Listen",
+        "nightOwl": "Night owl energy 🦉",
+        "earlyBird": "Early bird gets the beats 🐦",
+        "afternoonVibes": "Afternoon vibes only 🌅",
+        "balancedListener": "Perfectly balanced 🎵",
+        "yourDay": "{day} is YOUR day",
+        "noData": "Sync more history to see patterns"
       },
-      "stats": {
-        "title": "Your Stats",
+      "summary": {
+        "title": "That's a Wrap!",
         "timeListened": "Time Listened",
         "tracksPlayed": "Tracks Played",
-        "uniqueArtists": "Unique Artists",
-        "uniqueTracks": "Unique Tracks"
+        "uniqueArtists": "Artists",
+        "uniqueTracks": "Tracks",
+        "podcasts": "Podcasts",
+        "signOff": "Until next time, {name}. Keep the music playing.",
+        "signOffGeneric": "Until next time. Keep the music playing.",
+        "share": "Share Your Wrapped",
+        "watchAgain": "Watch Again"
       }
-    },
-    "syncMore": "Sync more history to see patterns"
+    }
   },
   "share": {
     "title": "Share",

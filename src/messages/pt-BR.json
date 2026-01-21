@@ -258,49 +258,92 @@
   "wrapped": {
     "title": "Seu Wrapped",
     "subtitle": "Sua história musical personalizada",
-    "loading": "CARREGANDO SEU WRAPPED...",
+    "loading": "Carregando seu Wrapped...",
     "failed": "Falha ao carregar dados",
-    "journeyAwaits": "Sua jornada musical aguarda",
-    "startWrapped": "INICIAR WRAPPED",
+    "tryAgain": "Tentar Novamente",
     "timeRanges": {
       "short": "Últimas 4 Semanas",
       "medium": "Últimos 6 Meses",
       "long": "Todos os Tempos"
     },
+    "landing": {
+      "ready": "Pronto para sentir algo?",
+      "begin": "Começar Sua Jornada"
+    },
     "slides": {
       "intro": {
-        "title": "Seu {timeRange}",
-        "subtitle": "Vamos ver o que você tem ouvido"
+        "subtitle": "Vamos fazer uma viagem pelo seu som...",
+        "yourJourney": "Sua Jornada Musical"
       },
       "topArtist": {
-        "title": "Seu Artista #1"
+        "badge": "Artista #1",
+        "highs": "Ele estava lá nos seus momentos altos...",
+        "lows": "...e nos baixos também.",
+        "rideOrDie": "Seu parceiro de todas as horas.",
+        "streams": "Reproduções"
       },
       "topArtists": {
-        "title": "Seus Artistas Favoritos"
+        "title": "Seu Círculo Íntimo",
+        "subtitle": "Esses artistas definiram seu som"
+      },
+      "topTrack": {
+        "badge": "Música #1",
+        "hitDifferent": "Essa bateu diferente."
       },
       "topTracks": {
-        "title": "Suas Músicas Favoritas"
+        "title": "Sua Trilha Sonora",
+        "subtitle": "As músicas que te moveram"
+      },
+      "sonicAura": {
+        "title": "Sua Aura Sonora",
+        "subtitle": "Baseado na sua alma musical",
+        "analyzing": "Lendo sua alma musical...",
+        "therapist": "Você é basicamente um terapeuta de {genre}"
       },
       "genres": {
-        "title": "Seus Gêneros Favoritos"
+        "title": "Sua Vibe",
+        "popVeins": "Pop corre nas suas veias",
+        "metalHead": "Você é basicamente um metaleiro",
+        "indieKid": "Indie kid de coração",
+        "hiphopSoul": "Hip-hop corre na sua alma",
+        "electronicHeart": "Seu coração bate eletrônico",
+        "jazzConnoisseur": "Um verdadeiro conhecedor de jazz",
+        "classicalSoul": "Alma antiga, gosto atemporal",
+        "rnbVibes": "Só vibes de R&B",
+        "eclecticTaste": "Seu gosto? Lindamente eclético"
       },
-      "topPodcasts": {
-        "title": "Seus Podcasts Favoritos"
+      "timeListened": {
+        "youSpent": "Você gastou...",
+        "thatsEnough": "Isso é suficiente para...",
+        "flightsTo": "voar para {destination} {count} vezes",
+        "watchMovies": "assistir {count} filmes",
+        "listenAudiobooks": "ouvir {count} audiobooks",
+        "daysOfVibes": "{count} dias de pura vibe",
+        "hoursOfMusic": "{count} horas de pura música",
+        "timeListening": "Tempo Ouvindo"
       },
-      "listeningPatterns": {
-        "title": "Seus Padrões de Audição",
-        "peakTime": "Horário de pico:",
-        "byDay": "Por Dia da Semana"
+      "patterns": {
+        "title": "Quando Você Ouve",
+        "nightOwl": "Energia de coruja 🦉",
+        "earlyBird": "Quem cedo madruga pega as batidas 🐦",
+        "afternoonVibes": "Vibes de tarde only 🌅",
+        "balancedListener": "Perfeitamente equilibrado 🎵",
+        "yourDay": "{day} é o SEU dia",
+        "noData": "Sincronize mais histórico para ver padrões"
       },
-      "stats": {
-        "title": "Suas Estatísticas",
+      "summary": {
+        "title": "É Isso!",
         "timeListened": "Tempo Ouvido",
         "tracksPlayed": "Músicas Tocadas",
-        "uniqueArtists": "Artistas Únicos",
-        "uniqueTracks": "Músicas Únicas"
+        "uniqueArtists": "Artistas",
+        "uniqueTracks": "Músicas",
+        "podcasts": "Podcasts",
+        "signOff": "Até a próxima, {name}. Continue com a música.",
+        "signOffGeneric": "Até a próxima. Continue com a música.",
+        "share": "Compartilhar Seu Wrapped",
+        "watchAgain": "Ver Novamente"
       }
-    },
-    "syncMore": "Sincronize mais histórico para ver padrões"
+    }
   },
   "share": {
     "title": "Compartilhar",

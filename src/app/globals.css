@@ -320,3 +320,149 @@
     animation: none;
   }
 }
+
+/* =================================
+   Wrapped Experience Utilities
+   ================================= */
+
+/* Safe area padding for notch/dynamic island */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Glow effects for wrapped */
+@layer utilities {
+  .glow-spotify {
+    box-shadow:
+      0 0 20px rgba(29, 185, 84, 0.4),
+      0 0 60px rgba(29, 185, 84, 0.2),
+      0 0 100px rgba(29, 185, 84, 0.1);
+  }
+
+  .glow-purple {
+    box-shadow:
+      0 0 20px rgba(139, 92, 246, 0.4),
+      0 0 60px rgba(139, 92, 246, 0.2),
+      0 0 100px rgba(139, 92, 246, 0.1);
+  }
+
+  .glow-pink {
+    box-shadow:
+      0 0 20px rgba(236, 72, 153, 0.4),
+      0 0 60px rgba(236, 72, 153, 0.2),
+      0 0 100px rgba(236, 72, 153, 0.1);
+  }
+
+  .glow-amber {
+    box-shadow:
+      0 0 20px rgba(245, 158, 11, 0.4),
+      0 0 60px rgba(245, 158, 11, 0.2),
+      0 0 100px rgba(245, 158, 11, 0.1);
+  }
+
+  .glow-blue {
+    box-shadow:
+      0 0 20px rgba(59, 130, 246, 0.4),
+      0 0 60px rgba(59, 130, 246, 0.2),
+      0 0 100px rgba(59, 130, 246, 0.1);
+  }
+
+  .glow-teal {
+    box-shadow:
+      0 0 20px rgba(20, 184, 166, 0.4),
+      0 0 60px rgba(20, 184, 166, 0.2),
+      0 0 100px rgba(20, 184, 166, 0.1);
+  }
+}
+
+/* Mood gradient backgrounds */
+.gradient-energetic {
+  background: linear-gradient(135deg, #EC4899 0%, #F59E0B 100%);
+}
+
+.gradient-chill {
+  background: linear-gradient(135deg, #3B82F6 0%, #14B8A6 100%);
+}
+
+.gradient-melancholic {
+  background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+}
+
+.gradient-nostalgic {
+  background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+}
+
+.gradient-experimental {
+  background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+}
+
+/* Wrapped slide-specific gradients */
+.gradient-intro {
+  background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+}
+
+.gradient-top-artist {
+  background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+}
+
+.gradient-top-track {
+  background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+}
+
+.gradient-genres {
+  background: linear-gradient(135deg, #EC4899 0%, #F43F5E 100%);
+}
+
+.gradient-time {
+  background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+}
+
+.gradient-patterns {
+  background: linear-gradient(135deg, #14B8A6 0%, #10B981 100%);
+}
+
+.gradient-summary {
+  background: linear-gradient(135deg, #1DB954 0%, #059669 100%);
+}
+
+/* Confetti animation keyframes */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.animate-confetti {
+  animation: confetti-fall 3s ease-out forwards;
+}
+
+/* Music note float animation */
+@keyframes note-float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100px) rotate(20deg);
+    opacity: 0;
+  }
+}
+
+.animate-note-float {
+  animation: note-float 4s ease-out forwards;
+}

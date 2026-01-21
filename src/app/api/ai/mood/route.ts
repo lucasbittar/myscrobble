@@ -59,9 +59,13 @@ export async function GET(request: Request) {
     const forceRefresh = searchParams.get('refresh') === 'true';
     const userId = session.user.id;
 
-    // Check cache
+    // Detect user's locale early for cache key
+    const locale = await detectLocale();
+    const cacheKey = `${userId}:${locale}`;
+
+    // Check cache (locale-aware)
     if (!forceRefresh) {
-      const cached = moodCache.get(userId);
+      const cached = moodCache.get(cacheKey);
       if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
         return NextResponse.json({
           ...cached.data,
@@ -101,8 +105,7 @@ export async function GET(request: Request) {
       .slice(0, 8)
       .map(([genre]) => genre);
 
-    // Detect user's locale
-    const locale = await detectLocale();
+    // Use detected locale (already fetched for cache key)
     const isPortuguese = locale === 'pt-BR';
 
     // Generate mood analysis using Gemini
@@ -190,9 +193,9 @@ ${closingInstruction}`;
     moodAnalysis.moodTags = moodAnalysis.moodTags || [];
     moodAnalysis.suggestions = moodAnalysis.suggestions || [];
 
-    // Cache the result
+    // Cache the result (locale-aware)
     const generatedAt = new Date().toISOString();
-    moodCache.set(userId, {
+    moodCache.set(cacheKey, {
       data: moodAnalysis,
       timestamp: Date.now(),
     });
