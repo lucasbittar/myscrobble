@@ -1,8 +1,18 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ImageSkeleton } from '@/components/ui/ImageSkeleton';
+import {
+  containerVariants,
+  heroVariants,
+  featuredTrackVariants,
+  listItemVariants,
+  skeletonVariants,
+  calculateExitDuration,
+} from '@/lib/animations';
 
 interface Track {
   id: string;
@@ -39,53 +49,51 @@ function formatDuration(ms: number): string {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-export function TopTracks({
-  limit = 10,
-  timeRange = 'medium_term',
-}: TopTracksProps) {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['top-tracks', timeRange, limit],
-    queryFn: () => fetchTopTracks(timeRange, limit),
-    placeholderData: keepPreviousData,
-  });
-
-  if (isLoading) {
-    return (
-      <div className="space-y-8">
-        {/* Hero skeleton */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="aspect-square rounded-3xl bg-white/50 dark:bg-white/5 animate-pulse" />
-          <div className="space-y-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-20 rounded-2xl bg-white/50 dark:bg-white/5 animate-pulse" />
-            ))}
-          </div>
-        </div>
-        {/* List skeleton */}
-        <div className="space-y-3">
-          {[...Array(10)].map((_, i) => (
-            <div key={i} className="h-16 rounded-xl bg-white/50 dark:bg-white/5 animate-pulse" />
+// Skeleton component for loading state
+function TopTracksSkeleton() {
+  return (
+    <motion.div
+      key="skeleton"
+      variants={skeletonVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className="space-y-8"
+    >
+      {/* Hero skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+        <div className="aspect-square rounded-3xl bg-white/50 dark:bg-white/5 animate-pulse" />
+        <div className="flex flex-col gap-3">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-[88px] rounded-2xl bg-white/50 dark:bg-white/5 animate-pulse" />
           ))}
         </div>
       </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="py-12 text-center">
-        <p className="text-muted-foreground">Error loading tracks</p>
+      {/* List skeleton */}
+      <div className="space-y-2">
+        {[...Array(15)].map((_, i) => (
+          <div key={i} className="h-16 rounded-xl bg-white/50 dark:bg-white/5 animate-pulse" />
+        ))}
       </div>
-    );
-  }
+    </motion.div>
+  );
+}
 
-  const tracks = data?.items || [];
+// Content component
+function TopTracksContent({ tracks }: { tracks: Track[] }) {
   const heroTrack = tracks[0];
   const featuredTracks = tracks.slice(1, 5);
   const listTracks = tracks.slice(5);
 
   return (
-    <div className="space-y-12">
+    <motion.div
+      key="content"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className="space-y-12"
+    >
       {/* Hero Section - #1 Track + Featured 2-5 */}
       {heroTrack && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
@@ -94,20 +102,23 @@ export function TopTracks({
             href={heroTrack.external_urls.spotify}
             target="_blank"
             rel="noopener noreferrer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
+            variants={heroVariants}
             className="group relative aspect-square rounded-3xl overflow-hidden"
           >
             {/* Album Art */}
             {heroTrack.album.images[0]?.url ? (
-              <Image
+              <ImageSkeleton
                 src={heroTrack.album.images[0].url}
                 alt={heroTrack.album.name}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                 priority
+                fallback={
+                  <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/20 to-[#8B5CF6]/20 flex items-center justify-center">
+                    <span className="text-6xl opacity-30">🎵</span>
+                  </div>
+                }
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/20 to-[#8B5CF6]/20 flex items-center justify-center">
@@ -157,9 +168,7 @@ export function TopTracks({
                 href={track.external_urls.spotify}
                 target="_blank"
                 rel="noopener noreferrer"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 + index * 0.1 }}
+                variants={featuredTrackVariants}
                 className="group relative flex items-center gap-4 p-4 rounded-2xl bg-white/50 dark:bg-white/5 backdrop-blur-sm border border-white/20 dark:border-white/10 transition-all duration-300 hover:bg-white/70 dark:hover:bg-white/10 hover:shadow-xl hover:shadow-[#1DB954]/10 hover:border-[#1DB954]/30"
               >
                 {/* Rank */}
@@ -170,12 +179,17 @@ export function TopTracks({
                 {/* Album Art */}
                 <div className="relative w-14 h-14 flex-shrink-0 rounded-xl overflow-hidden">
                   {track.album.images[0]?.url ? (
-                    <Image
+                    <ImageSkeleton
                       src={track.album.images[0].url}
                       alt={track.album.name}
                       fill
                       sizes="56px"
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      fallback={
+                        <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/20 to-[#8B5CF6]/20 flex items-center justify-center">
+                          <span className="text-lg opacity-30">🎵</span>
+                        </div>
+                      }
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/20 to-[#8B5CF6]/20 flex items-center justify-center">
@@ -229,9 +243,7 @@ export function TopTracks({
                   href={track.external_urls.spotify}
                   target="_blank"
                   rel="noopener noreferrer"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + index * 0.03 }}
+                  variants={listItemVariants}
                   className="group flex items-center gap-4 p-3 rounded-xl bg-white/30 dark:bg-white/5 backdrop-blur-sm border border-transparent hover:border-[#1DB954]/30 hover:bg-white/50 dark:hover:bg-white/10 transition-all duration-300"
                 >
                   {/* Rank */}
@@ -242,12 +254,17 @@ export function TopTracks({
                   {/* Album Art */}
                   <div className="relative w-10 h-10 flex-shrink-0 rounded-lg overflow-hidden">
                     {track.album.images[0]?.url ? (
-                      <Image
+                      <ImageSkeleton
                         src={track.album.images[0].url}
                         alt={track.album.name}
                         fill
                         sizes="40px"
                         className="object-cover"
+                        fallback={
+                          <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/10 to-[#8B5CF6]/10 flex items-center justify-center">
+                            <span className="text-sm opacity-30">🎵</span>
+                          </div>
+                        }
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/10 to-[#8B5CF6]/10 flex items-center justify-center">
@@ -276,7 +293,101 @@ export function TopTracks({
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
+  );
+}
+
+export function TopTracks({
+  limit = 10,
+  timeRange = 'medium_term',
+}: TopTracksProps) {
+  // Track what we're currently displaying vs what's requested
+  const [displayedTimeRange, setDisplayedTimeRange] = useState(timeRange);
+  const [showContent, setShowContent] = useState(true);
+  const isFirstMount = useRef(true);
+  const exitTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const { data, isLoading, error, isFetching } = useQuery({
+    queryKey: ['top-tracks', timeRange, limit],
+    queryFn: () => fetchTopTracks(timeRange, limit),
+  });
+
+  // Handle timeRange changes - trigger exit animation
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
+    if (timeRange !== displayedTimeRange) {
+      // Clear any pending timeout
+      if (exitTimeoutRef.current) {
+        clearTimeout(exitTimeoutRef.current);
+      }
+
+      // Start exit animation by hiding content
+      setShowContent(false);
+
+      // After exit animation completes, update displayed timeRange
+      const exitDuration = calculateExitDuration(data?.items?.length || 20);
+      exitTimeoutRef.current = setTimeout(() => {
+        setDisplayedTimeRange(timeRange);
+      }, exitDuration * 1000);
+    }
+
+    return () => {
+      if (exitTimeoutRef.current) {
+        clearTimeout(exitTimeoutRef.current);
+      }
+    };
+  }, [timeRange, displayedTimeRange, data?.items?.length]);
+
+  // Show content when data for the new timeRange arrives
+  useEffect(() => {
+    if (!showContent && displayedTimeRange === timeRange && data && !isFetching) {
+      setShowContent(true);
+    }
+  }, [showContent, displayedTimeRange, timeRange, data, isFetching]);
+
+  // Initial loading state (first load only)
+  if (isLoading && isFirstMount.current) {
+    return (
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          <div className="aspect-square rounded-3xl bg-white/50 dark:bg-white/5 animate-pulse" />
+          <div className="flex flex-col gap-3">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-[88px] rounded-2xl bg-white/50 dark:bg-white/5 animate-pulse" />
+            ))}
+          </div>
+        </div>
+        <div className="space-y-2">
+          {[...Array(15)].map((_, i) => (
+            <div key={i} className="h-16 rounded-xl bg-white/50 dark:bg-white/5 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="py-12 text-center">
+        <p className="text-muted-foreground">Error loading tracks</p>
+      </div>
+    );
+  }
+
+  const tracks = data?.items || [];
+
+  return (
+    <AnimatePresence mode="wait">
+      {!showContent || isFetching ? (
+        <TopTracksSkeleton />
+      ) : (
+        <TopTracksContent tracks={tracks} />
+      )}
+    </AnimatePresence>
   );
 }
 

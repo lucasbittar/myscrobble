@@ -1,11 +1,21 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion';
 import { OnTourBadge } from '@/components/ui/OnTourBadge';
+import { ImageSkeleton } from '@/components/ui/ImageSkeleton';
 import { useTourStatusBatch } from '@/hooks/useTourStatus';
 import { useGeolocation } from '@/hooks/useGeolocation';
+import {
+  containerVariants,
+  heroVariants,
+  featuredVariants,
+  gridItemVariants,
+  skeletonVariants,
+  calculateExitDuration,
+} from '@/lib/animations';
 
 interface Artist {
   id: string;
@@ -33,62 +43,57 @@ interface TopArtistsProps {
   showTitle?: boolean;
 }
 
-export function TopArtists({
-  limit = 10,
-  timeRange = 'medium_term',
-}: TopArtistsProps) {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['top-artists', timeRange, limit],
-    queryFn: () => fetchTopArtists(timeRange, limit),
-    placeholderData: keepPreviousData,
-  });
-
-  // Tour status for badges
-  const { location } = useGeolocation();
-  const artistNames = data?.items?.map((a) => a.name) || [];
-  const { data: tourStatus } = useTourStatusBatch(
-    artistNames,
-    location?.lat,
-    location?.lng
-  );
-
-  if (isLoading) {
-    return (
-      <div className="space-y-8">
-        {/* Hero skeleton */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="aspect-square rounded-3xl bg-white/50 dark:bg-white/5 animate-pulse" />
-          <div className="grid grid-cols-2 gap-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="aspect-square rounded-2xl bg-white/50 dark:bg-white/5 animate-pulse" />
-            ))}
-          </div>
-        </div>
-        {/* Grid skeleton */}
-        <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
-          {[...Array(10)].map((_, i) => (
+// Skeleton component for loading state
+function TopArtistsSkeleton() {
+  return (
+    <motion.div
+      key="skeleton"
+      variants={skeletonVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className="space-y-8"
+    >
+      {/* Hero skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+        <div className="aspect-square rounded-3xl bg-white/50 dark:bg-white/5 animate-pulse" />
+        <div className="grid grid-cols-2 gap-4">
+          {[...Array(4)].map((_, i) => (
             <div key={i} className="aspect-square rounded-2xl bg-white/50 dark:bg-white/5 animate-pulse" />
           ))}
         </div>
       </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="py-12 text-center">
-        <p className="text-muted-foreground">Error loading artists</p>
+      {/* Grid skeleton */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        {[...Array(15)].map((_, i) => (
+          <div key={i} className="aspect-square rounded-2xl bg-white/50 dark:bg-white/5 animate-pulse" />
+        ))}
       </div>
-    );
-  }
+    </motion.div>
+  );
+}
 
-  const artists = data?.items || [];
+// Content component
+function TopArtistsContent({
+  artists,
+  tourStatus
+}: {
+  artists: Artist[];
+  tourStatus: Record<string, { onTour: boolean }> | undefined;
+}) {
   const heroArtist = artists[0];
   const featuredArtists = artists.slice(1, 5);
   const gridArtists = artists.slice(5);
 
   return (
-    <div className="space-y-12">
+    <motion.div
+      key="content"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className="space-y-12"
+    >
       {/* Hero Section - #1 Artist + Featured 2-5 */}
       {heroArtist && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
@@ -97,20 +102,23 @@ export function TopArtists({
             href={heroArtist.external_urls.spotify}
             target="_blank"
             rel="noopener noreferrer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
+            variants={heroVariants}
             className="group relative aspect-square rounded-3xl overflow-hidden"
           >
             {/* Background Image */}
             {heroArtist.images[0]?.url ? (
-              <Image
+              <ImageSkeleton
                 src={heroArtist.images[0].url}
                 alt={heroArtist.name}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                 priority
+                fallback={
+                  <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/20 to-[#8B5CF6]/20 flex items-center justify-center">
+                    <span className="text-6xl opacity-30">🎵</span>
+                  </div>
+                }
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/20 to-[#8B5CF6]/20 flex items-center justify-center">
@@ -159,19 +167,22 @@ export function TopArtists({
                 href={artist.external_urls.spotify}
                 target="_blank"
                 rel="noopener noreferrer"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + index * 0.1 }}
+                variants={featuredVariants}
                 className="group relative aspect-square rounded-2xl overflow-hidden"
               >
                 {/* Image */}
                 {artist.images[0]?.url ? (
-                  <Image
+                  <ImageSkeleton
                     src={artist.images[0].url}
                     alt={artist.name}
                     fill
                     sizes="(max-width: 1024px) 50vw, 25vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    fallback={
+                      <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/20 to-[#8B5CF6]/20 flex items-center justify-center">
+                        <span className="text-3xl opacity-30">🎵</span>
+                      </div>
+                    }
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/20 to-[#8B5CF6]/20 flex items-center justify-center">
@@ -236,21 +247,24 @@ export function TopArtists({
                   href={artist.external_urls.spotify}
                   target="_blank"
                   rel="noopener noreferrer"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3 + index * 0.03 }}
+                  variants={gridItemVariants}
                   className="group relative"
                 >
                   {/* Card with glass effect */}
                   <div className="relative aspect-square rounded-2xl overflow-hidden bg-white/50 dark:bg-white/5 backdrop-blur-sm border border-white/20 dark:border-white/10 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-[#1DB954]/10 group-hover:border-[#1DB954]/30">
                     {/* Image */}
                     {artist.images[0]?.url ? (
-                      <Image
+                      <ImageSkeleton
                         src={artist.images[0].url}
                         alt={artist.name}
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        fallback={
+                          <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/10 to-[#8B5CF6]/10 flex items-center justify-center">
+                            <span className="text-2xl opacity-30">🎵</span>
+                          </div>
+                        }
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/10 to-[#8B5CF6]/10 flex items-center justify-center">
@@ -287,7 +301,113 @@ export function TopArtists({
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
+  );
+}
+
+export function TopArtists({
+  limit = 10,
+  timeRange = 'medium_term',
+}: TopArtistsProps) {
+  // Track what we're currently displaying vs what's requested
+  const [displayedTimeRange, setDisplayedTimeRange] = useState(timeRange);
+  const [showContent, setShowContent] = useState(true);
+  const isFirstMount = useRef(true);
+  const exitTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const { data, isLoading, error, isFetching } = useQuery({
+    queryKey: ['top-artists', timeRange, limit],
+    queryFn: () => fetchTopArtists(timeRange, limit),
+  });
+
+  // Tour status for badges
+  const { location } = useGeolocation();
+  const artistNames = data?.items?.map((a) => a.name) || [];
+  const { data: tourStatus } = useTourStatusBatch(
+    artistNames,
+    location?.lat,
+    location?.lng
+  );
+
+  // Handle timeRange changes - trigger exit animation
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
+    if (timeRange !== displayedTimeRange) {
+      // Clear any pending timeout
+      if (exitTimeoutRef.current) {
+        clearTimeout(exitTimeoutRef.current);
+      }
+
+      // Start exit animation by hiding content
+      setShowContent(false);
+
+      // After exit animation completes, update displayed timeRange
+      const exitDuration = calculateExitDuration(data?.items?.length || 20);
+      exitTimeoutRef.current = setTimeout(() => {
+        setDisplayedTimeRange(timeRange);
+      }, exitDuration * 1000);
+    }
+
+    return () => {
+      if (exitTimeoutRef.current) {
+        clearTimeout(exitTimeoutRef.current);
+      }
+    };
+  }, [timeRange, displayedTimeRange, data?.items?.length]);
+
+  // Show content when data for the new timeRange arrives
+  useEffect(() => {
+    if (!showContent && displayedTimeRange === timeRange && data && !isFetching) {
+      setShowContent(true);
+    }
+  }, [showContent, displayedTimeRange, timeRange, data, isFetching]);
+
+  // Initial loading state (first load only)
+  if (isLoading && isFirstMount.current) {
+    return (
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          <div className="aspect-square rounded-3xl bg-white/50 dark:bg-white/5 animate-pulse" />
+          <div className="grid grid-cols-2 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="aspect-square rounded-2xl bg-white/50 dark:bg-white/5 animate-pulse" />
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {[...Array(15)].map((_, i) => (
+            <div key={i} className="aspect-square rounded-2xl bg-white/50 dark:bg-white/5 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="py-12 text-center">
+        <p className="text-muted-foreground">Error loading artists</p>
+      </div>
+    );
+  }
+
+  const artists = data?.items || [];
+
+  return (
+    <AnimatePresence mode="wait">
+      {!showContent || isFetching ? (
+        <TopArtistsSkeleton />
+      ) : (
+        <TopArtistsContent
+          artists={artists}
+          tourStatus={tourStatus}
+        />
+      )}
+    </AnimatePresence>
   );
 }
 

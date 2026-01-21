@@ -139,7 +139,7 @@ export default function TopChartsPage() {
         {/* Content */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={`${viewMode}-${timeRange}`}
+            key={viewMode}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
