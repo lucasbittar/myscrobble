@@ -217,13 +217,12 @@ function Confetti() {
   }));
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-50">
       {confettiPieces.map((piece) => (
         <motion.div
           key={piece.id}
           initial={{
             y: -20,
-            x: `${piece.x}%`,
             opacity: 1,
             rotate: piece.rotation,
           }}
@@ -237,6 +236,7 @@ function Confetti() {
             delay: piece.delay,
             ease: 'linear',
           }}
+          style={{ left: `${piece.x}%` }}
           className="absolute text-xl"
         >
           {piece.type === 'note' && '♪'}
@@ -409,7 +409,9 @@ export default function WaitlistPage() {
         >
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-4 leading-tight">
             {isSuccess ? (
-              <Highlight color="green">{t('success')}</Highlight>
+              <>
+                {t('successPart1')} <Highlight color="green">{t('successHighlight')}</Highlight>
+              </>
             ) : (
               <>
                 {t('headlinePart1')} <Highlight color="pink">{t('headlineHighlight')}</Highlight>
