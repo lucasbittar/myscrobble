@@ -61,7 +61,7 @@
       "quoteSubtitle": "Comece sua jornada hoje",
       "readyToExplore": "Pronto para explorar?",
       "readyDescription": "Conecte sua conta do Spotify e desbloqueie insights sobre sua jornada musical.",
-      "getStarted": "Começar Grátis"
+      "getStarted": "Começar já"
     },
     "features": {
       "stats": "Estatísticas",
@@ -487,5 +487,24 @@
       "shows": "Shows",
       "savedEpisodes": "Episódios Salvos"
     }
+  },
+  "waitlist": {
+    "headlinePart1": "O show de hoje está",
+    "headlineHighlight": "esgotado",
+    "subheadline": "Mas você está na lista de convidados para o próximo",
+    "explanation": "MyScrobble está em acesso antecipado com vagas limitadas. Estamos trabalhando para expandir a capacidade.",
+    "cta": "Garantir Meu Passe VIP",
+    "emailPlaceholder": "seu@email.com",
+    "success": "Você está na lista!",
+    "successSubtext": "Vamos te avisar quando uma vaga abrir",
+    "alreadyOnList": "Você já está na lista de convidados!",
+    "position": "#{position} na fila",
+    "shareTitle": "Compartilhe com amigos",
+    "shareDescription": "Ajude a gente a crescer e avance na fila",
+    "twitterText": "Acabei de descobrir o MyScrobble - um painel lindo do Spotify com recomendações de IA e descoberta de shows. Confira!",
+    "whatsappText": "Confere o MyScrobble - ele mostra suas estatísticas do Spotify, encontra shows e dá recomendações musicais com IA!",
+    "copyLink": "Copiar Link",
+    "linkCopied": "Link copiado!",
+    "invalidEmail": "Por favor, insira um email válido"
   }
 }

@@ -61,7 +61,7 @@
       "quoteSubtitle": "Start your journey today",
       "readyToExplore": "Ready to explore?",
       "readyDescription": "Connect your Spotify account and unlock insights into your musical journey.",
-      "getStarted": "Get Started Free"
+      "getStarted": "Get Started Now"
     },
     "features": {
       "stats": "Listening Stats",
@@ -500,5 +500,24 @@
       "shows": "Shows",
       "savedEpisodes": "Saved Episodes"
     }
+  },
+  "waitlist": {
+    "headlinePart1": "Tonight's show is",
+    "headlineHighlight": "sold out",
+    "subheadline": "But you're on the guest list for the next one",
+    "explanation": "MyScrobble is in early access with limited spots. We're working on expanding capacity.",
+    "cta": "Get Your Backstage Pass",
+    "emailPlaceholder": "your@email.com",
+    "success": "You're on the list!",
+    "successSubtext": "We'll email you when a spot opens up",
+    "alreadyOnList": "You're already on the guest list!",
+    "position": "#{position} in line",
+    "shareTitle": "Share with friends",
+    "shareDescription": "Help us grow and move up the list",
+    "twitterText": "Just discovered MyScrobble - a beautiful Spotify dashboard with AI recommendations and concert discovery. Check it out!",
+    "whatsappText": "Check out MyScrobble - it shows your Spotify stats, finds concerts, and gives AI music recommendations!",
+    "copyLink": "Copy Link",
+    "linkCopied": "Link copied!",
+    "invalidEmail": "Please enter a valid email address"
   }
 }

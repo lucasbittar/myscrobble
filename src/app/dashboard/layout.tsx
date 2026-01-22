@@ -144,6 +144,20 @@ export default function DashboardLayout({
         const res = await fetch('/api/auth/session');
         const data = await res.json();
         if (data?.user) {
+          // Session is valid, now check if Spotify API is accessible (quota check)
+          const spotifyRes = await fetch('/api/spotify/me');
+
+          if (spotifyRes.status === 403) {
+            // User is blocked by Spotify quota - redirect to waitlist
+            const params = new URLSearchParams({
+              spotifyId: data.user.id || '',
+              spotifyName: data.user.name || '',
+              spotifyImage: data.user.image || '',
+            });
+            router.push(`/waitlist?${params.toString()}`);
+            return;
+          }
+
           setSession(data);
         } else {
           router.push('/auth/login');
