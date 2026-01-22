@@ -162,7 +162,9 @@
       "mostActive": "Horário mais ativo",
       "peakHour": "Horário de Pico",
       "avgPerDay": "Média Por Dia",
-      "dataFrom": "Dados das últimas 4 semanas"
+      "dataFrom": "Dados das últimas 4 semanas",
+      "uniqueArtistsContext": "De {count} artistas diferentes nas últimas 4 semanas",
+      "uniqueTracksContext": "De {count} músicas diferentes que você ouviu"
     },
     "timeRanges": {
       "short": "4 Semanas",
@@ -448,6 +450,12 @@
     "loading": "Lendo sua alma musical...",
     "error": "Não foi possível ler as vibes",
     "basedOnVibe": "Baseado na sua vibe, você pode curtir:"
+  },
+  "footer": {
+    "madeWith": "Criado com",
+    "by": "por",
+    "disclaimer": "MyScrobble.fm é uma ferramenta independente de análise musical. Não tenho vínculo oficial com a Last.fm ou Spotify. O termo \"Scrobble\" é utilizado de forma descritiva para a cultura de registro de músicas que amamos.",
+    "tagline": "Transformando seus dados em insights visuais"
   },
   "contextualShare": {
     "title": "Compartilhe Sua Música",

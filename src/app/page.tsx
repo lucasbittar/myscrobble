@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import { Footer } from '@/components/ui/Footer';
 
 // Spotify icon component
 function SpotifyIcon({ className }: { className?: string }) {
@@ -715,18 +716,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer - White translucent */}
-      <footer className="py-12 px-6 md:px-12 bg-white/60 dark:bg-white/5 backdrop-blur-xl border-t border-border/50">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-baseline gap-1">
-            <span className="text-lg font-bold text-foreground">MyScrobble</span>
-            <span className="text-sm text-muted-foreground">.fm</span>
-          </div>
-          <p className="text-sm text-muted-foreground text-center md:text-right">
-            {t('privacy')}
-          </p>
-        </div>
-      </footer>
+      {/* Footer with disclaimer */}
+      <Footer />
     </div>
   );
 }
