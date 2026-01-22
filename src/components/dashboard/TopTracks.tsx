@@ -26,10 +26,42 @@ interface Track {
   external_urls: { spotify: string };
 }
 
+interface EnrichedTrack {
+  id: string;
+  name: string;
+  artist: string;
+  albumArt?: string;
+  spotifyUrl: string;
+  durationMs: number;
+  count: number;
+}
+
 async function fetchTopTracks(
   timeRange: string,
   limit: number
 ): Promise<{ items: Track[] }> {
+  // For short_term (4 weeks), use enriched stats endpoint (listening history)
+  if (timeRange === 'short_term') {
+    const res = await fetch(`/api/stats/enriched?track_limit=${limit}`);
+    if (!res.ok) throw new Error('Failed to fetch');
+    const data = await res.json();
+    // Map enriched data to Track interface
+    return {
+      items: (data.top_tracks || []).map((t: EnrichedTrack) => ({
+        id: t.id,
+        name: t.name,
+        artists: [{ name: t.artist }],
+        album: {
+          name: '',
+          images: t.albumArt ? [{ url: t.albumArt }] : [],
+        },
+        duration_ms: t.durationMs,
+        external_urls: { spotify: t.spotifyUrl },
+      })),
+    };
+  }
+
+  // For medium_term and long_term, use Spotify API
   const res = await fetch(
     `/api/spotify/top-tracks?time_range=${timeRange}&limit=${limit}`
   );

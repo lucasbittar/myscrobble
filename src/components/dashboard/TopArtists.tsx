@@ -26,10 +26,38 @@ interface Artist {
   external_urls: { spotify: string };
 }
 
+interface EnrichedArtist {
+  id: string;
+  name: string;
+  image?: string;
+  genres: string[];
+  count: number;
+  minutes: number;
+}
+
 async function fetchTopArtists(
   timeRange: string,
   limit: number
 ): Promise<{ items: Artist[] }> {
+  // For short_term (4 weeks), use enriched stats endpoint (listening history)
+  if (timeRange === 'short_term') {
+    const res = await fetch(`/api/stats/enriched?artist_limit=${limit}`);
+    if (!res.ok) throw new Error('Failed to fetch');
+    const data = await res.json();
+    // Map enriched data to Artist interface
+    return {
+      items: (data.top_artists || []).map((a: EnrichedArtist) => ({
+        id: a.id,
+        name: a.name,
+        images: a.image ? [{ url: a.image }] : [],
+        genres: a.genres || [],
+        popularity: 0,
+        external_urls: { spotify: `https://open.spotify.com/artist/${a.id}` },
+      })),
+    };
+  }
+
+  // For medium_term and long_term, use Spotify API
   const res = await fetch(
     `/api/spotify/top-artists?time_range=${timeRange}&limit=${limit}`
   );
