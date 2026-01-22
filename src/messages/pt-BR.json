@@ -510,5 +510,33 @@
     "yourPosition": "Sua Posição",
     "backToHome": "Voltar ao início",
     "signingUpAs": "Entrando como"
+  },
+  "teaser": {
+    "tagline": "Algo Incrível Está Chegando",
+    "headline1": "Sua Música.",
+    "headline2": "Visualizada.",
+    "headline3": "Amplificada.",
+    "description": "Um painel lindo do Spotify com recomendações de IA, descoberta de shows e estatísticas compartilháveis. Seja o primeiro a experimentar.",
+    "comingSoon": "Em Breve",
+    "joinWaitlist": "Entre na Lista",
+    "emailPlaceholder": "seu@email.com",
+    "getEarlyAccess": "Garantir Acesso",
+    "joining": "Entrando...",
+    "successTitle": "Você Está Dentro!",
+    "successMessage": "Vamos te avisar quando lançarmos",
+    "position": "#{position} na fila",
+    "alreadyJoined": "Você já está na lista!",
+    "features": {
+      "stats": "Insights de audição",
+      "ai": "Recomendações com IA",
+      "concerts": "Descoberta de shows",
+      "share": "Cards compartilháveis"
+    },
+    "social": {
+      "title": "Espalhe a palavra",
+      "twitter": "Compartilhar no X",
+      "whatsapp": "Compartilhar no WhatsApp",
+      "copy": "Copiar link"
+    }
   }
 }

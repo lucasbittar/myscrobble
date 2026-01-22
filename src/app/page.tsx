@@ -2,9 +2,12 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { useTranslations } from 'next-intl';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { useTranslations, useLocale } from 'next-intl';
 import { Footer } from '@/components/ui/Footer';
+
+// Check if we're in teaser mode
+const IS_TEASER_MODE = process.env.NEXT_PUBLIC_TEASER === 'true';
 
 // Spotify icon component
 function SpotifyIcon({ className }: { className?: string }) {
@@ -444,11 +447,575 @@ function StatItem({
   );
 }
 
+// Feature pill animated icons for teaser page
+function FeaturePillIcon({ type, color }: { type: 'stats' | 'ai' | 'concerts' | 'share'; color: string }) {
+  if (type === 'stats') {
+    // Animated equalizer bars
+    return (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <motion.rect
+          x="1" y="8" width="3" height="9" rx="1.5"
+          fill={color}
+          animate={{ height: [9, 5, 9], y: [8, 12, 8] }}
+          transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.rect
+          x="5.5" y="4" width="3" height="13" rx="1.5"
+          fill={color}
+          animate={{ height: [13, 7, 13], y: [4, 10, 4] }}
+          transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut', delay: 0.15 }}
+        />
+        <motion.rect
+          x="10" y="1" width="3" height="16" rx="1.5"
+          fill={color}
+          animate={{ height: [16, 8, 16], y: [1, 9, 1] }}
+          transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
+        />
+        <motion.rect
+          x="14.5" y="6" width="3" height="11" rx="1.5"
+          fill={color}
+          animate={{ height: [11, 4, 11], y: [6, 13, 6] }}
+          transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut', delay: 0.45 }}
+        />
+      </svg>
+    );
+  }
+
+  if (type === 'ai') {
+    // Animated sparkle/magic effect
+    return (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        {/* Central star */}
+        <motion.path
+          d="M9 1L10.5 6.5L16 8L10.5 9.5L9 15L7.5 9.5L2 8L7.5 6.5L9 1Z"
+          fill={color}
+          animate={{ scale: [1, 1.15, 1], rotate: [0, 15, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ transformOrigin: '9px 8px' }}
+        />
+        {/* Orbiting sparkles */}
+        <motion.circle
+          cx="3" cy="3" r="1.5"
+          fill={color}
+          animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
+        />
+        <motion.circle
+          cx="15" cy="4" r="1"
+          fill={color}
+          animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
+        />
+        <motion.circle
+          cx="14" cy="14" r="1.5"
+          fill={color}
+          animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+          transition={{ duration: 1.5, repeat: Infinity, delay: 1 }}
+        />
+      </svg>
+    );
+  }
+
+  if (type === 'concerts') {
+    // Microphone with radiating sound waves
+    return (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        {/* Microphone body */}
+        <rect x="7" y="2" width="4" height="8" rx="2" fill={color} />
+        {/* Stand */}
+        <path d="M9 10V14M6 14H12" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+        {/* Sound waves */}
+        <motion.path
+          d="M4 6C4 6 3 7.5 3 9C3 10.5 4 12 4 12"
+          stroke={color}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          fill="none"
+          animate={{ opacity: [0.3, 1, 0.3], x: [-1, 0, -1] }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.path
+          d="M14 6C14 6 15 7.5 15 9C15 10.5 14 12 14 12"
+          stroke={color}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          fill="none"
+          animate={{ opacity: [0.3, 1, 0.3], x: [1, 0, 1] }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        {/* Outer waves */}
+        <motion.path
+          d="M2 5C2 5 0.5 7 0.5 9C0.5 11 2 13 2 13"
+          stroke={color}
+          strokeWidth="1"
+          strokeLinecap="round"
+          fill="none"
+          opacity={0.5}
+          animate={{ opacity: [0.2, 0.6, 0.2], x: [-1, 0, -1] }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }}
+        />
+        <motion.path
+          d="M16 5C16 5 17.5 7 17.5 9C17.5 11 16 13 16 13"
+          stroke={color}
+          strokeWidth="1"
+          strokeLinecap="round"
+          fill="none"
+          opacity={0.5}
+          animate={{ opacity: [0.2, 0.6, 0.2], x: [1, 0, 1] }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }}
+        />
+      </svg>
+    );
+  }
+
+  if (type === 'share') {
+    // Animated share card with floating elements
+    return (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        {/* Card background */}
+        <rect x="2" y="3" width="14" height="12" rx="2" stroke={color} strokeWidth="1.5" fill="none" />
+        {/* Image placeholder area */}
+        <motion.rect
+          x="4" y="5" width="6" height="4" rx="1"
+          fill={color}
+          animate={{ opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+        {/* Text lines */}
+        <motion.rect
+          x="4" y="11" width="10" height="1.5" rx="0.75"
+          fill={color}
+          opacity={0.6}
+          animate={{ width: [10, 8, 10] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        />
+        {/* Floating share indicator */}
+        <motion.g
+          animate={{ y: [-1, 1, -1], rotate: [0, 5, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ transformOrigin: '14px 7px' }}
+        >
+          <circle cx="14" cy="7" r="3" fill={color} />
+          <path d="M13 7L14.5 5.5M14.5 5.5L16 7M14.5 5.5V8.5" stroke="white" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+        </motion.g>
+      </svg>
+    );
+  }
+
+  return null;
+}
+
+// Teaser Page Component - Light theme with organic blobs
+function TeaserPage() {
+  const t = useTranslations('teaser');
+  const tWaitlist = useTranslations('waitlist');
+  const locale = useLocale();
+
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [position, setPosition] = useState<number | null>(null);
+  const [alreadyExists, setAlreadyExists] = useState(false);
+  const [error, setError] = useState('');
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError(tWaitlist('invalidEmail'));
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, locale }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setIsSuccess(true);
+        setPosition(data.position);
+        setAlreadyExists(data.alreadyExists);
+      } else {
+        setError(data.error || 'Something went wrong');
+      }
+    } catch {
+      setError('Failed to join waitlist. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://myscrobble.fm';
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch {
+      const textArea = document.createElement('textarea');
+      textArea.value = shareUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    }
+  };
+
+  const handleTwitterShare = () => {
+    const text = encodeURIComponent(tWaitlist('twitterText'));
+    const url = encodeURIComponent(shareUrl);
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+  };
+
+  const handleWhatsAppShare = () => {
+    const text = encodeURIComponent(`${tWaitlist('whatsappText')} ${shareUrl}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  };
+
+  // Confetti for success state
+  const Confetti = () => {
+    const pieces = [...Array(40)].map((_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      delay: Math.random() * 0.5,
+      duration: 2 + Math.random() * 2,
+      rotation: Math.random() * 360,
+      symbol: ['♪', '♫', '◉', '✦', '★'][Math.floor(Math.random() * 5)],
+      color: ['#EC4899', '#8B5CF6', '#1DB954', '#F59E0B'][Math.floor(Math.random() * 4)],
+    }));
+
+    return (
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-50">
+        {pieces.map((piece) => (
+          <motion.div
+            key={piece.id}
+            initial={{ y: -20, opacity: 1, rotate: piece.rotation }}
+            animate={{ y: '110vh', opacity: [1, 1, 0], rotate: piece.rotation + 360 }}
+            transition={{ duration: piece.duration, delay: piece.delay, ease: 'linear' }}
+            style={{ left: `${piece.x}%`, color: piece.color }}
+            className="absolute text-2xl"
+          >
+            {piece.symbol}
+          </motion.div>
+        ))}
+      </div>
+    );
+  };
+
+  // Sound wave animation bars
+  const SoundWave = ({ className }: { className?: string }) => (
+    <div className={`flex items-end gap-1 h-8 ${className}`}>
+      {[...Array(5)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="w-1 bg-gradient-to-t from-[#EC4899] to-[#8B5CF6] rounded-full"
+          animate={{ height: [12, 28, 16, 32, 12] }}
+          transition={{
+            duration: 1.2,
+            repeat: Infinity,
+            delay: i * 0.15,
+            ease: 'easeInOut',
+          }}
+        />
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Organic flowing shapes - matching main landing page */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <FlowingShape
+          className="absolute -top-48 -right-48 w-[700px] h-[700px] opacity-30"
+          gradient="purple-pink"
+          delay={0}
+          blur={20}
+          floatDirection="up"
+        />
+        <FlowingShape
+          className="absolute -bottom-32 -left-32 w-[500px] h-[500px] opacity-25"
+          gradient="warm"
+          delay={0.2}
+          blur={0}
+          floatDirection="right"
+        />
+        <FlowingShape
+          className="absolute top-1/3 -right-24 w-[400px] h-[400px] opacity-35"
+          gradient="spotify"
+          delay={0.4}
+          blur={0}
+          floatDirection="left"
+        />
+        <FlowingShape
+          className="absolute bottom-1/4 left-1/4 w-[300px] h-[300px] opacity-20"
+          gradient="teal-blue"
+          delay={0.3}
+          blur={0}
+          floatDirection="down"
+        />
+      </div>
+
+      {/* Success confetti */}
+      <AnimatePresence>
+        {isSuccess && <Confetti />}
+      </AnimatePresence>
+
+      {/* Main content */}
+      <div className="relative z-10 min-h-screen flex flex-col">
+        {/* Header */}
+        <header className="py-6 px-6 md:px-12">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center justify-between max-w-7xl mx-auto"
+          >
+            <div className="flex items-baseline gap-1">
+              <span className="text-xl md:text-2xl font-black tracking-tight text-foreground">MyScrobble</span>
+              <span className="text-sm text-muted-foreground">.fm</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-full border border-border/50">
+              <motion.span
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="w-2 h-2 rounded-full bg-[#EC4899]"
+              />
+              <span className="text-xs uppercase tracking-wider text-muted-foreground">{t('comingSoon')}</span>
+            </div>
+          </motion.div>
+        </header>
+
+        {/* Hero section */}
+        <main className="flex-1 flex items-center justify-center px-6 py-12">
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Tagline with sound waves */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="flex items-center justify-center gap-4 mb-10"
+            >
+              <SoundWave />
+              <span className="text-sm md:text-base uppercase tracking-[0.3em] text-muted-foreground">
+                {t('tagline')}
+              </span>
+              <SoundWave />
+            </motion.div>
+
+            {/* Headline - all at once to prevent jumping */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="mb-10"
+            >
+              <h1 className="text-[clamp(3rem,12vw,9rem)] font-black leading-[0.9] tracking-tight">
+                <span className="text-foreground block">{t('headline1')}</span>
+                <span className="bg-gradient-to-r from-[#EC4899] via-[#8B5CF6] to-[#1DB954] bg-clip-text text-transparent block">
+                  {t('headline2')}
+                </span>
+                <span className="text-foreground block">{t('headline3')}</span>
+              </h1>
+            </motion.div>
+
+            {/* Description */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
+            >
+              {t('description')}
+            </motion.p>
+
+            {/* Feature pills */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+              className="flex flex-wrap justify-center gap-3 mb-12"
+            >
+              {[
+                { key: 'stats', color: '#1DB954' },
+                { key: 'ai', color: '#8B5CF6' },
+                { key: 'concerts', color: '#EC4899' },
+                { key: 'share', color: '#F59E0B' },
+              ].map((feature) => (
+                <div
+                  key={feature.key}
+                  className="flex items-center gap-2.5 px-4 py-2.5 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-full border border-border/50 hover:border-border transition-colors"
+                >
+                  <FeaturePillIcon type={feature.key as 'stats' | 'ai' | 'concerts' | 'share'} color={feature.color} />
+                  <span className="text-sm font-medium text-foreground/80">{t(`features.${feature.key}`)}</span>
+                </div>
+              ))}
+            </motion.div>
+
+            {/* Email signup or success state */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="max-w-md mx-auto"
+            >
+              {!isSuccess ? (
+                <>
+                  <form onSubmit={handleSubmit} className="mb-4">
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder={t('emailPlaceholder')}
+                        className="flex-1 px-5 py-4 bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-xl border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#EC4899]/50 focus:border-[#EC4899] transition-all"
+                        disabled={isSubmitting}
+                      />
+                      <motion.button
+                        type="submit"
+                        disabled={isSubmitting}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="px-6 py-4 bg-gradient-to-r from-[#EC4899] to-[#8B5CF6] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-[#EC4899]/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap cursor-pointer"
+                      >
+                        {isSubmitting ? (
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                            className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mx-auto"
+                          />
+                        ) : (
+                          t('getEarlyAccess')
+                        )}
+                      </motion.button>
+                    </div>
+                    {error && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-3 text-sm text-red-500"
+                      >
+                        {error}
+                      </motion.p>
+                    )}
+                  </form>
+                  <p className="text-sm text-muted-foreground">
+                    {t('joinWaitlist')} · 🔒
+                  </p>
+                </>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="space-y-6"
+                >
+                  {/* Success message */}
+                  <div className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-border/50">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: 'spring', delay: 0.2 }}
+                      className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-[#1DB954] to-[#14B8A6] flex items-center justify-center"
+                    >
+                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </motion.div>
+                    <h3 className="text-2xl font-bold text-foreground mb-2">{t('successTitle')}</h3>
+                    <p className="text-muted-foreground mb-4">
+                      {alreadyExists ? t('alreadyJoined') : t('successMessage')}
+                    </p>
+                    {position && (
+                      <div className="inline-block px-4 py-2 bg-[#EC4899]/10 rounded-full">
+                        <span className="text-[#EC4899] font-bold">{t('position', { position })}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Social share */}
+                  <div className="bg-white/40 dark:bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-border/30">
+                    <h4 className="text-sm uppercase tracking-wider text-muted-foreground mb-4">{t('social.title')}</h4>
+                    <div className="flex justify-center gap-3">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleTwitterShare}
+                        className="p-3 bg-foreground/5 hover:bg-foreground/10 rounded-xl transition-colors cursor-pointer"
+                      >
+                        <svg className="w-5 h-5 text-foreground" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleWhatsAppShare}
+                        className="p-3 bg-[#25D366]/10 hover:bg-[#25D366]/20 rounded-xl transition-colors cursor-pointer"
+                      >
+                        <svg className="w-5 h-5 text-[#25D366]" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                        </svg>
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleCopyLink}
+                        className="p-3 bg-foreground/5 hover:bg-foreground/10 rounded-xl transition-colors cursor-pointer relative"
+                      >
+                        {linkCopied ? (
+                          <svg className="w-5 h-5 text-[#1DB954]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                          </svg>
+                        )}
+                      </motion.button>
+                    </div>
+                    {linkCopied && (
+                      <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-sm text-[#1DB954] mt-3"
+                      >
+                        {tWaitlist('linkCopied')}
+                      </motion.p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+          </div>
+        </main>
+
+        {/* Footer */}
+        <Footer />
+      </div>
+    </div>
+  );
+}
+
 export default function HomePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const t = useTranslations('landing');
+
+  // If in teaser mode, show teaser page immediately
+  if (IS_TEASER_MODE) {
+    return <TeaserPage />;
+  }
 
   // Handle scroll for header background
   useEffect(() => {

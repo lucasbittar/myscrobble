@@ -523,5 +523,33 @@
     "yourPosition": "Your Position",
     "backToHome": "Back to home",
     "signingUpAs": "Signing up as"
+  },
+  "teaser": {
+    "tagline": "Something Amazing Is Coming",
+    "headline1": "Your Music.",
+    "headline2": "Visualized.",
+    "headline3": "Amplified.",
+    "description": "A beautiful Spotify dashboard with AI recommendations, concert discovery, and shareable stats. Be the first to experience it.",
+    "comingSoon": "Coming Soon",
+    "joinWaitlist": "Join the Waitlist",
+    "emailPlaceholder": "your@email.com",
+    "getEarlyAccess": "Get Early Access",
+    "joining": "Joining...",
+    "successTitle": "You're In!",
+    "successMessage": "We'll notify you when we launch",
+    "position": "#{position} in line",
+    "alreadyJoined": "You're already on the list!",
+    "features": {
+      "stats": "Deep listening insights",
+      "ai": "AI-powered recommendations",
+      "concerts": "Concert discovery",
+      "share": "Shareable music cards"
+    },
+    "social": {
+      "title": "Spread the word",
+      "twitter": "Share on X",
+      "whatsapp": "Share on WhatsApp",
+      "copy": "Copy link"
+    }
   }
 }

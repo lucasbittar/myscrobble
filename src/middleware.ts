@@ -5,6 +5,9 @@ const locales = ['en', 'pt-BR'];
 const defaultLocale = 'en';
 const COOKIE_NAME = 'NEXT_LOCALE';
 
+// Teaser mode: when true, only landing page is accessible
+const IS_TEASER_MODE = process.env.NEXT_PUBLIC_TEASER === 'true';
+
 function getPreferredLocale(request: NextRequest): string {
   // 1. Check cookie first (returning users)
   const cookieLocale = request.cookies.get(COOKIE_NAME)?.value;
@@ -55,6 +58,13 @@ export function middleware(request: NextRequest) {
     pathname.includes('.') // static files
   ) {
     return NextResponse.next();
+  }
+
+  // TEASER MODE: Block all routes except landing page
+  if (IS_TEASER_MODE && pathname !== '/') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/';
+    return NextResponse.redirect(url);
   }
 
   const preferredLocale = getPreferredLocale(request);
