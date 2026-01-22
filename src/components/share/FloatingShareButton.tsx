@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { ShareColorTheme, shareColorThemes, ShareData, useShareSafe } from './ShareContext';
 
 interface FloatingShareButtonProps {
@@ -15,9 +15,9 @@ interface FloatingShareButtonProps {
 }
 
 const sizeConfig = {
-  sm: { height: 40, iconSize: 16, fontSize: 12, expandedWidth: 100 },
-  md: { height: 48, iconSize: 20, fontSize: 14, expandedWidth: 120 },
-  lg: { height: 56, iconSize: 24, fontSize: 15, expandedWidth: 140 },
+  sm: { height: 40, iconSize: 16, fontSize: 12, expandedWidth: 100, expandedWidthPtBR: 130 },
+  md: { height: 48, iconSize: 20, fontSize: 14, expandedWidth: 120, expandedWidthPtBR: 155 },
+  lg: { height: 56, iconSize: 24, fontSize: 15, expandedWidth: 140, expandedWidthPtBR: 175 },
 };
 
 export function FloatingShareButton({
@@ -31,12 +31,14 @@ export function FloatingShareButton({
   const [isHovered, setIsHovered] = useState(false);
   const shareContext = useShareSafe();
   const t = useTranslations('contextualShare');
+  const locale = useLocale();
 
   if (!shareContext) return null;
 
   const { openModal } = shareContext;
   const colors = shareColorThemes[theme];
   const config = sizeConfig[size];
+  const expandedWidth = locale === 'pt-BR' ? config.expandedWidthPtBR : config.expandedWidth;
 
   const handleClick = () => openModal(shareData, theme);
 
@@ -58,7 +60,7 @@ export function FloatingShareButton({
         }}
         initial={{ width: config.height }}
         animate={{
-          width: isHovered && showLabel ? config.expandedWidth : config.height,
+          width: isHovered && showLabel ? expandedWidth : config.height,
           y: isHovered ? -2 : 0,
         }}
         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
