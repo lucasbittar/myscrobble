@@ -1,8 +1,21 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { sendWelcomeEmail } from '@/lib/email';
 
 // Email validation regex
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Detect locale from Accept-Language header or body
+function getLocale(request: Request, bodyLocale?: string): 'en' | 'pt-BR' {
+  // Priority: body locale > Accept-Language header
+  if (bodyLocale === 'pt-BR' || bodyLocale === 'pt') return 'pt-BR';
+  if (bodyLocale === 'en') return 'en';
+
+  const acceptLanguage = request.headers.get('accept-language') || '';
+  if (acceptLanguage.includes('pt')) return 'pt-BR';
+
+  return 'en';
+}
 
 interface WaitlistEntry {
   id: string;
@@ -13,7 +26,8 @@ interface WaitlistEntry {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, spotifyId, spotifyName, spotifyImage } = body;
+    const { email, spotifyId, spotifyName, spotifyImage, locale: bodyLocale } = body;
+    const locale = getLocale(request, bodyLocale);
 
     // Validate email
     if (!email || !EMAIL_REGEX.test(email)) {
@@ -56,6 +70,7 @@ export async function POST(request: Request) {
         spotify_id: spotifyId || null,
         spotify_name: spotifyName || null,
         spotify_image: spotifyImage || null,
+        locale: locale,
       })
       .select('id, created_at')
       .single();
@@ -76,10 +91,20 @@ export async function POST(request: Request) {
       .select('*', { count: 'exact', head: true })
       .lte('created_at', typedNewEntry.created_at);
 
+    const position = count || 1;
+
+    // Send welcome email (don't await to not block the response)
+    sendWelcomeEmail({
+      to: email.toLowerCase(),
+      name: spotifyName || undefined,
+      position,
+      locale,
+    }).catch((err) => console.error('Failed to send welcome email:', err));
+
     return NextResponse.json({
       success: true,
       alreadyExists: false,
-      position: count || 1,
+      position,
     });
   } catch (error) {
     console.error('Waitlist error:', error);

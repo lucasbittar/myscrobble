@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -250,6 +250,7 @@ function Confetti() {
 
 export default function WaitlistPage() {
   const t = useTranslations('waitlist');
+  const locale = useLocale();
   const searchParams = useSearchParams();
 
   const [email, setEmail] = useState('');
@@ -286,6 +287,7 @@ export default function WaitlistPage() {
           spotifyId,
           spotifyName,
           spotifyImage,
+          locale,
         }),
       });
 
@@ -437,7 +439,7 @@ export default function WaitlistPage() {
             >
               <div className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl px-8 py-4 border border-border/50">
                 <div className="text-center">
-                  <div className="text-sm text-muted-foreground uppercase tracking-wider mb-1">Your Position</div>
+                  <div className="text-sm text-muted-foreground uppercase tracking-wider mb-1">{t('yourPosition')}</div>
                   <div className="text-4xl font-black text-[#EC4899]">
                     {t('position', { position })}
                   </div>
@@ -514,7 +516,7 @@ export default function WaitlistPage() {
                     height={32}
                     className="rounded-full"
                   />
-                  <span>Signing up as <strong className="text-foreground">{decodeURIComponent(spotifyName)}</strong></span>
+                  <span>{t('signingUpAs')} <strong className="text-foreground">{decodeURIComponent(spotifyName)}</strong></span>
                 </motion.div>
               )}
             </>
@@ -586,7 +588,7 @@ export default function WaitlistPage() {
                   href="/"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  ← Back to home
+                  ← {t('backToHome')}
                 </Link>
               </div>
             </>

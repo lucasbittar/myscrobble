@@ -506,6 +506,9 @@
     "whatsappText": "Confere o MyScrobble - ele mostra suas estatísticas do Spotify, encontra shows e dá recomendações musicais com IA!",
     "copyLink": "Copiar Link",
     "linkCopied": "Link copiado!",
-    "invalidEmail": "Por favor, insira um email válido"
+    "invalidEmail": "Por favor, insira um email válido",
+    "yourPosition": "Sua Posição",
+    "backToHome": "Voltar ao início",
+    "signingUpAs": "Entrando como"
   }
 }

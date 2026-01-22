@@ -519,6 +519,9 @@
     "whatsappText": "Check out MyScrobble - it shows your Spotify stats, finds concerts, and gives AI music recommendations!",
     "copyLink": "Copy Link",
     "linkCopied": "Link copied!",
-    "invalidEmail": "Please enter a valid email address"
+    "invalidEmail": "Please enter a valid email address",
+    "yourPosition": "Your Position",
+    "backToHome": "Back to home",
+    "signingUpAs": "Signing up as"
   }
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { getSession } from '@/lib/session';
+import { sendAccessGrantedEmail } from '@/lib/email';
 
 const ADMIN_EMAIL = 'lucasbittar.magnani@gmail.com';
 
@@ -66,6 +67,13 @@ export async function PATCH(request: Request) {
     const supabase = createServerClient() as any;
 
     if (action === 'convert') {
+      // First, get the user's email, name, and locale
+      const { data: entry } = await supabase
+        .from('waitlist')
+        .select('email, spotify_name, locale')
+        .eq('id', id)
+        .single();
+
       // Mark as converted
       const { error } = await supabase
         .from('waitlist')
@@ -75,6 +83,16 @@ export async function PATCH(request: Request) {
       if (error) {
         console.error('Error converting entry:', error);
         return NextResponse.json({ error: 'Failed to update entry' }, { status: 500 });
+      }
+
+      // Send access granted email (don't await to not block the response)
+      if (entry?.email) {
+        const locale = entry.locale === 'pt-BR' ? 'pt-BR' : 'en';
+        sendAccessGrantedEmail({
+          to: entry.email,
+          name: entry.spotify_name || undefined,
+          locale,
+        }).catch((err) => console.error('Failed to send access granted email:', err));
       }
 
       return NextResponse.json({ success: true, action: 'converted' });
