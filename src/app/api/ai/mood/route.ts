@@ -113,6 +113,7 @@ export async function GET(request: Request) {
 
     const artistsList = topArtists.map((a) => a.name).join(', ');
     const genresList = topGenres.join(', ');
+    const userName = session.user.name || '';
 
     const moodTagsExample = isPortuguese
       ? 'nostálgico, introspectivo, noturno, energético, sonhador'
@@ -123,10 +124,10 @@ export async function GET(request: Request) {
       : 'A rainy day playlist, Discovering shoegaze artists, Late-night lo-fi sessions';
 
     const mainInstruction = isPortuguese
-      ? `O que você diria em algumas frases (máximo 2) para uma pessoa que está ouvindo esses artistas nas últimas 4 semanas? Dê conselhos, sugestões, palavras de sabedoria ou uma piada engraçada baseada no gosto musical dela. Seja espirituoso, pessoal e divertido - como um amigo que manja de música zoando ela com carinho.
+      ? `O que você diria em algumas frases (máximo 2) para ${userName ? `${userName}, uma pessoa` : 'uma pessoa'} que está ouvindo esses artistas nas últimas 4 semanas? Dê conselhos, sugestões, palavras de sabedoria ou uma piada engraçada baseada no gosto musical. Seja espirituoso, pessoal e divertido - como um amigo que manja de música zoando com carinho.
 
-IMPORTANTE: Responda inteiramente em Português do Brasil.`
-      : `What would you say in a couple of sentences (2 max) to a person that has been listening to these artists for the last 4 weeks? Give them advice, suggestions, words of wisdom, or a funny joke based on their music taste. Be witty, personal, and playful - like a friend who knows music well roasting them affectionately.
+IMPORTANTE: Responda inteiramente em Português do Brasil.${userName ? ` Use o nome "${userName}" para inferir o gênero da pessoa e usar linguagem apropriada (amigo/amiga, ele/ela, etc).` : ''}`
+      : `What would you say in a couple of sentences (2 max) to ${userName ? `${userName}, a person` : 'a person'} that has been listening to these artists for the last 4 weeks? Give them advice, suggestions, words of wisdom, or a funny joke based on their music taste. Be witty, personal, and playful - like a friend who knows music well roasting them affectionately.
 
 Respond in English.`;
 
