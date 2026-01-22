@@ -131,8 +131,8 @@ IMPORTANTE: Responda inteiramente em Português do Brasil.`
 Respond in English.`;
 
     const moodSentenceInstruction = isPortuguese
-      ? 'Seu comentário espirituoso de 1-2 frases, conselho ou piada sobre o gosto musical. Use segunda pessoa (você). Seja específico sobre os artistas/gêneros. Pode ser engraçado, perspicaz ou ambos.'
-      : 'Your 1-2 sentence witty comment, advice, or joke about their music taste. Use second person (you/your). Be specific about the artists/genres they listen to. Can be funny, insightful, or both.';
+      ? 'Seu comentário espirituoso de 1-2 frases curtas (MÁXIMO 205 CARACTERES), conselho ou piada sobre o gosto musical. Use segunda pessoa (você). Seja específico sobre os artistas/gêneros. Pode ser engraçado, perspicaz ou ambos.'
+      : 'Your 1-2 sentence witty comment, advice, or joke about their music taste (MAXIMUM 205 CHARACTERS). Use second person (you/your). Be specific about the artists/genres they listen to. Can be funny, insightful, or both.';
 
     const closingInstruction = isPortuguese
       ? `Seja criativo e específico - mencione os artistas/gêneros reais. Não seja genérico ou corporativo.
@@ -192,6 +192,11 @@ ${closingInstruction}`;
     // Ensure arrays exist
     moodAnalysis.moodTags = moodAnalysis.moodTags || [];
     moodAnalysis.suggestions = moodAnalysis.suggestions || [];
+
+    // Enforce 205 character limit on moodSentence
+    if (moodAnalysis.moodSentence && moodAnalysis.moodSentence.length > 205) {
+      moodAnalysis.moodSentence = moodAnalysis.moodSentence.substring(0, 202) + '...';
+    }
 
     // Cache the result (locale-aware)
     const generatedAt = new Date().toISOString();
