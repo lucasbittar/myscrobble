@@ -448,5 +448,36 @@
     "loading": "Lendo sua alma musical...",
     "error": "Não foi possível ler as vibes",
     "basedOnVibe": "Baseado na sua vibe, você pode curtir:"
+  },
+  "contextualShare": {
+    "title": "Compartilhe Sua Música",
+    "shareButton": "Compartilhar",
+    "share": "Compartilhar",
+    "downloadButton": "Baixar para Instagram",
+    "generating": "Gerando...",
+    "optimizedFor": "Otimizado para Instagram Stories",
+    "cards": {
+      "nowPlaying": "Tocando Agora",
+      "myStats": "Minhas Estatísticas",
+      "timeListened": "Tempo Ouvido",
+      "tracksPlayed": "Músicas Tocadas",
+      "artists": "Artistas",
+      "recentVibes": "Minhas Vibes Recentes",
+      "tracksRecently": "músicas recentes",
+      "topArtists": "Meus Top Artistas",
+      "topTracks": "Minhas Top Músicas",
+      "topAlbums": "Meus Top Álbuns",
+      "nextShow": "Meu Próximo Show",
+      "today": "Hoje!",
+      "tomorrow": "Amanhã!",
+      "inDays": "Em {days} dias",
+      "moreShows": "mais shows",
+      "noConcerts": "Nenhum show agendado",
+      "sonicAura": "Minha Aura Sonora",
+      "myPodcasts": "Meus Podcasts",
+      "episodes": "episódios",
+      "shows": "Shows",
+      "savedEpisodes": "Episódios Salvos"
+    }
   }
 }

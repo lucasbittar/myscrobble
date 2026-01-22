@@ -461,5 +461,36 @@
     "loading": "Reading your musical soul...",
     "error": "Couldn't read the vibes",
     "basedOnVibe": "Based on your vibe, you might enjoy:"
+  },
+  "contextualShare": {
+    "title": "Share Your Music",
+    "shareButton": "Share",
+    "share": "Share",
+    "downloadButton": "Download for Instagram",
+    "generating": "Generating...",
+    "optimizedFor": "Optimized for Instagram Stories",
+    "cards": {
+      "nowPlaying": "Now Playing",
+      "myStats": "My Stats",
+      "timeListened": "Time Listened",
+      "tracksPlayed": "Tracks Played",
+      "artists": "Artists",
+      "recentVibes": "My Recent Vibes",
+      "tracksRecently": "tracks recently",
+      "topArtists": "My Top Artists",
+      "topTracks": "My Top Tracks",
+      "topAlbums": "My Top Albums",
+      "nextShow": "My Next Show",
+      "today": "Today!",
+      "tomorrow": "Tomorrow!",
+      "inDays": "In {days} days",
+      "moreShows": "more shows",
+      "noConcerts": "No upcoming concerts",
+      "sonicAura": "My Sonic Aura",
+      "myPodcasts": "My Podcasts",
+      "episodes": "episodes",
+      "shows": "Shows",
+      "savedEpisodes": "Saved Episodes"
+    }
   }
 }

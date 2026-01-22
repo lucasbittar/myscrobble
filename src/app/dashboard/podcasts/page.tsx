@@ -7,6 +7,13 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { getLargestImage, type SpotifyShow, type SpotifyEpisode } from '@/lib/spotify';
 import { PageHeader } from '@/components/modern';
+import {
+  ShareProvider,
+  ShareModal,
+  FloatingShareButton,
+  type PodcastsShareData,
+  type ShareData,
+} from '@/components/share';
 
 interface SavedShow {
   added_at: string;
@@ -104,7 +111,24 @@ export default function PodcastsPage() {
   const hasShows = showsData?.items && showsData.items.length > 0;
   const hasEpisodes = episodesData?.items && episodesData.items.length > 0;
 
+  // Prepare share data
+  const shareData: ShareData | null = hasShows && featuredShow ? {
+    type: 'podcasts',
+    data: {
+      featuredShow: {
+        name: featuredShow.show.name,
+        publisher: featuredShow.show.publisher,
+        image: getLargestImage(featuredShow.show.images) || '',
+        episodeCount: featuredShow.show.total_episodes,
+      },
+      totalShows: showsData?.total || 0,
+      totalEpisodes: episodesData?.total || 0,
+    } as PodcastsShareData,
+  } : null;
+
   return (
+    <ShareProvider userName="User">
+      <>
     <div className="relative z-10 min-h-screen py-12 md:py-24 px-6 md:px-12">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
@@ -112,18 +136,38 @@ export default function PodcastsPage() {
           subtitle={t('subtitle')}
           title={t('title')}
           rightContent={
-            hasShows && (
-              <div className="flex gap-4">
-                <div className="text-center px-4 py-2 rounded-2xl bg-white/60 dark:bg-white/10 backdrop-blur-sm">
-                  <p className="text-2xl font-bold text-foreground">{showsData?.total || 0}</p>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('stats.shows')}</p>
+            <div className="flex items-center gap-4">
+              {/* Share Button */}
+              {shareData && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <FloatingShareButton
+                    shareData={shareData}
+                    theme="teal"
+                    position="relative"
+                    size="lg"
+                    showLabel
+                  />
+                </motion.div>
+              )}
+
+              {/* Stats */}
+              {hasShows && (
+                <div className="flex gap-4">
+                  <div className="text-center px-4 py-2 rounded-2xl bg-white/60 dark:bg-white/10 backdrop-blur-sm">
+                    <p className="text-2xl font-bold text-foreground">{showsData?.total || 0}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('stats.shows')}</p>
+                  </div>
+                  <div className="text-center px-4 py-2 rounded-2xl bg-white/60 dark:bg-white/10 backdrop-blur-sm">
+                    <p className="text-2xl font-bold text-foreground">{episodesData?.total || 0}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('stats.episodes')}</p>
+                  </div>
                 </div>
-                <div className="text-center px-4 py-2 rounded-2xl bg-white/60 dark:bg-white/10 backdrop-blur-sm">
-                  <p className="text-2xl font-bold text-foreground">{episodesData?.total || 0}</p>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('stats.episodes')}</p>
-                </div>
-              </div>
-            )
+              )}
+            </div>
           }
         />
 
@@ -401,5 +445,10 @@ export default function PodcastsPage() {
         )}
       </div>
     </div>
+
+        {/* Share Modal */}
+        <ShareModal />
+      </>
+    </ShareProvider>
   );
 }

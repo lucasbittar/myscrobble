@@ -22,6 +22,80 @@ import { SatoriPodcastsCard } from '@/components/share/satori/SatoriPodcastsCard
 
 export const runtime = 'edge';
 
+// Helper to convert ArrayBuffer to base64 (Edge-compatible, no Node.js Buffer)
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+// Helper to fetch an image and convert to base64 data URL
+async function fetchImageAsDataUrl(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url, {
+      headers: { 'Accept': 'image/*' },
+    });
+    if (!response.ok) return null;
+
+    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    const arrayBuffer = await response.arrayBuffer();
+    const base64 = arrayBufferToBase64(arrayBuffer);
+    return `data:${contentType};base64,${base64}`;
+  } catch (error) {
+    console.error('Failed to fetch image:', url, error);
+    return null;
+  }
+}
+
+// Process data to convert all image URLs to data URLs
+async function processImagesInData<T>(data: T): Promise<T> {
+  if (!data || typeof data !== 'object') return data;
+
+  const processedData = JSON.parse(JSON.stringify(data)) as T;
+
+  // Collect all image URLs and their references for batch fetching
+  const imagePromises: Promise<void>[] = [];
+
+  // Helper to process an object and its nested properties
+  function processObject(obj: Record<string, unknown>) {
+    for (const key of Object.keys(obj)) {
+      const value = obj[key];
+
+      // Check for image URL properties
+      if ((key === 'image' || key === 'artistImage') && typeof value === 'string' && value.startsWith('http')) {
+        const url = value;
+        imagePromises.push(
+          fetchImageAsDataUrl(url).then(dataUrl => {
+            if (dataUrl) {
+              obj[key] = dataUrl;
+            }
+          })
+        );
+      } else if (Array.isArray(value)) {
+        // Process array items
+        for (const item of value) {
+          if (item && typeof item === 'object') {
+            processObject(item as Record<string, unknown>);
+          }
+        }
+      } else if (value && typeof value === 'object') {
+        // Process nested objects
+        processObject(value as Record<string, unknown>);
+      }
+    }
+  }
+
+  processObject(processedData as Record<string, unknown>);
+
+  // Wait for all image fetches to complete
+  await Promise.all(imagePromises);
+
+  return processedData;
+}
+
 // Translation strings for both locales
 const translations = {
   en: {
@@ -93,10 +167,13 @@ export async function POST(request: NextRequest) {
     const body: GenerateRequest = await request.json();
     console.log('[share/generate] Request received:', { type: body.type, theme: body.theme, locale: body.locale });
 
-    const { type, data, locale = 'en' } = body;
+    const { type, locale = 'en' } = body;
     const theme = body.theme || cardTypeToTheme[type];
     const colors = shareColorThemes[theme];
     const t = translations[locale] || translations.en;
+
+    // Process images - fetch and convert to base64 data URLs for reliable rendering
+    const data = await processImagesInData(body.data);
 
     // Helper to interpolate translation strings
     const formatT = (key: TranslationKey, params?: Record<string, string | number>) => {

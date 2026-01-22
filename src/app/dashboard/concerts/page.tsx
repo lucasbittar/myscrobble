@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
@@ -13,6 +13,7 @@ import type { VenueResponse, Venue } from '@/types/venue';
 import { PageHeader, ModernButton } from '@/components/modern';
 import { ConcertHero, ConcertTimeline } from '@/components/concerts';
 import { containerVariants, gridItemVariants } from '@/lib/animations';
+import { ShareProvider, ShareModal, FloatingShareButton, type ConcertsShareData, type ShareData } from '@/components/share';
 
 // Dynamically import the map component to avoid SSR issues with Leaflet
 const VenueMapInteractive = dynamic(
@@ -164,8 +165,21 @@ export default function ConcertsPage() {
   const venues = venueData?.venues || [];
   const detectedCity = venueData?.detectedCity;
 
+  // Get user info for share
+  const [userName, setUserName] = useState('User');
+  useEffect(() => {
+    fetch('/api/spotify/me')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data?.display_name) setUserName(data.display_name);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
-    <div className="relative z-10 min-h-screen">
+    <ShareProvider userName={userName}>
+      <>
+        <div className="relative z-10 min-h-screen">
       {/* Section 1: Concerts */}
       <div className="py-12 md:py-24 px-6 md:px-12">
         <div className="max-w-7xl mx-auto">
@@ -174,37 +188,70 @@ export default function ConcertsPage() {
             subtitle={t('subtitle')}
             title={t('title')}
             rightContent={
-              artistsOnTour.length > 0 ? (
-                <div className="flex flex-wrap gap-2 items-center">
-                  {artistsOnTour.slice(0, 5).map((artist) => (
-                    <motion.div
-                      key={artist.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="flex items-center gap-2 rounded-full border border-white/30 dark:border-white/20 bg-white/70 dark:bg-white/10 backdrop-blur-md pl-1 pr-3 py-1 shadow-sm"
-                    >
-                      <div className="relative w-6 h-6 rounded-full overflow-hidden ring-2 ring-[#EC4899]/30">
-                        {artist.images[0]?.url && (
-                          <Image
-                            src={artist.images[0].url}
-                            alt={artist.name}
-                            fill
-                            className="object-cover"
-                          />
-                        )}
-                      </div>
-                      <span className="text-xs font-medium text-foreground">
-                        {artist.name}
+              <div className="flex items-center gap-4">
+                {/* Share Button */}
+                {nextConcert && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <FloatingShareButton
+                      shareData={{
+                        type: 'concerts',
+                        data: {
+                          nextConcert: {
+                            artistName: nextConcert.artistName,
+                            artistImage: nextConcert.artistImage,
+                            venue: nextConcert.venue,
+                            city: nextConcert.city,
+                            date: nextConcert.date,
+                            daysUntil: Math.ceil((new Date(nextConcert.date).getTime() - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24)),
+                          },
+                          upcomingCount: allConcerts.length,
+                        } as ConcertsShareData,
+                      } as ShareData}
+                      theme="pink"
+                      position="relative"
+                      size="lg"
+                      showLabel
+                    />
+                  </motion.div>
+                )}
+
+                {/* Artists on Tour */}
+                {artistsOnTour.length > 0 && (
+                  <div className="flex flex-wrap gap-2 items-center">
+                    {artistsOnTour.slice(0, 5).map((artist) => (
+                      <motion.div
+                        key={artist.id}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="flex items-center gap-2 rounded-full border border-white/30 dark:border-white/20 bg-white/70 dark:bg-white/10 backdrop-blur-md pl-1 pr-3 py-1 shadow-sm"
+                      >
+                        <div className="relative w-6 h-6 rounded-full overflow-hidden ring-2 ring-[#EC4899]/30">
+                          {artist.images[0]?.url && (
+                            <Image
+                              src={artist.images[0].url}
+                              alt={artist.name}
+                              fill
+                              className="object-cover"
+                            />
+                          )}
+                        </div>
+                        <span className="text-xs font-medium text-foreground">
+                          {artist.name}
+                        </span>
+                      </motion.div>
+                    ))}
+                    {artistsOnTour.length > 5 && (
+                      <span className="text-xs text-muted-foreground font-medium px-2 py-1 rounded-full bg-white/50 dark:bg-white/10 backdrop-blur-sm">
+                        +{artistsOnTour.length - 5}
                       </span>
-                    </motion.div>
-                  ))}
-                  {artistsOnTour.length > 5 && (
-                    <span className="text-xs text-muted-foreground font-medium px-2 py-1 rounded-full bg-white/50 dark:bg-white/10 backdrop-blur-sm">
-                      +{artistsOnTour.length - 5}
-                    </span>
-                  )}
-                </div>
-              ) : null
+                    )}
+                  </div>
+                )}
+              </div>
             }
           />
 
@@ -437,7 +484,12 @@ export default function ConcertsPage() {
           </div>
         </motion.section>
       )}
-    </div>
+
+        {/* Share Modal */}
+        <ShareModal />
+      </div>
+      </>
+    </ShareProvider>
   );
 }
 

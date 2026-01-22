@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import { FloatingShareButton, type SonicAuraShareData, type ShareData } from '@/components/share';
 
 // Mood color type
 type MoodColor = 'energetic' | 'chill' | 'melancholic' | 'nostalgic' | 'experimental';
@@ -407,6 +408,30 @@ export function MoodAnalysis() {
               </AnimatePresence>
             </div>
           </div>
+
+          {/* Share Button - only show when mood is loaded */}
+          {mood && !showLoading && !error && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="mt-8 flex justify-end"
+            >
+              <FloatingShareButton
+                shareData={{
+                  type: 'sonic-aura',
+                  data: {
+                    moodSentence: mood.moodSentence,
+                    moodTags: mood.moodTags,
+                    moodColor: mood.moodColor,
+                    emoji: mood.emoji,
+                  } as SonicAuraShareData,
+                } as ShareData}
+                theme="dynamic"
+                showLabel
+              />
+            </motion.div>
+          )}
         </div>
       </div>
     </motion.section>

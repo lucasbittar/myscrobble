@@ -1,10 +1,17 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
+import {
+  ShareProvider,
+  ShareModal,
+  FloatingShareButton,
+  type HistoryShareData,
+  type ShareData,
+} from '@/components/share';
 
 interface HistoryItem {
   id: string;
@@ -154,9 +161,34 @@ export default function HistoryPage() {
   const totalPages = Math.ceil((history?.total || 0) / limit);
   const currentPage = Math.floor(offset / limit) + 1;
 
+  // Get user info for share
+  const [userName, setUserName] = useState('User');
+  useEffect(() => {
+    fetch('/api/spotify/me')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data?.display_name) setUserName(data.display_name);
+      })
+      .catch(() => {});
+  }, []);
+
+  // Prepare share data
+  const shareData: ShareData | null = history?.items && history.items.length > 0 ? {
+    type: 'history',
+    data: {
+      recentTracks: history.items.slice(0, 9).map(item => ({
+        trackName: item.track_name,
+        artistName: item.artist_name,
+        albumImage: item.album_art_url || '',
+      })),
+    } as HistoryShareData,
+  } : null;
+
   return (
-    <div className="min-h-screen py-12 md:py-24 px-6 md:px-12">
-      <div className="max-w-7xl mx-auto">
+    <ShareProvider userName={userName}>
+      <>
+        <div className="min-h-screen py-12 md:py-24 px-6 md:px-12">
+          <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -188,34 +220,55 @@ export default function HistoryPage() {
               </p>
             </div>
 
-            <motion.button
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              onClick={() => syncMutation.mutate()}
-              disabled={syncMutation.isPending}
-              className="group relative px-6 py-3 rounded-full bg-[#1DB954] text-white font-semibold overflow-hidden transition-all hover:shadow-lg hover:shadow-[#1DB954]/25 disabled:opacity-50 cursor-pointer"
-            >
-              <span className="relative z-10 flex items-center gap-2">
-                {syncMutation.isPending ? (
-                  <>
-                    <motion.span
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                      className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                    />
-                    {tCommon('syncing')}
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    {tCommon('syncNow')}
-                  </>
-                )}
-              </span>
-            </motion.button>
+            {/* Action buttons */}
+            <div className="flex items-center gap-3">
+              {/* Share Button */}
+              {shareData && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.25 }}
+                >
+                  <FloatingShareButton
+                    shareData={shareData}
+                    theme="green"
+                    position="relative"
+                    size="lg"
+                    showLabel
+                  />
+                </motion.div>
+              )}
+
+              {/* Sync Button */}
+              <motion.button
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 }}
+                onClick={() => syncMutation.mutate()}
+                disabled={syncMutation.isPending}
+                className="group relative px-6 py-3 rounded-full bg-[#1DB954] text-white font-semibold overflow-hidden transition-all hover:shadow-lg hover:shadow-[#1DB954]/25 disabled:opacity-50 cursor-pointer"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  {syncMutation.isPending ? (
+                    <>
+                      <motion.span
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                        className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                      />
+                      {tCommon('syncing')}
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      {tCommon('syncNow')}
+                    </>
+                  )}
+                </span>
+              </motion.button>
+            </div>
           </div>
 
           {/* Filter Pills */}
@@ -454,6 +507,11 @@ export default function HistoryPage() {
           </motion.div>
         )}
       </div>
-    </div>
+
+        {/* Share Modal */}
+        <ShareModal />
+      </div>
+      </>
+    </ShareProvider>
   );
 }

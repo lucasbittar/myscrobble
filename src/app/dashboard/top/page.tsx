@@ -2,9 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TopArtists, TopTracks, TopAlbums } from '@/components/dashboard';
 import { useTranslations } from 'next-intl';
+import {
+  ShareProvider,
+  ShareModal,
+  FloatingShareButton,
+  type TopChartsShareData,
+  type ShareData,
+} from '@/components/share';
 
 type TimeRange = 'short_term' | 'medium_term' | 'long_term';
 type ViewMode = 'artists' | 'tracks' | 'albums';
@@ -58,9 +66,74 @@ export default function TopChartsPage() {
     }
   }, [searchParams, viewMode, timeRange]);
 
+  // Get user info for share
+  const [userName, setUserName] = useState('User');
+  useEffect(() => {
+    fetch('/api/spotify/me')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data?.display_name) setUserName(data.display_name);
+      })
+      .catch(() => {});
+  }, []);
+
+  // Fetch data for share card based on current view
+  const { data: shareItems } = useQuery({
+    queryKey: ['share-top', viewMode, timeRange],
+    queryFn: async () => {
+      const endpoint = viewMode === 'artists'
+        ? `/api/spotify/top-artists?time_range=${timeRange}&limit=5`
+        : viewMode === 'tracks'
+        ? `/api/spotify/top-tracks?time_range=${timeRange}&limit=5`
+        : `/api/spotify/top-albums?time_range=${timeRange}&limit=5`;
+
+      const res = await fetch(endpoint);
+      if (!res.ok) return null;
+      const data = await res.json();
+
+      // Different API responses have different structures:
+      // - top-artists: { name, images: [{url}] }
+      // - top-tracks: { name, artists: [{name}], album: { images: [{url}] } }
+      // - top-albums: { name, artist (string), image (string) }
+      return (data.items || []).map((item: {
+        name: string;
+        images?: { url: string }[];
+        artists?: { name: string }[];
+        album?: { images?: { url: string }[] };
+        artist?: string;
+        image?: string;
+      }) => ({
+        name: item.name,
+        subtitle: viewMode === 'tracks'
+          ? item.artists?.[0]?.name
+          : viewMode === 'albums'
+            ? item.artist
+            : undefined,
+        image: viewMode === 'tracks'
+          ? item.album?.images?.[0]?.url || ''
+          : viewMode === 'albums'
+            ? item.image || ''
+            : item.images?.[0]?.url || '',
+      }));
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Prepare share data
+  const shareData: ShareData | null = shareItems && shareItems.length > 0 ? {
+    type: 'top-charts',
+    data: {
+      type: viewMode,
+      timeRange: timeRangeLabels[timeRange],
+      items: shareItems,
+    } as TopChartsShareData,
+  } : null;
+
   return (
-    <div className="min-h-screen py-12 md:py-24 px-6 md:px-12">
-      <div className="max-w-7xl mx-auto">
+    <ShareProvider userName={userName}>
+      <>
+        <div className="min-h-screen py-12 md:py-24 px-6 md:px-12">
+          <div className="max-w-7xl mx-auto">
         {/* Header Section - Matching History page style */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -75,7 +148,7 @@ export default function TopChartsPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="text-xs font-medium tracking-[0.3em] text-[#1DB954] uppercase mb-2"
+                className="text-xs font-medium tracking-[0.3em] text-[#8B5CF6] uppercase mb-2"
               >
                 {t('subtitle')}
               </motion.p>
@@ -84,30 +157,50 @@ export default function TopChartsPage() {
               </h1>
             </div>
 
-            {/* Time Range Pills */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              className="flex gap-2"
-            >
-              {(Object.keys(timeRangeLabels) as TimeRange[]).map((range, index) => (
-                <motion.button
-                  key={range}
-                  initial={{ opacity: 0, scale: 0.8 }}
+            {/* Action buttons */}
+            <div className="flex items-center gap-3">
+              {/* Share Button */}
+              {shareData && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3 + index * 0.05 }}
-                  onClick={() => handleTimeChange(range)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
-                    timeRange === range
-                      ? 'relative z-10 bg-[#1DB954] text-white shadow-lg shadow-[#1DB954]/25'
-                      : 'bg-white/60 dark:bg-white/10 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-white/80 dark:hover:bg-white/20'
-                  }`}
+                  transition={{ delay: 0.25 }}
                 >
-                  {timeRangeLabels[range]}
-                </motion.button>
-              ))}
-            </motion.div>
+                  <FloatingShareButton
+                    shareData={shareData}
+                    theme="purple"
+                    position="relative"
+                    size="lg"
+                    showLabel
+                  />
+                </motion.div>
+              )}
+
+              {/* Time Range Pills */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 }}
+                className="flex gap-2"
+              >
+                {(Object.keys(timeRangeLabels) as TimeRange[]).map((range, index) => (
+                  <motion.button
+                    key={range}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.3 + index * 0.05 }}
+                    onClick={() => handleTimeChange(range)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                      timeRange === range
+                        ? 'relative z-10 bg-[#8B5CF6] text-white shadow-lg shadow-[#8B5CF6]/25'
+                        : 'bg-white/60 dark:bg-white/10 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-white/80 dark:hover:bg-white/20'
+                    }`}
+                  >
+                    {timeRangeLabels[range]}
+                  </motion.button>
+                ))}
+              </motion.div>
+            </div>
           </div>
 
           {/* View Mode Toggle */}
@@ -150,7 +243,12 @@ export default function TopChartsPage() {
             {viewMode === 'albums' && <TopAlbums limit={20} timeRange={timeRange} />}
           </motion.div>
         </AnimatePresence>
-      </div>
-    </div>
+          </div>
+        </div>
+
+        {/* Share Modal */}
+        <ShareModal />
+      </>
+    </ShareProvider>
   );
 }

@@ -11,6 +11,7 @@ import { MoodAnalysis } from '@/components/dashboard/MoodAnalysis';
 import { useTourStatusBatch } from '@/hooks/useTourStatus';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useTranslations } from 'next-intl';
+import { ShareProvider, ShareModal } from '@/components/share';
 
 interface NowPlayingData {
   isPlaying: boolean;
@@ -245,8 +246,10 @@ export default function DashboardPage() {
   );
 
   return (
-    <div className="relative">
-      {/* Hero Section - Now Playing */}
+    <ShareProvider userName={userName || 'User'}>
+      <>
+        <div className="relative">
+          {/* Hero Section - Now Playing */}
       <section className="min-h-[70vh] flex items-center px-6 md:px-12 py-24">
         <div className="max-w-7xl mx-auto w-full">
           {nowPlaying?.isPlaying && nowPlaying.track ? (
@@ -596,7 +599,12 @@ export default function DashboardPage() {
           </div>
         </div>
       </RevealSection>
-    </div>
+
+          {/* Share Modal */}
+          <ShareModal />
+        </div>
+      </>
+    </ShareProvider>
   );
 }
 
