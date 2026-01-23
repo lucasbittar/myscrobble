@@ -467,6 +467,7 @@
   "footer": {
     "madeWith": "Made with",
     "by": "by",
+    "privacy": "Privacy Policy",
     "disclaimer": "MyScrobble.fm is an independent music analytics tool. I have no official affiliation with Last.fm or Spotify. The term \"Scrobble\" is used descriptively for the culture of tracking the music we love.",
     "tagline": "Transforming your data into visual insights"
   },
@@ -505,7 +506,7 @@
     "headlinePart1": "Tonight's show is",
     "headlineHighlight": "sold out",
     "subheadline": "But you're on the guest list for the next one",
-    "explanation": "MyScrobble is in early access with limited spots. We're working on expanding capacity.",
+    "explanation": "MyScrobble.fm is in early access with limited spots. We're working on expanding capacity.",
     "cta": "Get Your Backstage Pass",
     "emailPlaceholder": "your@email.com",
     "successPart1": "You're on",
@@ -515,14 +516,67 @@
     "position": "#{position} in line",
     "shareTitle": "Share with friends",
     "shareDescription": "Help us grow and move up the list",
-    "twitterText": "Just discovered MyScrobble - a beautiful Spotify dashboard with AI recommendations and concert discovery. Check it out!",
-    "whatsappText": "Check out MyScrobble - it shows your Spotify stats, finds concerts, and gives AI music recommendations!",
+    "twitterText": "Just discovered MyScrobble.fm - a beautiful Spotify dashboard with AI recommendations and concert discovery. Check it out!",
+    "whatsappText": "Check out MyScrobble.fm - it shows your Spotify stats, finds concerts, and gives AI music recommendations!",
     "copyLink": "Copy Link",
     "linkCopied": "Link copied!",
     "invalidEmail": "Please enter a valid email address",
     "yourPosition": "Your Position",
     "backToHome": "Back to home",
     "signingUpAs": "Signing up as"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "backToHome": "Back to Home",
+    "lastUpdated": "Last updated",
+    "lastUpdatedDate": "January 2026",
+    "sections": {
+      "intro": {
+        "title": "Introduction",
+        "content": "MyScrobble.fm is a personal music analytics dashboard that helps you visualize your Spotify listening habits. We take your privacy seriously and are committed to being transparent about how we handle your data."
+      },
+      "dataCollected": {
+        "title": "What We Collect",
+        "intro": "When you use MyScrobble.fm, we access the following data from your Spotify account:",
+        "item1": "Your Spotify profile information (display name, profile picture, email)",
+        "item2": "Your listening history (recently played tracks)",
+        "item3": "Your top artists, tracks, and albums",
+        "item4": "Your saved podcasts and episodes"
+      },
+      "howWeUse": {
+        "title": "How We Use Your Data",
+        "intro": "We use your data exclusively to:",
+        "item1": "Display your personalized listening statistics and charts",
+        "item2": "Generate AI-powered music recommendations based on your taste",
+        "item3": "Help you discover concerts from artists you listen to"
+      },
+      "dataStorage": {
+        "title": "Data Storage",
+        "content": "Your listening history is stored securely in our database to provide historical analytics beyond Spotify's 50-track limit. Your data is never shared with third parties for advertising or marketing purposes."
+      },
+      "thirdParty": {
+        "title": "Third-Party Services",
+        "intro": "We use the following services to provide our features:",
+        "spotify": "For authentication and accessing your music data",
+        "supabase": "For secure database storage",
+        "gemini": "For AI-powered recommendations (your data is not stored by Google)"
+      },
+      "yourRights": {
+        "title": "Your Rights",
+        "intro": "You have full control over your data:",
+        "item1": "You can revoke MyScrobble.fm's access to your Spotify account at any time through Spotify's settings",
+        "item2": "You can request deletion of all your data stored in our system",
+        "item3": "You can export your data upon request"
+      },
+      "retention": {
+        "title": "Data Retention",
+        "content": "We retain your listening history and preferences for as long as your account is active. If you revoke access or request deletion, your data will be removed within 30 days."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "content": "If you have any questions about this privacy policy or your data, please contact us at"
+      }
+    }
   },
   "teaser": {
     "tagline": "Something Amazing Is Coming",
