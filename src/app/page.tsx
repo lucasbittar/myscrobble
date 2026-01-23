@@ -829,38 +829,42 @@ function TeaserPage() {
               </h1>
             </motion.div>
 
-            {/* Description */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="text-base md:text-xl text-muted-foreground max-w-2xl mx-auto mb-6 md:mb-10 leading-relaxed px-2 md:px-0"
-            >
-              {t('description')}
-            </motion.p>
+            {/* Description - hide on success */}
+            {!isSuccess && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="text-base md:text-xl text-muted-foreground max-w-2xl mx-auto mb-6 md:mb-10 leading-relaxed px-2 md:px-0"
+              >
+                {t('description')}
+              </motion.p>
+            )}
 
-            {/* Feature pills */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
-              className="flex flex-wrap justify-center gap-2 md:gap-3 mb-8 md:mb-12"
-            >
-              {[
-                { key: 'stats', color: '#1DB954' },
-                { key: 'ai', color: '#8B5CF6' },
-                { key: 'concerts', color: '#EC4899' },
-                { key: 'share', color: '#F59E0B' },
-              ].map((feature) => (
-                <div
-                  key={feature.key}
-                  className="flex items-center gap-2 md:gap-2.5 px-3 md:px-4 py-2 md:py-2.5 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-full border border-border/50 hover:border-border transition-colors"
-                >
-                  <FeaturePillIcon type={feature.key as 'stats' | 'ai' | 'concerts' | 'share'} color={feature.color} />
-                  <span className="text-xs md:text-sm font-medium text-foreground/80">{t(`features.${feature.key}`)}</span>
-                </div>
-              ))}
-            </motion.div>
+            {/* Feature pills - hide on success to save space */}
+            {!isSuccess && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                className="flex flex-wrap justify-center gap-2 md:gap-3 mb-8 md:mb-12"
+              >
+                {[
+                  { key: 'stats', color: '#1DB954' },
+                  { key: 'ai', color: '#8B5CF6' },
+                  { key: 'concerts', color: '#EC4899' },
+                  { key: 'share', color: '#F59E0B' },
+                ].map((feature) => (
+                  <div
+                    key={feature.key}
+                    className="flex items-center gap-2 md:gap-2.5 px-3 md:px-4 py-2 md:py-2.5 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-full border border-border/50 hover:border-border transition-colors"
+                  >
+                    <FeaturePillIcon type={feature.key as 'stats' | 'ai' | 'concerts' | 'share'} color={feature.color} />
+                    <span className="text-xs md:text-sm font-medium text-foreground/80">{t(`features.${feature.key}`)}</span>
+                  </div>
+                ))}
+              </motion.div>
+            )}
 
             {/* Email signup or success state */}
             <motion.div
