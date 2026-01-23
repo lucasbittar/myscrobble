@@ -37,7 +37,7 @@
     "login": "CONECTAR COM SPOTIFY",
     "privacy": "Seu histórico de músicas permanece privado. Apenas analisamos seus dados para fornecer insights.",
     "init": {
-      "loading": "Inicializando MyScrobble...",
+      "loading": "Inicializando MyScrobble.fm...",
       "spotify": "Carregando módulo da API do Spotify",
       "ai": "Carregando recomendações de IA",
       "concerts": "Carregando descoberta de shows",
@@ -454,6 +454,7 @@
   "footer": {
     "madeWith": "Criado com",
     "by": "por",
+    "privacy": "Política de Privacidade",
     "disclaimer": "MyScrobble.fm é uma ferramenta independente de análise musical. Não tenho vínculo oficial com a Last.fm ou Spotify. O termo \"Scrobble\" é utilizado de forma descritiva para a cultura de registro de músicas que amamos.",
     "tagline": "Transformando seus dados em insights visuais"
   },
@@ -492,7 +493,7 @@
     "headlinePart1": "O show de hoje está",
     "headlineHighlight": "esgotado",
     "subheadline": "Mas você está na lista de convidados para o próximo",
-    "explanation": "MyScrobble está em acesso antecipado com vagas limitadas. Estamos trabalhando para expandir a capacidade.",
+    "explanation": "MyScrobble.fm está em acesso antecipado com vagas limitadas. Estamos trabalhando para expandir a capacidade.",
     "cta": "Garantir Meu Passe VIP",
     "emailPlaceholder": "seu@email.com",
     "successPart1": "Você está",
@@ -502,14 +503,67 @@
     "position": "#{position} na fila",
     "shareTitle": "Compartilhe com amigos",
     "shareDescription": "Ajude a gente a crescer e avance na fila",
-    "twitterText": "Acabei de descobrir o MyScrobble - um painel lindo do Spotify com recomendações de IA e descoberta de shows. Confira!",
-    "whatsappText": "Confere o MyScrobble - ele mostra suas estatísticas do Spotify, encontra shows e dá recomendações musicais com IA!",
+    "twitterText": "Acabei de descobrir o MyScrobble.fm - um painel lindo do Spotify com recomendações de IA e descoberta de shows. Confira!",
+    "whatsappText": "Confere o MyScrobble.fm - ele mostra suas estatísticas do Spotify, encontra shows e dá recomendações musicais com IA!",
     "copyLink": "Copiar Link",
     "linkCopied": "Link copiado!",
     "invalidEmail": "Por favor, insira um email válido",
     "yourPosition": "Sua Posição",
     "backToHome": "Voltar ao início",
     "signingUpAs": "Entrando como"
+  },
+  "privacy": {
+    "title": "Política de Privacidade",
+    "backToHome": "Voltar ao Início",
+    "lastUpdated": "Última atualização",
+    "lastUpdatedDate": "Janeiro de 2026",
+    "sections": {
+      "intro": {
+        "title": "Introdução",
+        "content": "MyScrobble.fm é um painel de análise musical pessoal que ajuda você a visualizar seus hábitos de audição no Spotify. Levamos sua privacidade a sério e estamos comprometidos em ser transparentes sobre como tratamos seus dados."
+      },
+      "dataCollected": {
+        "title": "O Que Coletamos",
+        "intro": "Quando você usa o MyScrobble.fm, acessamos os seguintes dados da sua conta Spotify:",
+        "item1": "Suas informações de perfil do Spotify (nome, foto, email)",
+        "item2": "Seu histórico de audição (músicas tocadas recentemente)",
+        "item3": "Seus artistas, músicas e álbuns favoritos",
+        "item4": "Seus podcasts e episódios salvos"
+      },
+      "howWeUse": {
+        "title": "Como Usamos Seus Dados",
+        "intro": "Usamos seus dados exclusivamente para:",
+        "item1": "Exibir suas estatísticas e rankings personalizados de audição",
+        "item2": "Gerar recomendações musicais com IA baseadas no seu gosto",
+        "item3": "Ajudar você a descobrir shows de artistas que você ouve"
+      },
+      "dataStorage": {
+        "title": "Armazenamento de Dados",
+        "content": "Seu histórico de audição é armazenado de forma segura em nosso banco de dados para fornecer análises históricas além do limite de 50 músicas do Spotify. Seus dados nunca são compartilhados com terceiros para fins de publicidade ou marketing."
+      },
+      "thirdParty": {
+        "title": "Serviços de Terceiros",
+        "intro": "Utilizamos os seguintes serviços para fornecer nossas funcionalidades:",
+        "spotify": "Para autenticação e acesso aos seus dados musicais",
+        "supabase": "Para armazenamento seguro no banco de dados",
+        "gemini": "Para recomendações com IA (seus dados não são armazenados pelo Google)"
+      },
+      "yourRights": {
+        "title": "Seus Direitos",
+        "intro": "Você tem controle total sobre seus dados:",
+        "item1": "Você pode revogar o acesso do MyScrobble.fm à sua conta Spotify a qualquer momento nas configurações do Spotify",
+        "item2": "Você pode solicitar a exclusão de todos os seus dados armazenados em nosso sistema",
+        "item3": "Você pode exportar seus dados mediante solicitação"
+      },
+      "retention": {
+        "title": "Retenção de Dados",
+        "content": "Mantemos seu histórico de audição e preferências enquanto sua conta estiver ativa. Se você revogar o acesso ou solicitar exclusão, seus dados serão removidos em até 30 dias."
+      },
+      "contact": {
+        "title": "Fale Conosco",
+        "content": "Se você tiver alguma dúvida sobre esta política de privacidade ou seus dados, entre em contato conosco em"
+      }
+    }
   },
   "teaser": {
     "tagline": "Algo Incrível Está Chegando",
