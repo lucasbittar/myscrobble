@@ -1,6 +1,14 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialization to avoid build-time errors when env var is missing
+let resendClient: Resend | null = null;
+
+function getResendClient(): Resend | null {
+  if (!resendClient && process.env.RESEND_API_KEY) {
+    resendClient = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resendClient;
+}
 
 const FROM_EMAIL = 'MyScrobble <hello@myscrobble.fm>';
 
@@ -105,6 +113,12 @@ interface SendAccessGrantedEmailParams {
 
 export async function sendWelcomeEmail({ to, name, position, locale = 'en' }: SendWelcomeEmailParams) {
   const t = translations.welcome[locale] || translations.welcome.en;
+  const resend = getResendClient();
+
+  if (!resend) {
+    console.error('Resend client not initialized - missing API key');
+    return { success: false, error: new Error('Email service not configured') };
+  }
 
   try {
     const { data, error } = await resend.emails.send({
@@ -129,6 +143,12 @@ export async function sendWelcomeEmail({ to, name, position, locale = 'en' }: Se
 
 export async function sendAccessGrantedEmail({ to, name, locale = 'en' }: SendAccessGrantedEmailParams) {
   const t = translations.accessGranted[locale] || translations.accessGranted.en;
+  const resend = getResendClient();
+
+  if (!resend) {
+    console.error('Resend client not initialized - missing API key');
+    return { success: false, error: new Error('Email service not configured') };
+  }
 
   try {
     const { data, error } = await resend.emails.send({
