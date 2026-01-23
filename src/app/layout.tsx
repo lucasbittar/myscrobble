@@ -41,11 +41,20 @@ export const metadata: Metadata = {
     title: 'MyScrobble.fm | Your Spotify Dashboard',
     description: 'Visualize your Spotify listening history with AI-powered recommendations.',
     type: 'website',
+    images: [
+      {
+        url: '/og-image-en.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'MyScrobble.fm - Your Spotify Dashboard',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'MyScrobble.fm | Your Spotify Dashboard',
     description: 'Visualize your Spotify listening history with AI-powered recommendations.',
+    images: ['/og-image-en.jpg'],
   },
 };
 
