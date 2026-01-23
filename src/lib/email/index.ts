@@ -113,14 +113,20 @@ interface SendAccessGrantedEmailParams {
 
 export async function sendWelcomeEmail({ to, name, position, locale = 'en' }: SendWelcomeEmailParams) {
   const t = translations.welcome[locale] || translations.welcome.en;
+
+  console.log('[Email] Attempting to send welcome email to:', to);
+  console.log('[Email] RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
+
   const resend = getResendClient();
 
   if (!resend) {
-    console.error('Resend client not initialized - missing API key');
-    return { success: false, error: new Error('Email service not configured') };
+    const errorMsg = 'Resend client not initialized - missing API key';
+    console.error('[Email]', errorMsg);
+    throw new Error(errorMsg);
   }
 
   try {
+    console.log('[Email] Sending email via Resend...');
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to,
@@ -129,28 +135,34 @@ export async function sendWelcomeEmail({ to, name, position, locale = 'en' }: Se
     });
 
     if (error) {
-      console.error('Failed to send welcome email:', error);
-      return { success: false, error };
+      console.error('[Email] Resend API error:', error);
+      throw error;
     }
 
-    console.log('Welcome email sent:', data);
+    console.log('[Email] Welcome email sent successfully:', data);
     return { success: true, data };
   } catch (error) {
-    console.error('Error sending welcome email:', error);
-    return { success: false, error };
+    console.error('[Email] Error sending welcome email:', error);
+    throw error;
   }
 }
 
 export async function sendAccessGrantedEmail({ to, name, locale = 'en' }: SendAccessGrantedEmailParams) {
   const t = translations.accessGranted[locale] || translations.accessGranted.en;
+
+  console.log('[Email] Attempting to send access granted email to:', to);
+  console.log('[Email] RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
+
   const resend = getResendClient();
 
   if (!resend) {
-    console.error('Resend client not initialized - missing API key');
-    return { success: false, error: new Error('Email service not configured') };
+    const errorMsg = 'Resend client not initialized - missing API key';
+    console.error('[Email]', errorMsg);
+    throw new Error(errorMsg);
   }
 
   try {
+    console.log('[Email] Sending email via Resend...');
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to,
@@ -159,15 +171,15 @@ export async function sendAccessGrantedEmail({ to, name, locale = 'en' }: SendAc
     });
 
     if (error) {
-      console.error('Failed to send access granted email:', error);
-      return { success: false, error };
+      console.error('[Email] Resend API error:', error);
+      throw error;
     }
 
-    console.log('Access granted email sent:', data);
+    console.log('[Email] Access granted email sent successfully:', data);
     return { success: true, data };
   } catch (error) {
-    console.error('Error sending access granted email:', error);
-    return { success: false, error };
+    console.error('[Email] Error sending access granted email:', error);
+    throw error;
   }
 }
 
