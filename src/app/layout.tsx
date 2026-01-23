@@ -36,6 +36,7 @@ export const metadata: Metadata = {
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
   },
+  manifest: '/site.webmanifest',
   openGraph: {
     title: 'MyScrobble.fm | Your Spotify Dashboard',
     description: 'Visualize your Spotify listening history with AI-powered recommendations.',
