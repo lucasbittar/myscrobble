@@ -3,7 +3,7 @@
     "loading": "Carregando...",
     "loadingSystem": "CARREGANDO SISTEMA...",
     "error": "Erro",
-    "viewAll": "Ver tudo →",
+    "viewAll": "Ver tudo",
     "tryAgain": "Tentar Novamente",
     "goHome": "Ir para Início",
     "prev": "← ANTERIOR",
@@ -43,11 +43,42 @@
       "concerts": "Carregando descoberta de shows",
       "auth": "Aguardando autenticação..."
     },
+    "hero": {
+      "tagline": "Seu Painel do Spotify",
+      "titlePart1": "Descubra Sua",
+      "titleHighlight": "Vibe",
+      "titlePart2": "Musical",
+      "cta": "Conectar com Spotify"
+    },
+    "sections": {
+      "whatYouGet": "O que você ganha",
+      "everythingAbout": "Tudo sobre seus",
+      "listeningHabits": "hábitos musicais",
+      "quote1": "Música é a",
+      "quote2": "trilha sonora",
+      "quote3": "da sua vida. Torne-a",
+      "quote4": "inesquecível",
+      "quoteSubtitle": "Comece sua jornada hoje",
+      "readyToExplore": "Pronto para explorar?",
+      "readyDescription": "Conecte sua conta do Spotify e desbloqueie insights sobre sua jornada musical.",
+      "getStarted": "Começar já"
+    },
     "features": {
       "stats": "Estatísticas",
+      "statsDescription": "Mergulhe nos seus padrões de audição. Veja seus artistas, músicas e álbuns favoritos em diferentes períodos.",
       "ai": "IA Discover",
+      "aiDescription": "Com IA, receba recomendações personalizadas baseadas no seu perfil único de gosto e histórico de audição.",
       "concerts": "Shows",
-      "share": "Compartilhar"
+      "concertsDescription": "Nunca perca seus artistas favoritos ao vivo. Descubra shows e turnês próximos da sua localização.",
+      "share": "Compartilhar",
+      "shareDescription": "Crie lindos cards compartilháveis mostrando seu gosto musical. Perfeito para redes sociais.",
+      "tryItNow": "Experimente"
+    },
+    "stats": {
+      "topTracks": "Músicas Favoritas",
+      "topArtists": "Artistas Favoritos",
+      "history": "Histórico de Audição",
+      "aiRecommendations": "Recomendações"
     },
     "system": {
       "ready": "SIS: PRONTO",
@@ -93,8 +124,8 @@
     },
     "nowPlaying": {
       "title": "Tocando Agora",
-      "live": "Ao Vivo",
-      "liveShort": "Ao Vivo",
+      "live": "Tocando",
+      "liveShort": "Tocando",
       "notPlaying": "Nada Tocando",
       "hint": "Toque algo no Spotify para ver aqui"
     },
@@ -116,15 +147,24 @@
       "topCharts": "Seus Mais Tocados",
       "topArtists": "Artistas Favoritos",
       "topTracks": "Músicas Favoritas",
+      "topTracksDescription": "Suas músicas mais tocadas este mês. Essas são as músicas que definiram sua audição.",
       "topAlbums": "Álbuns Favoritos",
-      "peakTime": "Horário de Pico"
+      "peakTime": "Horário de Pico",
+      "justPlayed": "Tocadas recentemente",
+      "liveEvents": "Eventos ao Vivo",
+      "exploreMore": "Explore Mais",
+      "exploreMoreDescription": "Descubra todas as formas de vivenciar sua história musical",
+      "explore": "Explorar"
     },
     "stats": {
       "minutesListened": "Minutos Ouvidos",
       "tracksPlayed": "Músicas Tocadas",
       "mostActive": "Horário mais ativo",
       "peakHour": "Horário de Pico",
-      "dataFrom": "Dados das últimas 4 semanas"
+      "avgPerDay": "Média Por Dia",
+      "dataFrom": "Dados das últimas 4 semanas",
+      "uniqueArtistsContext": "De {count} artistas diferentes nas últimas 4 semanas",
+      "uniqueTracksContext": "De {count} músicas diferentes que você ouviu"
     },
     "timeRanges": {
       "short": "4 Semanas",
@@ -151,7 +191,7 @@
       },
       "concerts": {
         "title": "Shows",
-        "description": "Encontre shows dos seus artistas favoritos"
+        "description": "Veja seu próximo show e explore casas de música ao vivo na sua cidade"
       },
       "wrapped": {
         "title": "Seu Wrapped",
@@ -185,78 +225,127 @@
   },
   "history": {
     "title": "Histórico de Músicas",
+    "subtitle": "Seu Diário Musical",
     "tracksSynced": "{count} músicas sincronizadas",
-    "lastSync": "Última sincronização: {date}",
+    "lastSync": "Última sincronização {date}",
+    "today": "Hoje",
+    "yesterday": "Ontem",
     "filters": {
-      "all": "TUDO",
-      "today": "HOJE",
-      "week": "SEMANA",
-      "month": "MÊS"
+      "all": "Todo Período",
+      "today": "Hoje",
+      "week": "Esta Semana",
+      "month": "Este Mês"
     },
     "sync": {
-      "required": "sincronização.necessária",
+      "required": "Sincronização Necessária",
       "description": "Sincronize seu histórico de músicas para visualizar e filtrar suas faixas.",
       "hint": "Isso salvará suas últimas 50 músicas tocadas no banco de dados. Execute periodicamente para construir seu histórico completo."
     },
-    "loading": "CARREGANDO HISTÓRICO...",
+    "loading": "Carregando histórico...",
     "noTracks": "Nenhuma música encontrada para este período"
   },
   "discover": {
     "title": "IA Discover",
-    "subtitle": "Recomendações personalizadas com Gemini AI",
+    "subtitle": "Seu Laboratório Musical",
     "regenerate": "Regenerar",
     "analyzing": "Analisando seus padrões de audição...",
     "failed": "Falha ao gerar recomendações",
     "apiHint": "Certifique-se de que sua chave da API Gemini está configurada corretamente",
-    "basedOn": "Baseado nos seus artistas favoritos:",
-    "startWith": "Comece com:"
+    "basedOn": "Baseado nos seus favoritos",
+    "startWith": "Comece com:",
+    "featured": "Escolha Especial",
+    "moreDiscoveries": "Mais Descobertas",
+    "whyYouWillLove": "Por que você vai amar"
   },
   "wrapped": {
     "title": "Seu Wrapped",
     "subtitle": "Sua história musical personalizada",
-    "loading": "CARREGANDO SEU WRAPPED...",
+    "loading": "Carregando seu Wrapped...",
     "failed": "Falha ao carregar dados",
-    "journeyAwaits": "Sua jornada musical aguarda",
-    "startWrapped": "INICIAR WRAPPED",
+    "tryAgain": "Tentar Novamente",
     "timeRanges": {
       "short": "Últimas 4 Semanas",
       "medium": "Últimos 6 Meses",
       "long": "Todos os Tempos"
     },
+    "landing": {
+      "ready": "Pronto para sentir algo?",
+      "begin": "Começar Sua Jornada"
+    },
     "slides": {
       "intro": {
-        "title": "Seu {timeRange}",
-        "subtitle": "Vamos ver o que você tem ouvido"
+        "subtitle": "Vamos fazer uma viagem pelo seu som...",
+        "yourJourney": "Sua Jornada Musical"
       },
       "topArtist": {
-        "title": "Seu Artista #1"
+        "badge": "Artista #1",
+        "highs": "Ele estava lá nos seus momentos altos...",
+        "lows": "...e nos baixos também.",
+        "rideOrDie": "Seu parceiro de todas as horas.",
+        "streams": "Reproduções"
       },
       "topArtists": {
-        "title": "Seus Artistas Favoritos"
+        "title": "Seu Círculo Íntimo",
+        "subtitle": "Esses artistas definiram seu som"
+      },
+      "topTrack": {
+        "badge": "Música #1",
+        "hitDifferent": "Essa bateu diferente."
       },
       "topTracks": {
-        "title": "Suas Músicas Favoritas"
+        "title": "Sua Trilha Sonora",
+        "subtitle": "As músicas que te moveram"
+      },
+      "sonicAura": {
+        "title": "Sua Aura Sonora",
+        "subtitle": "Baseado na sua alma musical",
+        "analyzing": "Lendo sua alma musical...",
+        "therapist": "Você é basicamente um terapeuta de {genre}"
       },
       "genres": {
-        "title": "Seus Gêneros Favoritos"
+        "title": "Sua Vibe",
+        "popVeins": "Pop corre nas suas veias",
+        "metalHead": "Você é basicamente um metaleiro",
+        "indieKid": "Indie kid de coração",
+        "hiphopSoul": "Hip-hop corre na sua alma",
+        "electronicHeart": "Seu coração bate eletrônico",
+        "jazzConnoisseur": "Um verdadeiro conhecedor de jazz",
+        "classicalSoul": "Alma antiga, gosto atemporal",
+        "rnbVibes": "Só vibes de R&B",
+        "eclecticTaste": "Seu gosto? Lindamente eclético"
       },
-      "topPodcasts": {
-        "title": "Seus Podcasts Favoritos"
+      "timeListened": {
+        "youSpent": "Você gastou...",
+        "thatsEnough": "Isso é suficiente para...",
+        "flightsTo": "voar para {destination} {count} vezes",
+        "watchMovies": "assistir {count} filmes",
+        "listenAudiobooks": "ouvir {count} audiobooks",
+        "daysOfVibes": "{count} dias de pura vibe",
+        "hoursOfMusic": "{count} horas de pura música",
+        "timeListening": "Tempo Ouvindo"
       },
-      "listeningPatterns": {
-        "title": "Seus Padrões de Audição",
-        "peakTime": "Horário de pico:",
-        "byDay": "Por Dia da Semana"
+      "patterns": {
+        "title": "Quando Você Ouve",
+        "nightOwl": "Energia de coruja 🦉",
+        "earlyBird": "Quem cedo madruga pega as batidas 🐦",
+        "afternoonVibes": "Vibes de tarde only 🌅",
+        "balancedListener": "Perfeitamente equilibrado 🎵",
+        "yourDay": "{day} é o SEU dia",
+        "noData": "Sincronize mais histórico para ver padrões"
       },
-      "stats": {
-        "title": "Suas Estatísticas",
+      "summary": {
+        "title": "É Isso!",
         "timeListened": "Tempo Ouvido",
         "tracksPlayed": "Músicas Tocadas",
-        "uniqueArtists": "Artistas Únicos",
-        "uniqueTracks": "Músicas Únicas"
+        "uniqueArtists": "Artistas",
+        "uniqueTracks": "Músicas",
+        "podcasts": "Podcasts",
+        "signOff": "Até a próxima, {name}. Continue com a música.",
+        "signOffGeneric": "Até a próxima. Continue com a música.",
+        "share": "Compartilhar Seu Wrapped",
+        "watchAgain": "Ver Novamente"
       }
-    },
-    "syncMore": "Sincronize mais histórico para ver padrões"
+    }
   },
   "share": {
     "title": "Compartilhar",
@@ -290,8 +379,38 @@
   },
   "concerts": {
     "title": "Shows",
-    "subtitle": "Próximos shows dos seus artistas favoritos",
-    "tracking": "Rastreando:"
+    "subtitle": "Música ao Vivo",
+    "tracking": "Rastreando:",
+    "nextShow": "Seu Próximo Show",
+    "upcomingShows": "Próximos Shows",
+    "thisWeek": "Esta Semana",
+    "thisMonth": "Este Mês",
+    "later": "Mais Tarde",
+    "discoverNearby": "Descubra por Perto",
+    "basedOnTaste": "Baseado no seu gosto",
+    "noConcerts": "Nenhum show dos seus artistas favoritos",
+    "noVenues": "Nenhum local com música ao vivo encontrado",
+    "noVenuesDescription": "Não encontramos locais na sua área",
+    "venueTypes": {
+      "bar": "Bar",
+      "club": "Balada",
+      "venue": "Casa de Shows",
+      "restaurant": "Restaurante"
+    },
+    "viewOnMap": "Ver no Mapa",
+    "liveMusic": "Música ao Vivo",
+    "liveMusicIn": "Música ao Vivo em {city}",
+    "loadingMap": "Carregando mapa...",
+    "venuesFound": "{count} {count, plural, one {local} other {locais}} encontrado",
+    "venues": "Locais",
+    "clickToExplore": "Clique para explorar",
+    "findingVenues": "Buscando locais...",
+    "youAreHere": "Você está aqui",
+    "kmAway": "{distance}km de distância",
+    "website": "Website",
+    "today": "Hoje!",
+    "tomorrow": "Amanhã!",
+    "inDays": "Em {days} dias"
   },
   "podcasts": {
     "title": "Podcasts",
@@ -320,6 +439,104 @@
     "viewAll": "Ver Todos os Shows",
     "locationPermission": "Ative a localização para shows próximos",
     "searching": "Buscando shows...",
-    "fromTopArtists": "Baseado nos seus artistas favoritos"
+    "fromTopArtists": "Baseado nos seus artistas favoritos",
+    "locationHint": "Ative sua localização para ver shows perto de você e obter informações de distância",
+    "enableLocation": "Ativar Localização"
+  },
+  "mood": {
+    "title": "Sua Aura Sonora",
+    "subtitle": "Baseado nas últimas 4 semanas",
+    "refresh": "Nova Leitura",
+    "loading": "Lendo sua alma musical...",
+    "error": "Não foi possível ler as vibes",
+    "basedOnVibe": "Baseado na sua vibe, você pode curtir:"
+  },
+  "footer": {
+    "madeWith": "Criado com",
+    "by": "por",
+    "disclaimer": "MyScrobble.fm é uma ferramenta independente de análise musical. Não tenho vínculo oficial com a Last.fm ou Spotify. O termo \"Scrobble\" é utilizado de forma descritiva para a cultura de registro de músicas que amamos.",
+    "tagline": "Transformando seus dados em insights visuais"
+  },
+  "contextualShare": {
+    "title": "Compartilhe Sua Música",
+    "shareButton": "Compartilhar",
+    "share": "Compartilhar",
+    "downloadButton": "Baixar para Instagram",
+    "generating": "Gerando...",
+    "optimizedFor": "Otimizado para Instagram Stories",
+    "cards": {
+      "nowPlaying": "Tocando Agora",
+      "myStats": "Minhas Estatísticas",
+      "timeListened": "Tempo Ouvido",
+      "tracksPlayed": "Músicas Tocadas",
+      "artists": "Artistas",
+      "recentVibes": "Minhas Vibes Recentes",
+      "tracksRecently": "músicas recentes",
+      "topArtists": "Meus Top Artistas",
+      "topTracks": "Minhas Top Músicas",
+      "topAlbums": "Meus Top Álbuns",
+      "nextShow": "Meu Próximo Show",
+      "today": "Hoje!",
+      "tomorrow": "Amanhã!",
+      "inDays": "Em {days} dias",
+      "moreShows": "mais shows",
+      "noConcerts": "Nenhum show agendado",
+      "sonicAura": "Minha Aura Sonora",
+      "myPodcasts": "Meus Podcasts",
+      "episodes": "episódios",
+      "shows": "Shows",
+      "savedEpisodes": "Episódios Salvos"
+    }
+  },
+  "waitlist": {
+    "headlinePart1": "O show de hoje está",
+    "headlineHighlight": "esgotado",
+    "subheadline": "Mas você está na lista de convidados para o próximo",
+    "explanation": "MyScrobble está em acesso antecipado com vagas limitadas. Estamos trabalhando para expandir a capacidade.",
+    "cta": "Garantir Meu Passe VIP",
+    "emailPlaceholder": "seu@email.com",
+    "successPart1": "Você está",
+    "successHighlight": "na lista!",
+    "successSubtext": "Vamos te avisar quando uma vaga abrir",
+    "alreadyOnList": "Você já está na lista de convidados!",
+    "position": "#{position} na fila",
+    "shareTitle": "Compartilhe com amigos",
+    "shareDescription": "Ajude a gente a crescer e avance na fila",
+    "twitterText": "Acabei de descobrir o MyScrobble - um painel lindo do Spotify com recomendações de IA e descoberta de shows. Confira!",
+    "whatsappText": "Confere o MyScrobble - ele mostra suas estatísticas do Spotify, encontra shows e dá recomendações musicais com IA!",
+    "copyLink": "Copiar Link",
+    "linkCopied": "Link copiado!",
+    "invalidEmail": "Por favor, insira um email válido",
+    "yourPosition": "Sua Posição",
+    "backToHome": "Voltar ao início",
+    "signingUpAs": "Entrando como"
+  },
+  "teaser": {
+    "tagline": "Algo Incrível Está Chegando",
+    "headline1": "Sua Música.",
+    "headline2": "Visualizada.",
+    "headline3": "Amplificada.",
+    "description": "Um painel lindo do Spotify com recomendações de IA, descoberta de shows e estatísticas compartilháveis. Seja o primeiro a experimentar.",
+    "comingSoon": "Em Breve",
+    "joinWaitlist": "Entre na Lista",
+    "emailPlaceholder": "seu@email.com",
+    "getEarlyAccess": "Garantir Acesso",
+    "joining": "Entrando...",
+    "successTitle": "Você Está Dentro!",
+    "successMessage": "Vamos te avisar quando lançarmos",
+    "position": "#{position} na fila",
+    "alreadyJoined": "Você já está na lista!",
+    "features": {
+      "stats": "Insights de audição",
+      "ai": "Recomendações com IA",
+      "concerts": "Descoberta de shows",
+      "share": "Cards compartilháveis"
+    },
+    "social": {
+      "title": "Espalhe a palavra",
+      "twitter": "Compartilhar no X",
+      "whatsapp": "Compartilhar no WhatsApp",
+      "copy": "Copiar link"
+    }
   }
 }

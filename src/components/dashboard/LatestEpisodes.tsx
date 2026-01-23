@@ -3,9 +3,9 @@
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { TerminalCard } from '@/components/crt';
 import { useTranslations } from 'next-intl';
 import { getLargestImage, type SpotifyEpisode } from '@/lib/spotify';
+import { ModernCard, ModernBadge } from '@/components/modern';
 
 interface SavedEpisode {
   added_at: string;
@@ -47,29 +47,29 @@ export function LatestEpisodes({ limit = 10, showTitle = true }: LatestEpisodesP
 
   if (isLoading) {
     return (
-      <TerminalCard title={showTitle ? "saved_episodes.data" : undefined} animate={false}>
+      <ModernCard>
         <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex gap-3 animate-pulse">
-              <div className="w-16 h-16 rounded-lg bg-[#1a1a1a]" />
+              <div className="w-16 h-16 rounded-xl bg-secondary" />
               <div className="flex-1 space-y-2">
-                <div className="h-4 w-3/4 rounded bg-[#1a1a1a]" />
-                <div className="h-3 w-1/2 rounded bg-[#1a1a1a]" />
+                <div className="h-4 w-3/4 rounded bg-secondary" />
+                <div className="h-3 w-1/2 rounded bg-secondary" />
               </div>
             </div>
           ))}
         </div>
-      </TerminalCard>
+      </ModernCard>
     );
   }
 
   if (error) {
     return (
-      <TerminalCard title={showTitle ? "saved_episodes.data" : undefined} animate={false}>
+      <ModernCard>
         <div className="py-4 text-center">
-          <p className="font-terminal text-sm text-[#ff4444]">Error loading episodes</p>
+          <p className="text-sm font-medium text-destructive">Error loading episodes</p>
         </div>
-      </TerminalCard>
+      </ModernCard>
     );
   }
 
@@ -77,17 +77,17 @@ export function LatestEpisodes({ limit = 10, showTitle = true }: LatestEpisodesP
 
   if (episodes.length === 0) {
     return (
-      <TerminalCard title={showTitle ? "saved_episodes.data" : undefined} animate={false}>
+      <ModernCard>
         <div className="py-8 text-center">
-          <p className="font-terminal text-sm text-muted-foreground">{t('noEpisodes')}</p>
+          <p className="text-sm font-medium text-muted-foreground">{t('noEpisodes')}</p>
         </div>
-      </TerminalCard>
+      </ModernCard>
     );
   }
 
   return (
-    <TerminalCard title={showTitle ? "saved_episodes.data" : undefined} animate={false}>
-      <div className="space-y-3">
+    <ModernCard padding="none">
+      <div className="divide-y divide-border">
         {episodes.map((item, index) => (
           <motion.div
             key={item.episode.id}
@@ -99,10 +99,10 @@ export function LatestEpisodes({ limit = 10, showTitle = true }: LatestEpisodesP
               href={item.episode.external_urls.spotify}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex gap-3 rounded-md p-2 transition-colors hover:bg-[rgba(168,85,247,0.05)]"
+              className="group flex gap-4 p-4 transition-colors hover:bg-secondary/30"
             >
               {/* Episode image */}
-              <div className="relative w-16 h-16 flex-shrink-0 overflow-hidden rounded-lg border border-[rgba(168,85,247,0.2)] transition-all group-hover:border-[#a855f7]">
+              <div className="relative w-16 h-16 flex-shrink-0 overflow-hidden rounded-xl">
                 {getLargestImage(item.episode.images) ? (
                   <Image
                     src={getLargestImage(item.episode.images)!}
@@ -113,30 +113,29 @@ export function LatestEpisodes({ limit = 10, showTitle = true }: LatestEpisodesP
                     className="object-cover transition-transform group-hover:scale-105"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-[#1a1a1a]">
+                  <div className="flex h-full w-full items-center justify-center bg-secondary">
                     <span className="text-lg opacity-30">🎙️</span>
                   </div>
                 )}
                 {/* Play indicator */}
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="text-[#a855f7] text-xl">▶</span>
+                  <span className="text-[#8B5CF6] text-xl">▶</span>
                 </div>
               </div>
 
               {/* Episode info */}
               <div className="flex-1 min-w-0">
-                <p className="truncate font-terminal text-sm text-foreground group-hover:text-[#a855f7]">
+                <p className="truncate text-sm font-medium text-foreground group-hover:text-[#8B5CF6]">
                   {item.episode.name}
                 </p>
-                <p className="truncate font-mono text-xs text-muted-foreground">
+                <p className="truncate text-xs text-muted-foreground">
                   {item.episode.show.name}
                 </p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="font-mono text-[10px] text-[#a855f7]">
+                <div className="flex items-center gap-2 mt-2">
+                  <ModernBadge color="purple" size="sm">
                     {formatDuration(item.episode.duration_ms)}
-                  </span>
-                  <span className="text-muted-foreground">•</span>
-                  <span className="font-mono text-[10px] text-muted-foreground">
+                  </ModernBadge>
+                  <span className="text-xs text-muted-foreground">
                     {formatReleaseDate(item.episode.release_date)}
                   </span>
                 </div>
@@ -145,6 +144,6 @@ export function LatestEpisodes({ limit = 10, showTitle = true }: LatestEpisodesP
           </motion.div>
         ))}
       </div>
-    </TerminalCard>
+    </ModernCard>
   );
 }

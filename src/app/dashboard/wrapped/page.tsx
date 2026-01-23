@@ -1,12 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
-import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
+import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import { useSession } from 'next-auth/react';
 import { getLargestImage } from '@/lib/spotify';
+import {
+  WrappedContainer,
+  slideGradients,
+  moodGradientOverrides,
+  SlideLanding,
+  SlideIntro,
+  SlideTopArtist,
+  SlideTopArtists,
+  SlideTopTrack,
+  SlideTopTracks,
+  SlideSonicAura,
+  SlideGenres,
+  SlideTimeListened,
+  SlidePatterns,
+  SlideSummary,
+  MoodColor,
+  GradientConfig,
+} from '@/components/wrapped';
 
 type TimeRange = 'short_term' | 'medium_term' | 'long_term';
 
@@ -37,7 +54,13 @@ interface WrappedData {
   listeningByDay: Array<{ day: string; count: number }>;
 }
 
-// Calculate date range based on time range
+interface MoodData {
+  moodSentence: string;
+  moodTags: string[];
+  moodColor: MoodColor;
+  emoji: string;
+}
+
 function getDateRange(timeRange: TimeRange): { start_date?: string; end_date?: string } {
   const now = new Date();
   switch (timeRange) {
@@ -54,7 +77,6 @@ function getDateRange(timeRange: TimeRange): { start_date?: string; end_date?: s
 }
 
 async function fetchWrappedData(timeRange: TimeRange): Promise<WrappedData> {
-  // Build date params for stats
   const dateRange = getDateRange(timeRange);
   const statsParams = new URLSearchParams();
   if (dateRange.start_date) statsParams.set('start_date', dateRange.start_date);
@@ -115,16 +137,22 @@ async function fetchWrappedData(timeRange: TimeRange): Promise<WrappedData> {
   };
 }
 
-const slides = ['intro', 'topArtist', 'topArtists', 'topTracks', 'genres', 'topPodcasts', 'listeningPatterns', 'stats'];
+async function fetchMoodAnalysis(): Promise<MoodData | null> {
+  try {
+    const res = await fetch('/api/ai/mood');
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
 
 export default function WrappedPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>('medium_term');
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const t = useTranslations('wrapped');
-  const tCommon = useTranslations('common');
+  const { data: session } = useSession();
 
-  // Time range labels from translations
   const timeRangeLabels: Record<TimeRange, string> = {
     short_term: t('timeRanges.short'),
     medium_term: t('timeRanges.medium'),
@@ -136,485 +164,181 @@ export default function WrappedPage() {
     queryFn: () => fetchWrappedData(timeRange),
   });
 
-  const nextSlide = () => {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide((prev) => prev + 1);
-    } else {
-      setIsPlaying(false);
-      setCurrentSlide(0);
+  const { data: moodData, isLoading: isMoodLoading } = useQuery({
+    queryKey: ['wrapped-mood'],
+    queryFn: fetchMoodAnalysis,
+    enabled: isPlaying,
+    staleTime: 6 * 60 * 60 * 1000,
+  });
+
+  const moodColor: MoodColor = moodData?.moodColor || 'experimental';
+
+  // Build slides and gradients dynamically based on available data
+  const { slides, gradients } = useMemo(() => {
+    if (!data) return { slides: [], gradients: [] };
+
+    const slideList: React.ReactNode[] = [];
+    const gradientList: GradientConfig[] = [];
+
+    // Slide 1: Intro
+    slideList.push(
+      <SlideIntro key="intro" timeRange={timeRangeLabels[timeRange]} />
+    );
+    gradientList.push(moodGradientOverrides[moodColor] || slideGradients.intro);
+
+    // Slide 2: Top Artist (if available)
+    if (data.topArtists[0]) {
+      slideList.push(
+        <SlideTopArtist key="topArtist" artist={data.topArtists[0]} />
+      );
+      gradientList.push(slideGradients.topArtist);
     }
-  };
 
-  const prevSlide = () => {
-    if (currentSlide > 0) {
-      setCurrentSlide((prev) => prev - 1);
+    // Slide 3: Top Artists (if more than 1)
+    if (data.topArtists.length > 1) {
+      slideList.push(
+        <SlideTopArtists key="topArtists" artists={data.topArtists} />
+      );
+      gradientList.push(slideGradients.topArtists);
     }
-  };
 
-  const startPresentation = () => {
-    setCurrentSlide(0);
-    setIsPlaying(true);
-  };
+    // Slide 4: Top Track (if available)
+    if (data.topTracks[0]) {
+      slideList.push(
+        <SlideTopTrack key="topTrack" track={data.topTracks[0]} />
+      );
+      gradientList.push(slideGradients.topTrack);
+    }
 
+    // Slide 5: Top Tracks (if more than 1)
+    if (data.topTracks.length > 1) {
+      slideList.push(
+        <SlideTopTracks key="topTracks" tracks={data.topTracks} />
+      );
+      gradientList.push(slideGradients.topTracks);
+    }
+
+    // Slide 6: Sonic Aura
+    slideList.push(
+      <SlideSonicAura
+        key="sonicAura"
+        mood={moodData || null}
+        isLoading={isMoodLoading}
+        topGenre={data.topGenres[0]}
+      />
+    );
+    gradientList.push(moodGradientOverrides[moodColor] || slideGradients.sonicAura);
+
+    // Slide 7: Genres (if available)
+    if (data.topGenres.length > 0) {
+      slideList.push(
+        <SlideGenres key="genres" genres={data.topGenres} />
+      );
+      gradientList.push(slideGradients.genres);
+    }
+
+    // Slide 8: Time Listened (if we have minutes data)
+    if (data.stats.totalMinutes > 0) {
+      slideList.push(
+        <SlideTimeListened key="timeListened" totalMinutes={data.stats.totalMinutes} />
+      );
+      gradientList.push(slideGradients.timeListened);
+    }
+
+    // Slide 9: Listening Patterns (if we have data)
+    if (data.listeningByHour.length > 0 || data.listeningByDay.length > 0) {
+      slideList.push(
+        <SlidePatterns
+          key="patterns"
+          byHour={data.listeningByHour}
+          byDay={data.listeningByDay}
+        />
+      );
+      gradientList.push(slideGradients.patterns);
+    }
+
+    // Slide 10: Summary
+    slideList.push(
+      <SlideSummary
+        key="summary"
+        stats={data.stats}
+        podcastCount={data.topPodcasts.length}
+        moodColor={moodColor}
+        userName={session?.user?.name?.split(' ')[0]}
+        onShare={() => {
+          // Navigate to share page
+          window.location.href = '/dashboard/share';
+        }}
+        onRestart={() => {
+          setIsPlaying(false);
+        }}
+      />
+    );
+    gradientList.push(slideGradients.summary);
+
+    return { slides: slideList, gradients: gradientList };
+  }, [data, moodData, isMoodLoading, moodColor, timeRange, timeRangeLabels, session]);
+
+  // Loading state
   if (isLoading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
+      <div className="fixed inset-0 bg-gradient-to-br from-[#1A1A1A] to-[#2D2D2D] flex items-center justify-center">
         <motion.div
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          className="font-terminal text-2xl text-[#ffb000]"
+          className="text-center space-y-4"
         >
-          {t('loading')}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+            className="w-12 h-12 mx-auto rounded-full border-2 border-[#F59E0B] border-t-transparent"
+          />
+          <p className="text-xl font-bold text-[#F59E0B]">
+            {t('loading')}
+          </p>
         </motion.div>
       </div>
     );
   }
 
+  // Error state
   if (error || !data) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <TerminalCard>
-          <div className="py-8 text-center">
-            <p className="font-terminal text-[#ff4444]">{t('failed')}</p>
-          </div>
-        </TerminalCard>
+      <div className="fixed inset-0 bg-gradient-to-br from-[#1A1A1A] to-[#2D2D2D] flex items-center justify-center">
+        <div className="text-center space-y-4 p-8 bg-white/10 backdrop-blur-sm rounded-2xl">
+          <p className="text-xl font-medium text-red-400">{t('failed')}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-white/10 text-white rounded-full hover:bg-white/20 transition-colors"
+          >
+            {t('tryAgain')}
+          </button>
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-wrap items-start justify-between gap-4"
-      >
-        <div>
-          <h1 className="font-terminal text-3xl">
-            <GlowText color="amber" size="sm">
-              <span className="text-[#888888]">◆</span> {t('title')}
-            </GlowText>
-          </h1>
-          <p className="mt-1 font-mono text-sm text-[#888888]">
-            {t('subtitle')}
-          </p>
-        </div>
-
-        {/* Time Range Selector */}
-        <div className="flex gap-2">
-          {(Object.keys(timeRangeLabels) as TimeRange[]).map((range) => (
-            <TerminalButton
-              key={range}
-              variant={timeRange === range ? 'primary' : 'ghost'}
-              size="sm"
-              onClick={() => {
-                setTimeRange(range);
-                setCurrentSlide(0);
-                setIsPlaying(false);
-              }}
-            >
-              {timeRangeLabels[range]}
-            </TerminalButton>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Presentation Area */}
-      {!isPlaying ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex flex-col items-center justify-center py-12"
-        >
-          <div className="mb-8 text-center">
-            <h2 className="mb-2 font-terminal text-4xl text-[#ffb000]">
-              {timeRangeLabels[timeRange]}
-            </h2>
-            <p className="font-mono text-[#888888]">{t('journeyAwaits')}</p>
-          </div>
-          <TerminalButton size="lg" glow onClick={startPresentation}>
-            {t('startWrapped')}
-          </TerminalButton>
-        </motion.div>
-      ) : (
-        <div className="relative">
-          {/* Slide Container */}
-          <div className="mx-auto max-w-2xl">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentSlide}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.3 }}
-              >
-                {slides[currentSlide] === 'intro' && (
-                  <SlideIntro timeRange={timeRangeLabels[timeRange]} />
-                )}
-                {slides[currentSlide] === 'topArtist' && data.topArtists[0] && (
-                  <SlideTopArtist artist={data.topArtists[0]} />
-                )}
-                {slides[currentSlide] === 'topArtists' && (
-                  <SlideTopArtists artists={data.topArtists.slice(0, 5)} />
-                )}
-                {slides[currentSlide] === 'topTracks' && (
-                  <SlideTopTracks tracks={data.topTracks.slice(0, 5)} />
-                )}
-                {slides[currentSlide] === 'genres' && (
-                  <SlideGenres genres={data.topGenres} />
-                )}
-                {slides[currentSlide] === 'topPodcasts' && data.topPodcasts.length > 0 && (
-                  <SlidePodcasts podcasts={data.topPodcasts} />
-                )}
-                {slides[currentSlide] === 'listeningPatterns' && (
-                  <SlideListeningPatterns
-                    byHour={data.listeningByHour}
-                    byDay={data.listeningByDay}
-                  />
-                )}
-                {slides[currentSlide] === 'stats' && (
-                  <SlideStats stats={data.stats} />
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Navigation */}
-          <div className="mt-8 flex items-center justify-center gap-4">
-            <TerminalButton
-              variant="ghost"
-              onClick={prevSlide}
-              disabled={currentSlide === 0}
-            >
-              {tCommon('previous')}
-            </TerminalButton>
-            <div className="flex gap-2">
-              {slides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`h-2 w-2 rounded-full transition-all ${
-                    index === currentSlide
-                      ? 'bg-[#ffb000] shadow-[0_0_10px_rgba(255,176,0,0.5)]'
-                      : 'bg-[#333333]'
-                  }`}
-                />
-              ))}
-            </div>
-            <TerminalButton
-              variant="ghost"
-              onClick={nextSlide}
-            >
-              {currentSlide === slides.length - 1 ? tCommon('finish') : tCommon('next')}
-            </TerminalButton>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function SlideIntro({ timeRange }: { timeRange: string }) {
-  return (
-    <TerminalCard className="py-16 text-center">
-      <motion.div
-        initial={{ scale: 0.8 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <h2 className="mb-4 font-terminal text-5xl text-[#ffb000]">
-          Your {timeRange}
-        </h2>
-        <p className="font-mono text-lg text-[#888888]">
-          Let&apos;s see what you&apos;ve been listening to
-        </p>
-      </motion.div>
-    </TerminalCard>
-  );
-}
-
-function SlideTopArtist({ artist }: { artist: { name: string; image: string } }) {
-  return (
-    <TerminalCard className="py-8 text-center">
-      <p className="mb-4 font-terminal text-lg text-[#888888]">
-        Your #1 Artist
-      </p>
-      {artist.image && (
-        <div className="mx-auto mb-6 h-48 w-48 overflow-hidden rounded-full border-4 border-[#ffb000] shadow-[0_0_30px_rgba(255,176,0,0.3)]">
-          <Image
-            src={artist.image}
-            alt={artist.name}
-            width={192}
-            height={192}
-            className="h-full w-full object-cover"
-          />
-        </div>
-      )}
-      <h2 className="font-terminal text-4xl text-[#ffb000]">{artist.name}</h2>
-    </TerminalCard>
-  );
-}
-
-function SlideTopArtists({ artists }: { artists: Array<{ name: string; image: string }> }) {
-  return (
-    <TerminalCard className="py-8">
-      <h2 className="mb-6 text-center font-terminal text-2xl text-[#ffb000]">
-        Your Top Artists
-      </h2>
-      <div className="space-y-3">
-        {artists.map((artist, index) => (
-          <motion.div
-            key={artist.name}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="flex items-center gap-4"
-          >
-            <span className="w-8 text-right font-terminal text-2xl text-[#ffb000]">
-              {index + 1}
-            </span>
-            {artist.image && (
-              <div className="h-12 w-12 overflow-hidden rounded-full border border-[rgba(255,176,0,0.3)]">
-                <Image src={artist.image} alt={artist.name} width={48} height={48} className="h-full w-full object-cover" />
-              </div>
-            )}
-            <span className="font-terminal text-lg text-[#e0e0e0]">{artist.name}</span>
-          </motion.div>
-        ))}
+  // Landing screen (before starting the presentation)
+  if (!isPlaying) {
+    return (
+      <div className="fixed inset-0 bg-gradient-to-br from-[#1A1A1A] to-[#2D2D2D] flex items-center justify-center">
+        <SlideLanding
+          timeRange={timeRange}
+          onTimeRangeChange={setTimeRange}
+          onStart={() => setIsPlaying(true)}
+          previewImage={data.topArtists[0]?.image}
+        />
       </div>
-    </TerminalCard>
-  );
-}
+    );
+  }
 
-function SlideTopTracks({ tracks }: { tracks: Array<{ name: string; artist: string; image: string }> }) {
+  // Full-screen story experience
   return (
-    <TerminalCard className="py-8">
-      <h2 className="mb-6 text-center font-terminal text-2xl text-[#00f5ff]">
-        Your Top Tracks
-      </h2>
-      <div className="space-y-3">
-        {tracks.map((track, index) => (
-          <motion.div
-            key={track.name}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="flex items-center gap-4"
-          >
-            <span className="w-8 text-right font-terminal text-2xl text-[#00f5ff]">
-              {index + 1}
-            </span>
-            {track.image && (
-              <div className="h-12 w-12 overflow-hidden rounded border border-[rgba(0,245,255,0.3)]">
-                <Image src={track.image} alt={track.name} width={48} height={48} className="h-full w-full object-cover" />
-              </div>
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-terminal text-[#e0e0e0]">{track.name}</p>
-              <p className="truncate font-mono text-xs text-[#888888]">{track.artist}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </TerminalCard>
-  );
-}
-
-function SlideGenres({ genres }: { genres: string[] }) {
-  return (
-    <TerminalCard className="py-8 text-center">
-      <h2 className="mb-6 font-terminal text-2xl text-[#ff00ff]">
-        Your Top Genres
-      </h2>
-      <div className="flex flex-wrap justify-center gap-3">
-        {genres.map((genre, index) => (
-          <motion.span
-            key={genre}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: index * 0.1 }}
-            className="rounded-full border border-[rgba(255,0,255,0.3)] bg-[rgba(255,0,255,0.1)] px-4 py-2 font-terminal text-[#ff00ff]"
-          >
-            {genre}
-          </motion.span>
-        ))}
-      </div>
-    </TerminalCard>
-  );
-}
-
-function SlidePodcasts({ podcasts }: { podcasts: Array<{ name: string; publisher: string; image: string }> }) {
-  return (
-    <TerminalCard className="py-8">
-      <h2 className="mb-6 text-center font-terminal text-2xl text-[#a855f7]">
-        Your Top Podcasts
-      </h2>
-      <div className="space-y-3">
-        {podcasts.map((podcast, index) => (
-          <motion.div
-            key={podcast.name}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="flex items-center gap-4"
-          >
-            <span className="w-8 text-right font-terminal text-2xl text-[#a855f7]">
-              {index + 1}
-            </span>
-            {podcast.image && (
-              <div className="h-12 w-12 overflow-hidden rounded-lg border border-[rgba(168,85,247,0.3)]">
-                <Image src={podcast.image} alt={podcast.name} width={48} height={48} quality={100} className="h-full w-full object-cover" />
-              </div>
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-terminal text-[#e0e0e0]">{podcast.name}</p>
-              <p className="truncate font-mono text-xs text-[#888888]">{podcast.publisher}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </TerminalCard>
-  );
-}
-
-function SlideListeningPatterns({
-  byHour,
-  byDay,
-}: {
-  byHour: Array<{ hour: number; count: number }>;
-  byDay: Array<{ day: string; count: number }>;
-}) {
-  const maxHourCount = Math.max(...byHour.map((h) => h.count), 1);
-  const maxDayCount = Math.max(...byDay.map((d) => d.count), 1);
-
-  // Find peak listening hour
-  const peakHour = byHour.reduce((max, h) => (h.count > max.count ? h : max), byHour[0] || { hour: 0, count: 0 });
-  const formatHour = (h: number) => {
-    if (h === 0) return '12 AM';
-    if (h < 12) return `${h} AM`;
-    if (h === 12) return '12 PM';
-    return `${h - 12} PM`;
-  };
-
-  return (
-    <TerminalCard className="py-8">
-      <h2 className="mb-6 text-center font-terminal text-2xl text-[#ff00ff]">
-        Your Listening Patterns
-      </h2>
-
-      {byHour.length > 0 && (
-        <div className="mb-8">
-          <p className="mb-3 text-center font-mono text-sm text-[#888888]">
-            Peak listening time: <span className="text-[#ff00ff]">{formatHour(peakHour.hour)}</span>
-          </p>
-          <div className="flex items-end justify-center gap-1 h-24">
-            {byHour.map((item, index) => (
-              <motion.div
-                key={item.hour}
-                initial={{ height: 0 }}
-                animate={{ height: `${(item.count / maxHourCount) * 100}%` }}
-                transition={{ delay: index * 0.02, duration: 0.3 }}
-                className="w-2 min-h-[2px] rounded-t bg-gradient-to-t from-[#ff00ff] to-[#00f5ff]"
-                title={`${formatHour(item.hour)}: ${item.count} plays`}
-              />
-            ))}
-          </div>
-          <div className="mt-1 flex justify-between font-mono text-xs text-[#555555]">
-            <span>12AM</span>
-            <span>12PM</span>
-            <span>11PM</span>
-          </div>
-        </div>
-      )}
-
-      {byDay.length > 0 && (
-        <div>
-          <p className="mb-3 text-center font-mono text-sm text-[#888888]">By Day of Week</p>
-          <div className="flex justify-center gap-3">
-            {byDay.map((item, index) => (
-              <motion.div
-                key={item.day}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 + index * 0.05 }}
-                className="text-center"
-              >
-                <div
-                  className="mx-auto mb-1 w-8 h-8 rounded-full flex items-center justify-center font-terminal text-xs"
-                  style={{
-                    backgroundColor: `rgba(255, 0, 255, ${0.1 + (item.count / maxDayCount) * 0.4})`,
-                    color: item.count > maxDayCount * 0.5 ? '#ff00ff' : '#888888',
-                  }}
-                >
-                  {item.count}
-                </div>
-                <span className="font-mono text-xs text-[#555555]">{item.day}</span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {byHour.length === 0 && byDay.length === 0 && (
-        <p className="text-center font-mono text-sm text-[#555555]">
-          Sync more history to see patterns
-        </p>
-      )}
-    </TerminalCard>
-  );
-}
-
-function SlideStats({ stats }: { stats: { uniqueArtists: number; uniqueTracks: number; totalTracks: number; totalMinutes: number } }) {
-  const hours = Math.floor(stats.totalMinutes / 60);
-  const minutes = stats.totalMinutes % 60;
-
-  return (
-    <TerminalCard className="py-8 text-center">
-      <h2 className="mb-8 font-terminal text-2xl text-[#00ff41]">
-        Your Stats
-      </h2>
-      <div className="grid grid-cols-2 gap-6">
-        {stats.totalMinutes > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="col-span-2"
-          >
-            <p className="font-terminal text-5xl text-[#ffb000]">
-              {hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`}
-            </p>
-            <p className="mt-2 font-mono text-sm text-[#888888]">Time Listened</p>
-          </motion.div>
-        )}
-        {stats.totalTracks > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <p className="font-terminal text-4xl text-[#00ff41]">{stats.totalTracks.toLocaleString()}</p>
-            <p className="mt-2 font-mono text-sm text-[#888888]">Tracks Played</p>
-          </motion.div>
-        )}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <p className="font-terminal text-4xl text-[#00f5ff]">{stats.uniqueArtists}</p>
-          <p className="mt-2 font-mono text-sm text-[#888888]">Unique Artists</p>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <p className="font-terminal text-4xl text-[#ff00ff]">{stats.uniqueTracks}</p>
-          <p className="mt-2 font-mono text-sm text-[#888888]">Unique Tracks</p>
-        </motion.div>
-      </div>
-    </TerminalCard>
+    <WrappedContainer
+      gradients={gradients}
+      onClose={() => setIsPlaying(false)}
+    >
+      {slides}
+    </WrappedContainer>
   );
 }

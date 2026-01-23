@@ -3,7 +3,7 @@
     "loading": "Loading...",
     "loadingSystem": "LOADING SYSTEM...",
     "error": "Error",
-    "viewAll": "View all →",
+    "viewAll": "View all",
     "tryAgain": "Try Again",
     "goHome": "Go Home",
     "prev": "← PREV",
@@ -43,11 +43,42 @@
       "concerts": "Loading concert discovery",
       "auth": "Awaiting authentication..."
     },
+    "hero": {
+      "tagline": "Your Spotify Dashboard",
+      "titlePart1": "Discover Your",
+      "titleHighlight": "Music",
+      "titlePart2": "Story",
+      "cta": "Connect with Spotify"
+    },
+    "sections": {
+      "whatYouGet": "What you get",
+      "everythingAbout": "Everything about",
+      "listeningHabits": "listening habits",
+      "quote1": "Music is the",
+      "quote2": "soundtrack",
+      "quote3": "of your life. Make it",
+      "quote4": "unforgettable",
+      "quoteSubtitle": "Start your journey today",
+      "readyToExplore": "Ready to explore?",
+      "readyDescription": "Connect your Spotify account and unlock insights into your musical journey.",
+      "getStarted": "Get Started Now"
+    },
     "features": {
       "stats": "Listening Stats",
+      "statsDescription": "Deep dive into your listening patterns. See your top artists, tracks, and albums across different time periods.",
       "ai": "AI Discover",
+      "aiDescription": "Powered by AI, get personalized recommendations based on your unique taste profile and listening history.",
       "concerts": "Concerts",
-      "share": "Share"
+      "concertsDescription": "Never miss your favorite artists live. Discover upcoming concerts and tours near your location.",
+      "share": "Share",
+      "shareDescription": "Create beautiful shareable cards showcasing your music taste. Perfect for social media.",
+      "tryItNow": "Try it now"
+    },
+    "stats": {
+      "topTracks": "Top Tracks",
+      "topArtists": "Top Artists",
+      "history": "Listening History",
+      "aiRecommendations": "Recommendations"
     },
     "system": {
       "ready": "SYS: READY",
@@ -116,15 +147,24 @@
       "topCharts": "Your Top Charts",
       "topArtists": "Top Artists",
       "topTracks": "Top Tracks",
+      "topTracksDescription": "Your most played tracks this month. These are the songs that defined your listening.",
       "topAlbums": "Top Albums",
-      "peakTime": "Peak Listening Time"
+      "peakTime": "Peak Listening Time",
+      "justPlayed": "Just played",
+      "liveEvents": "Live Events",
+      "exploreMore": "Explore More",
+      "exploreMoreDescription": "Discover all the ways to experience your music story",
+      "explore": "Explore"
     },
     "stats": {
       "minutesListened": "Minutes Listened",
       "tracksPlayed": "Tracks Played",
       "mostActive": "Most active time",
       "peakHour": "Peak Hour",
-      "dataFrom": "Data from the last 4 weeks"
+      "avgPerDay": "Avg Per Day",
+      "dataFrom": "Data from the last 4 weeks",
+      "uniqueArtistsContext": "From {count} unique artists in the last 4 weeks",
+      "uniqueTracksContext": "From {count} unique tracks you've played"
     },
     "timeRanges": {
       "short": "4 Weeks",
@@ -151,7 +191,7 @@
       },
       "concerts": {
         "title": "Concerts",
-        "description": "Find upcoming shows from your favorite artists"
+        "description": "See your next concert and explore live music venues in your city"
       },
       "wrapped": {
         "title": "Your Wrapped",
@@ -185,78 +225,127 @@
   },
   "history": {
     "title": "Listening History",
+    "subtitle": "Your Music Journal",
     "tracksSynced": "{count} tracks synced",
-    "lastSync": "Last sync: {date}",
+    "lastSync": "Last sync {date}",
+    "today": "Today",
+    "yesterday": "Yesterday",
     "filters": {
-      "all": "ALL TIME",
-      "today": "TODAY",
-      "week": "WEEK",
-      "month": "MONTH"
+      "all": "All Time",
+      "today": "Today",
+      "week": "This Week",
+      "month": "This Month"
     },
     "sync": {
-      "required": "sync.required",
+      "required": "Sync Required",
       "description": "Sync your listening history to view and filter your tracks.",
       "hint": "This will save your last 50 played tracks to the database. Run it periodically to build your complete history."
     },
-    "loading": "LOADING HISTORY...",
+    "loading": "Loading history...",
     "noTracks": "No tracks found for this period"
   },
   "discover": {
     "title": "AI Discover",
-    "subtitle": "Personalized recommendations powered by Gemini AI",
+    "subtitle": "Your Personalized Music Lab",
     "regenerate": "Regenerate",
     "analyzing": "Analyzing your listening patterns...",
     "failed": "Failed to generate recommendations",
     "apiHint": "Make sure your Gemini API key is configured correctly",
-    "basedOn": "Based on your top artists:",
-    "startWith": "Start with:"
+    "basedOn": "Based on your favorites",
+    "startWith": "Start with:",
+    "featured": "Top Pick For You",
+    "moreDiscoveries": "More Discoveries",
+    "whyYouWillLove": "Why you'll love them"
   },
   "wrapped": {
     "title": "Your Wrapped",
     "subtitle": "Your personalized listening story",
-    "loading": "LOADING YOUR WRAPPED...",
+    "loading": "Loading your Wrapped...",
     "failed": "Failed to load data",
-    "journeyAwaits": "Your listening journey awaits",
-    "startWrapped": "START WRAPPED",
+    "tryAgain": "Try Again",
     "timeRanges": {
       "short": "Last 4 Weeks",
       "medium": "Last 6 Months",
       "long": "All Time"
     },
+    "landing": {
+      "ready": "Ready to feel something?",
+      "begin": "Begin Your Journey"
+    },
     "slides": {
       "intro": {
-        "title": "Your {timeRange}",
-        "subtitle": "Let's see what you've been listening to"
+        "subtitle": "Let's take a trip through your sound...",
+        "yourJourney": "Your Musical Journey"
       },
       "topArtist": {
-        "title": "Your #1 Artist"
+        "badge": "#1 Artist",
+        "highs": "They were there for your highs...",
+        "lows": "...and your lows.",
+        "rideOrDie": "Your ride or die.",
+        "streams": "Streams"
       },
       "topArtists": {
-        "title": "Your Top Artists"
+        "title": "Your Inner Circle",
+        "subtitle": "These artists defined your sound"
+      },
+      "topTrack": {
+        "badge": "#1 Track",
+        "hitDifferent": "This one hit different."
       },
       "topTracks": {
-        "title": "Your Top Tracks"
+        "title": "Your Soundtrack",
+        "subtitle": "The tracks that moved you"
+      },
+      "sonicAura": {
+        "title": "Your Sonic Aura",
+        "subtitle": "Based on your listening soul",
+        "analyzing": "Reading your musical soul...",
+        "therapist": "You're basically a {genre} therapist"
       },
       "genres": {
-        "title": "Your Top Genres"
+        "title": "Your Vibe",
+        "popVeins": "Pop runs through your veins",
+        "metalHead": "You're basically a metalhead",
+        "indieKid": "Indie kid at heart",
+        "hiphopSoul": "Hip-hop runs in your soul",
+        "electronicHeart": "Your heart beats electronic",
+        "jazzConnoisseur": "A true jazz connoisseur",
+        "classicalSoul": "Old soul, timeless taste",
+        "rnbVibes": "R&B vibes only",
+        "eclecticTaste": "Your taste? Beautifully eclectic"
       },
-      "topPodcasts": {
-        "title": "Your Top Podcasts"
+      "timeListened": {
+        "youSpent": "You spent...",
+        "thatsEnough": "That's enough to...",
+        "flightsTo": "fly to {destination} {count} times",
+        "watchMovies": "watch {count} movies",
+        "listenAudiobooks": "listen to {count} audiobooks",
+        "daysOfVibes": "{count} days of pure vibes",
+        "hoursOfMusic": "{count} hours of pure music",
+        "timeListening": "Time Listening"
       },
-      "listeningPatterns": {
-        "title": "Your Listening Patterns",
-        "peakTime": "Peak listening time:",
-        "byDay": "By Day of Week"
+      "patterns": {
+        "title": "When You Listen",
+        "nightOwl": "Night owl energy 🦉",
+        "earlyBird": "Early bird gets the beats 🐦",
+        "afternoonVibes": "Afternoon vibes only 🌅",
+        "balancedListener": "Perfectly balanced 🎵",
+        "yourDay": "{day} is YOUR day",
+        "noData": "Sync more history to see patterns"
       },
-      "stats": {
-        "title": "Your Stats",
+      "summary": {
+        "title": "That's a Wrap!",
         "timeListened": "Time Listened",
         "tracksPlayed": "Tracks Played",
-        "uniqueArtists": "Unique Artists",
-        "uniqueTracks": "Unique Tracks"
+        "uniqueArtists": "Artists",
+        "uniqueTracks": "Tracks",
+        "podcasts": "Podcasts",
+        "signOff": "Until next time, {name}. Keep the music playing.",
+        "signOffGeneric": "Until next time. Keep the music playing.",
+        "share": "Share Your Wrapped",
+        "watchAgain": "Watch Again"
       }
-    },
-    "syncMore": "Sync more history to see patterns"
+    }
   },
   "share": {
     "title": "Share",
@@ -290,13 +379,56 @@
   },
   "concerts": {
     "title": "Concerts",
-    "subtitle": "Upcoming shows from your favorite artists",
-    "tracking": "Tracking:"
+    "subtitle": "Live Music",
+    "tracking": "Tracking:",
+    "nextShow": "Your Next Show",
+    "upcomingShows": "Upcoming Shows",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "later": "Later",
+    "discoverNearby": "Discover Nearby",
+    "basedOnTaste": "Based on your taste",
+    "noConcerts": "No upcoming concerts from your favorite artists",
+    "noVenues": "No live music venues found nearby",
+    "noVenuesDescription": "We couldn't find venues in your area",
+    "venueTypes": {
+      "bar": "Bar",
+      "club": "Club",
+      "venue": "Venue",
+      "restaurant": "Restaurant"
+    },
+    "viewOnMap": "View on Map",
+    "liveMusic": "Live Music",
+    "liveMusicIn": "Live Music in {city}",
+    "loadingMap": "Loading map...",
+    "venuesFound": "{count} {count, plural, one {venue} other {venues}} found",
+    "venues": "Venues",
+    "clickToExplore": "Click to explore",
+    "findingVenues": "Finding venues...",
+    "youAreHere": "You are here",
+    "kmAway": "{distance}km away",
+    "website": "Website",
+    "today": "Today!",
+    "tomorrow": "Tomorrow!",
+    "inDays": "In {days} days"
   },
   "podcasts": {
     "title": "Podcasts",
-    "subtitle": "Your saved shows and episodes",
+    "subtitle": "Your Audio Library",
+    "loading": "Loading podcasts...",
     "tabs": {
+      "shows": "Shows",
+      "episodes": "Episodes"
+    },
+    "hero": {
+      "featured": "Featured Show",
+      "openInSpotify": "Open in Spotify"
+    },
+    "sections": {
+      "yourShows": "Your Shows",
+      "savedEpisodes": "Saved Episodes"
+    },
+    "stats": {
       "shows": "Shows",
       "episodes": "Episodes"
     },
@@ -320,6 +452,104 @@
     "viewAll": "View All Concerts",
     "locationPermission": "Enable location for nearby concerts",
     "searching": "Searching for concerts...",
-    "fromTopArtists": "Based on your top artists"
+    "fromTopArtists": "Based on your top artists",
+    "locationHint": "Enable location to see concerts near you and get distance information",
+    "enableLocation": "Enable Location"
+  },
+  "mood": {
+    "title": "Your Sonic Aura",
+    "subtitle": "Based on your last 4 weeks",
+    "refresh": "New Reading",
+    "loading": "Reading your musical soul...",
+    "error": "Couldn't read the vibes",
+    "basedOnVibe": "Based on your vibe, you might enjoy:"
+  },
+  "footer": {
+    "madeWith": "Made with",
+    "by": "by",
+    "disclaimer": "MyScrobble.fm is an independent music analytics tool. I have no official affiliation with Last.fm or Spotify. The term \"Scrobble\" is used descriptively for the culture of tracking the music we love.",
+    "tagline": "Transforming your data into visual insights"
+  },
+  "contextualShare": {
+    "title": "Share Your Music",
+    "shareButton": "Share",
+    "share": "Share",
+    "downloadButton": "Download for Instagram",
+    "generating": "Generating...",
+    "optimizedFor": "Optimized for Instagram Stories",
+    "cards": {
+      "nowPlaying": "Now Playing",
+      "myStats": "My Stats",
+      "timeListened": "Time Listened",
+      "tracksPlayed": "Tracks Played",
+      "artists": "Artists",
+      "recentVibes": "My Recent Vibes",
+      "tracksRecently": "tracks recently",
+      "topArtists": "My Top Artists",
+      "topTracks": "My Top Tracks",
+      "topAlbums": "My Top Albums",
+      "nextShow": "My Next Show",
+      "today": "Today!",
+      "tomorrow": "Tomorrow!",
+      "inDays": "In {days} days",
+      "moreShows": "more shows",
+      "noConcerts": "No upcoming concerts",
+      "sonicAura": "My Sonic Aura",
+      "myPodcasts": "My Podcasts",
+      "episodes": "episodes",
+      "shows": "Shows",
+      "savedEpisodes": "Saved Episodes"
+    }
+  },
+  "waitlist": {
+    "headlinePart1": "Tonight's show is",
+    "headlineHighlight": "sold out",
+    "subheadline": "But you're on the guest list for the next one",
+    "explanation": "MyScrobble is in early access with limited spots. We're working on expanding capacity.",
+    "cta": "Get Your Backstage Pass",
+    "emailPlaceholder": "your@email.com",
+    "successPart1": "You're on",
+    "successHighlight": "the list!",
+    "successSubtext": "We'll email you when a spot opens up",
+    "alreadyOnList": "You're already on the guest list!",
+    "position": "#{position} in line",
+    "shareTitle": "Share with friends",
+    "shareDescription": "Help us grow and move up the list",
+    "twitterText": "Just discovered MyScrobble - a beautiful Spotify dashboard with AI recommendations and concert discovery. Check it out!",
+    "whatsappText": "Check out MyScrobble - it shows your Spotify stats, finds concerts, and gives AI music recommendations!",
+    "copyLink": "Copy Link",
+    "linkCopied": "Link copied!",
+    "invalidEmail": "Please enter a valid email address",
+    "yourPosition": "Your Position",
+    "backToHome": "Back to home",
+    "signingUpAs": "Signing up as"
+  },
+  "teaser": {
+    "tagline": "Something Amazing Is Coming",
+    "headline1": "Your Music.",
+    "headline2": "Visualized.",
+    "headline3": "Amplified.",
+    "description": "A beautiful Spotify dashboard with AI recommendations, concert discovery, and shareable stats. Be the first to experience it.",
+    "comingSoon": "Coming Soon",
+    "joinWaitlist": "Join the Waitlist",
+    "emailPlaceholder": "your@email.com",
+    "getEarlyAccess": "Get Early Access",
+    "joining": "Joining...",
+    "successTitle": "You're In!",
+    "successMessage": "We'll notify you when we launch",
+    "position": "#{position} in line",
+    "alreadyJoined": "You're already on the list!",
+    "features": {
+      "stats": "Deep listening insights",
+      "ai": "AI-powered recommendations",
+      "concerts": "Concert discovery",
+      "share": "Shareable music cards"
+    },
+    "social": {
+      "title": "Spread the word",
+      "twitter": "Share on X",
+      "whatsapp": "Share on WhatsApp",
+      "copy": "Copy link"
+    }
   }
 }

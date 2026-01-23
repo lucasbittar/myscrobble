@@ -1,6 +1,38 @@
 # MyScrobble.fm
 
-A modern Spotify dashboard that brings your listening data to life with AI-powered insights, concert discovery, and beautiful visualizations — all wrapped in a nostalgic CRT terminal aesthetic.
+A modern Spotify dashboard that brings your listening data to life with AI-powered insights, concert discovery, and beautiful visualizations.
+
+## What's New
+
+### Design Revamp
+- Modern glass-morphism UI with organic flowing shapes
+- Light theme with translucent cards and subtle blur effects
+- Redesigned all pages: Dashboard, History, Charts, Discover, Podcasts, Concerts, Wrapped
+
+### Teaser Mode
+- `NEXT_PUBLIC_TEASER=true` enables a coming soon landing page
+- Blocks all routes except landing when enabled
+- Prominent waitlist signup with animated feature icons
+
+### Waitlist System
+- Handles Spotify API quota limitations gracefully
+- Email notifications via Resend (welcome + access granted)
+- Full i18n support (English/Portuguese)
+- Admin page for managing waitlist entries
+
+### Sonic Aura
+- AI-powered mood analysis based on recent listening
+- Personalized witty comments about your music taste
+- Gender-aware responses in Portuguese
+
+### Enhanced Share Cards
+- Server-side image generation with Satori
+- Redesigned vinyl collector style for Top Albums
+- Instagram Story-ready (1080x1920)
+
+### Venue Discovery
+- Interactive Leaflet map for live music venues
+- Location-aware concert recommendations
 
 ![MyScrobble Dashboard](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript) ![Spotify](https://img.shields.io/badge/Spotify-API-1DB954?style=flat-square&logo=spotify)
 
@@ -40,15 +72,15 @@ Sync your Spotify history to a database for long-term tracking beyond Spotify's 
 ### Internationalization
 Full support for English and Portuguese (Brazilian) with locale-aware features including tour search optimization for each region.
 
-## The CRT Aesthetic
+## Design System
 
-MyScrobble features a distinctive retro terminal design inspired by vintage CRT monitors:
+MyScrobble features a modern glass-morphism design with organic shapes:
 
-- **Phosphor Green** (#00ff41) — Primary glow
-- **Cyan** (#00f5ff) — Accents and highlights
-- **Magenta** (#ff00ff) — Badges and emphasis
-- **Amber** (#ffb000) — Wrapped theme
-- Scanline effects, text glow, and terminal typography
+- **Spotify Green** (#1DB954) — Primary actions, stats
+- **Purple** (#8B5CF6) — AI features, charts
+- **Pink** (#EC4899) — Concerts, accents
+- **Amber** (#F59E0B) — Wrapped, recommendations
+- Glass cards with backdrop blur, flowing blob animations
 
 ## Getting Started
 

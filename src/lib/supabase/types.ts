@@ -111,6 +111,38 @@ export interface Database {
           created_at?: string;
         };
       };
+      waitlist: {
+        Row: {
+          id: string;
+          email: string;
+          spotify_id: string | null;
+          spotify_name: string | null;
+          spotify_image: string | null;
+          created_at: string;
+          notified_at: string | null;
+          converted_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          spotify_id?: string | null;
+          spotify_name?: string | null;
+          spotify_image?: string | null;
+          created_at?: string;
+          notified_at?: string | null;
+          converted_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          spotify_id?: string | null;
+          spotify_name?: string | null;
+          spotify_image?: string | null;
+          created_at?: string;
+          notified_at?: string | null;
+          converted_at?: string | null;
+        };
+      };
     };
     Views: {
       [_ in never]: never;
@@ -131,3 +163,5 @@ export type ListeningHistory = Database['public']['Tables']['listening_history']
 export type NewListeningHistory = Database['public']['Tables']['listening_history']['Insert'];
 export type Recommendation = Database['public']['Tables']['recommendations']['Row'];
 export type NewRecommendation = Database['public']['Tables']['recommendations']['Insert'];
+export type Waitlist = Database['public']['Tables']['waitlist']['Row'];
+export type NewWaitlist = Database['public']['Tables']['waitlist']['Insert'];

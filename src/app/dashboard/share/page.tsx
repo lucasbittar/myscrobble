@@ -5,9 +5,9 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import html2canvas from 'html2canvas';
-import { GlowText, TerminalCard, TerminalButton } from '@/components/crt';
 import { useTranslations } from 'next-intl';
 import { getLargestImage } from '@/lib/spotify';
+import { ModernCard, ModernButton, Heading, ScrollReveal } from '@/components/modern';
 
 type Template = 'topArtist' | 'top5Artists' | 'topTrack' | 'stats' | 'topPodcast' | 'top5Podcasts';
 type TimeRange = 'short_term' | 'medium_term' | 'long_term';
@@ -167,103 +167,92 @@ export default function SharePage() {
   }, [template, timeRange]);
 
   return (
-    <div className="space-y-6">
+    <div className="py-12 md:py-24 px-6 md:px-12">
+      <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h1 className="font-terminal text-3xl">
-          <GlowText color="phosphor" size="sm">
-            <span className="text-[#888888]">◫</span> {t('title')}
-          </GlowText>
-        </h1>
-        <p className="mt-1 font-mono text-sm text-[#888888]">
+      <ScrollReveal>
+        <Heading level={2}>{t('title')}</Heading>
+        <p className="mt-1 text-muted-foreground">
           {t('subtitle')}
         </p>
-      </motion.div>
+      </ScrollReveal>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Controls */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="space-y-6"
-        >
-          {/* Template Selector */}
-          <TerminalCard title={t('templates.title')}>
-            <div className="grid grid-cols-2 gap-2">
-              {(Object.keys(templates) as Template[]).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setTemplate(t)}
-                  className={`cursor-pointer rounded-md border p-3 text-left font-terminal text-sm transition-all ${
-                    template === t
-                      ? 'border-[#00ff41] bg-[rgba(0,255,65,0.1)] text-[#00ff41]'
-                      : 'border-[rgba(0,255,65,0.2)] text-[#888888] hover:border-[rgba(0,255,65,0.4)]'
-                  }`}
-                >
-                  {templates[t]}
-                </button>
-              ))}
-            </div>
-          </TerminalCard>
+        <ScrollReveal delay={0.1}>
+          <div className="space-y-6">
+            {/* Template Selector */}
+            <ModernCard>
+              <p className="text-sm font-medium text-foreground mb-3">{t('templates.title')}</p>
+              <div className="grid grid-cols-2 gap-2">
+                {(Object.keys(templates) as Template[]).map((tmpl) => (
+                  <button
+                    key={tmpl}
+                    onClick={() => setTemplate(tmpl)}
+                    className={`cursor-pointer rounded-xl border p-3 text-left text-sm font-medium transition-all ${
+                      template === tmpl
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:border-primary/50 hover:text-foreground'
+                    }`}
+                  >
+                    {templates[tmpl]}
+                  </button>
+                ))}
+              </div>
+            </ModernCard>
 
-          {/* Time Range */}
-          <TerminalCard title={t('timeRange')}>
-            <div className="flex gap-2">
-              {(Object.keys(timeRangeLabels) as TimeRange[]).map((range) => (
-                <TerminalButton
-                  key={range}
-                  variant={timeRange === range ? 'primary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setTimeRange(range)}
-                  className="flex-1"
-                >
-                  {timeRangeLabels[range]}
-                </TerminalButton>
-              ))}
-            </div>
-          </TerminalCard>
+            {/* Time Range */}
+            <ModernCard>
+              <p className="text-sm font-medium text-foreground mb-3">{t('timeRange')}</p>
+              <div className="flex gap-2">
+                {(Object.keys(timeRangeLabels) as TimeRange[]).map((range) => (
+                  <ModernButton
+                    key={range}
+                    variant={timeRange === range ? 'primary' : 'ghost'}
+                    size="sm"
+                    onClick={() => setTimeRange(range)}
+                    className="flex-1"
+                  >
+                    {timeRangeLabels[range]}
+                  </ModernButton>
+                ))}
+              </div>
+            </ModernCard>
 
-          {/* Actions */}
-          <div className="flex gap-3">
-            <TerminalButton
-              onClick={handleDownload}
-              glow
-              className="flex-1"
-              disabled={isLoading || isDownloading}
-            >
-              {isDownloading ? t('generating') : t('download')}
-            </TerminalButton>
+            {/* Actions */}
+            <div className="flex gap-3">
+              <ModernButton
+                onClick={handleDownload}
+                className="flex-1"
+                disabled={isLoading || isDownloading}
+                loading={isDownloading}
+              >
+                {isDownloading ? t('generating') : t('download')}
+              </ModernButton>
+            </div>
+
+            <p className="text-xs text-muted-foreground/70">
+              {t('tip')}
+            </p>
           </div>
-
-          <p className="font-mono text-xs text-[#555555]">
-            {t('tip')}
-          </p>
-        </motion.div>
+        </ScrollReveal>
 
         {/* Preview */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <p className="mb-3 font-terminal text-sm text-[#888888]">{t('preview')}</p>
-          <div className="overflow-hidden rounded-lg border border-[rgba(0,255,65,0.2)]">
+        <ScrollReveal delay={0.2}>
+          <p className="mb-3 text-sm font-medium text-muted-foreground">{t('preview')}</p>
+          <div className="overflow-hidden rounded-2xl border border-border shadow-soft">
             <div
               ref={cardRef}
               className="relative mx-auto"
               style={{
                 aspectRatio: '9/16',
                 maxWidth: '360px',
-                background: 'linear-gradient(180deg, #0a0a0a 0%, #0d1a0d 100%)',
+                background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 100%)',
               }}
             >
               {isLoading ? (
                 <div className="flex h-full items-center justify-center">
-                  <p className="font-terminal text-[#00ff41]">{tCommon('loading')}</p>
+                  <p className="font-medium text-white">{tCommon('loading')}</p>
                 </div>
               ) : data ? (
                 <>
@@ -277,7 +266,8 @@ export default function SharePage() {
               ) : null}
             </div>
           </div>
-        </motion.div>
+        </ScrollReveal>
+      </div>
       </div>
     </div>
   );
@@ -286,11 +276,11 @@ export default function SharePage() {
 function CardWrapper({ children, userName }: { children: React.ReactNode; userName: string }) {
   return (
     <div className="relative flex h-full flex-col p-6">
-      {/* Scanlines overlay */}
+      {/* Gradient overlay */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-10"
+        className="pointer-events-none absolute inset-0 opacity-30"
         style={{
-          background: 'repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,255,65,0.1) 1px, rgba(0,255,65,0.1) 2px)',
+          background: 'radial-gradient(circle at top right, rgba(139, 92, 246, 0.3), transparent 60%)',
         }}
       />
 
@@ -299,7 +289,7 @@ function CardWrapper({ children, userName }: { children: React.ReactNode; userNa
 
       {/* Footer */}
       <div className="relative z-10 mt-auto pt-4 text-center">
-        <p className="font-terminal text-xs text-[#555555]">
+        <p className="text-xs text-white/50">
           {userName} • MyScrobble.fm
         </p>
       </div>
@@ -314,15 +304,15 @@ function TopArtistCard({ data, timeRangeLabel }: { data: ShareData; timeRangeLab
   return (
     <CardWrapper userName={data.userName}>
       <div className="flex h-full flex-col items-center justify-center text-center">
-        <p className="mb-4 font-terminal text-sm text-[#888888]">
+        <p className="mb-4 text-sm text-white/60">
           My #1 Artist ({timeRangeLabel})
         </p>
         {artist.image && (
-          <div className="mb-6 h-40 w-40 overflow-hidden rounded-full border-4 border-[#00ff41] shadow-[0_0_40px_rgba(0,255,65,0.3)]">
+          <div className="mb-6 h-40 w-40 overflow-hidden rounded-full border-4 border-[#1DB954] shadow-[0_0_40px_rgba(29,185,84,0.3)]">
             <Image src={artist.image} alt={artist.name} width={160} height={160} className="h-full w-full object-cover" />
           </div>
         )}
-        <h2 className="font-terminal text-3xl text-[#00ff41]">{artist.name}</h2>
+        <h2 className="text-3xl font-bold text-[#1DB954]">{artist.name}</h2>
       </div>
     </CardWrapper>
   );
@@ -332,21 +322,21 @@ function Top5ArtistsCard({ data, timeRangeLabel }: { data: ShareData; timeRangeL
   return (
     <CardWrapper userName={data.userName}>
       <div className="flex h-full flex-col">
-        <p className="mb-6 text-center font-terminal text-sm text-[#888888]">
+        <p className="mb-6 text-center text-sm text-white/60">
           Top 5 Artists ({timeRangeLabel})
         </p>
         <div className="flex-1 space-y-3">
           {data.topArtists.slice(0, 5).map((artist, index) => (
             <div key={artist.name} className="flex items-center gap-3">
-              <span className="w-6 text-right font-terminal text-xl text-[#00ff41]">
+              <span className="w-6 text-right text-xl font-bold text-[#1DB954]">
                 {index + 1}
               </span>
               {artist.image && (
-                <div className="h-10 w-10 overflow-hidden rounded-full border border-[rgba(0,255,65,0.3)]">
+                <div className="h-10 w-10 overflow-hidden rounded-full border border-[#1DB954]/30">
                   <Image src={artist.image} alt={artist.name} width={40} height={40} className="h-full w-full object-cover" />
                 </div>
               )}
-              <span className="truncate font-terminal text-[#e0e0e0]">{artist.name}</span>
+              <span className="truncate font-medium text-white">{artist.name}</span>
             </div>
           ))}
         </div>
@@ -362,16 +352,16 @@ function TopTrackCard({ data, timeRangeLabel }: { data: ShareData; timeRangeLabe
   return (
     <CardWrapper userName={data.userName}>
       <div className="flex h-full flex-col items-center justify-center text-center">
-        <p className="mb-4 font-terminal text-sm text-[#888888]">
+        <p className="mb-4 text-sm text-white/60">
           My #1 Track ({timeRangeLabel})
         </p>
         {track.image && (
-          <div className="mb-6 h-36 w-36 overflow-hidden rounded-lg border-4 border-[#00f5ff] shadow-[0_0_40px_rgba(0,245,255,0.3)]">
+          <div className="mb-6 h-36 w-36 overflow-hidden rounded-xl border-4 border-[#3B82F6] shadow-[0_0_40px_rgba(59,130,246,0.3)]">
             <Image src={track.image} alt={track.name} width={144} height={144} className="h-full w-full object-cover" />
           </div>
         )}
-        <h2 className="font-terminal text-2xl text-[#00f5ff]">{track.name}</h2>
-        <p className="mt-2 font-mono text-sm text-[#888888]">{track.artist}</p>
+        <h2 className="text-2xl font-bold text-[#3B82F6]">{track.name}</h2>
+        <p className="mt-2 text-sm text-white/60">{track.artist}</p>
       </div>
     </CardWrapper>
   );
@@ -385,32 +375,32 @@ function StatsCard({ data, timeRangeLabel, t }: { data: ShareData; timeRangeLabe
   return (
     <CardWrapper userName={data.userName}>
       <div className="flex h-full flex-col items-center justify-center text-center">
-        <p className="mb-6 font-terminal text-sm text-[#888888]">
+        <p className="mb-6 text-sm text-white/60">
           My Stats ({timeRangeLabel})
         </p>
         <div className="space-y-6">
           {hasListeningData && (
             <>
               <div>
-                <p className="font-terminal text-4xl text-[#ffb000]">
+                <p className="text-4xl font-bold text-[#F59E0B]">
                   {hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`}
                 </p>
-                <p className="mt-1 font-mono text-xs text-[#888888]">{t('cards.timeListened')}</p>
+                <p className="mt-1 text-xs text-white/60">{t('cards.timeListened')}</p>
               </div>
               <div>
-                <p className="font-terminal text-4xl text-[#00ff41]">{data.stats.totalTracks.toLocaleString()}</p>
-                <p className="mt-1 font-mono text-xs text-[#888888]">{t('cards.tracksPlayed')}</p>
+                <p className="text-4xl font-bold text-[#1DB954]">{data.stats.totalTracks.toLocaleString()}</p>
+                <p className="mt-1 text-xs text-white/60">{t('cards.tracksPlayed')}</p>
               </div>
             </>
           )}
           <div className="flex gap-8 justify-center">
             <div>
-              <p className="font-terminal text-3xl text-[#00f5ff]">{data.stats.uniqueArtists}</p>
-              <p className="mt-1 font-mono text-xs text-[#888888]">{t('cards.artists')}</p>
+              <p className="text-3xl font-bold text-[#3B82F6]">{data.stats.uniqueArtists}</p>
+              <p className="mt-1 text-xs text-white/60">{t('cards.artists')}</p>
             </div>
             <div>
-              <p className="font-terminal text-3xl text-[#ff00ff]">{data.stats.uniqueTracks}</p>
-              <p className="mt-1 font-mono text-xs text-[#888888]">{t('cards.tracks')}</p>
+              <p className="text-3xl font-bold text-[#8B5CF6]">{data.stats.uniqueTracks}</p>
+              <p className="mt-1 text-xs text-white/60">{t('cards.tracks')}</p>
             </div>
           </div>
         </div>
@@ -426,16 +416,16 @@ function TopPodcastCard({ data, timeRangeLabel }: { data: ShareData; timeRangeLa
   return (
     <CardWrapper userName={data.userName}>
       <div className="flex h-full flex-col items-center justify-center text-center">
-        <p className="mb-4 font-terminal text-sm text-[#888888]">
+        <p className="mb-4 text-sm text-white/60">
           My #1 Podcast ({timeRangeLabel})
         </p>
         {podcast.image && (
-          <div className="mb-6 h-40 w-40 overflow-hidden rounded-xl border-4 border-[#a855f7] shadow-[0_0_40px_rgba(168,85,247,0.3)]">
+          <div className="mb-6 h-40 w-40 overflow-hidden rounded-xl border-4 border-[#8B5CF6] shadow-[0_0_40px_rgba(139,92,246,0.3)]">
             <Image src={podcast.image} alt={podcast.name} width={160} height={160} quality={100} className="h-full w-full object-cover" />
           </div>
         )}
-        <h2 className="font-terminal text-2xl text-[#a855f7]">{podcast.name}</h2>
-        <p className="mt-2 font-mono text-sm text-[#888888]">{podcast.publisher}</p>
+        <h2 className="text-2xl font-bold text-[#8B5CF6]">{podcast.name}</h2>
+        <p className="mt-2 text-sm text-white/60">{podcast.publisher}</p>
       </div>
     </CardWrapper>
   );
@@ -445,23 +435,23 @@ function Top5PodcastsCard({ data, timeRangeLabel }: { data: ShareData; timeRange
   return (
     <CardWrapper userName={data.userName}>
       <div className="flex h-full flex-col">
-        <p className="mb-6 text-center font-terminal text-sm text-[#888888]">
+        <p className="mb-6 text-center text-sm text-white/60">
           Top 5 Podcasts ({timeRangeLabel})
         </p>
         <div className="flex-1 space-y-3">
           {data.topPodcasts.slice(0, 5).map((podcast, index) => (
             <div key={podcast.name} className="flex items-center gap-3">
-              <span className="w-6 text-right font-terminal text-xl text-[#a855f7]">
+              <span className="w-6 text-right text-xl font-bold text-[#8B5CF6]">
                 {index + 1}
               </span>
               {podcast.image && (
-                <div className="h-10 w-10 overflow-hidden rounded-lg border border-[rgba(168,85,247,0.3)]">
+                <div className="h-10 w-10 overflow-hidden rounded-lg border border-[#8B5CF6]/30">
                   <Image src={podcast.image} alt={podcast.name} width={40} height={40} quality={100} className="h-full w-full object-cover" />
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <span className="truncate font-terminal text-sm text-[#e0e0e0] block">{podcast.name}</span>
-                <span className="truncate font-mono text-xs text-[#888888] block">{podcast.publisher}</span>
+                <span className="truncate text-sm font-medium text-white block">{podcast.name}</span>
+                <span className="truncate text-xs text-white/60 block">{podcast.publisher}</span>
               </div>
             </div>
           ))}

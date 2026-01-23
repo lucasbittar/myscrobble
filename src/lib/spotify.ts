@@ -1,5 +1,24 @@
 const SPOTIFY_API_BASE = 'https://api.spotify.com/v1';
 
+// Custom error class for Spotify API errors
+export class SpotifyApiError extends Error {
+  status: number;
+  isQuotaExceeded: boolean;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'SpotifyApiError';
+    this.status = status;
+    // Spotify returns 403 when the app exceeds its quota (25 users in dev mode)
+    this.isQuotaExceeded = status === 403;
+  }
+}
+
+// Helper to check if an error is a quota exceeded error
+export function isQuotaExceededError(error: unknown): boolean {
+  return error instanceof SpotifyApiError && error.isQuotaExceeded;
+}
+
 export interface SpotifyTrack {
   id: string;
   name: string;
@@ -116,8 +135,9 @@ class SpotifyClient {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
-      throw new Error(
-        `Spotify API error: ${response.status} - ${error.error?.message || response.statusText}`
+      throw new SpotifyApiError(
+        `Spotify API error: ${response.status} - ${error.error?.message || response.statusText}`,
+        response.status
       );
     }
 
@@ -178,6 +198,28 @@ class SpotifyClient {
 
   async getArtist(artistId: string): Promise<SpotifyArtist> {
     return this.fetch<SpotifyArtist>(`/artists/${artistId}`);
+  }
+
+  /**
+   * Get multiple artists by their Spotify IDs.
+   * Spotify supports up to 50 artists per request.
+   */
+  async getArtists(artistIds: string[]): Promise<{ artists: (SpotifyArtist | null)[] }> {
+    if (artistIds.length === 0) return { artists: [] };
+    // Spotify allows max 50 artists per request
+    const ids = artistIds.slice(0, 50).join(',');
+    return this.fetch<{ artists: (SpotifyArtist | null)[] }>(`/artists?ids=${ids}`);
+  }
+
+  /**
+   * Get multiple tracks by their Spotify IDs.
+   * Spotify supports up to 50 tracks per request.
+   */
+  async getTracks(trackIds: string[]): Promise<{ tracks: (SpotifyTrack | null)[] }> {
+    if (trackIds.length === 0) return { tracks: [] };
+    // Spotify allows max 50 tracks per request
+    const ids = trackIds.slice(0, 50).join(',');
+    return this.fetch<{ tracks: (SpotifyTrack | null)[] }>(`/tracks?ids=${ids}`);
   }
 
   async getArtistTopTracks(artistId: string, market = 'US'): Promise<{ tracks: SpotifyTrack[] }> {

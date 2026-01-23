@@ -3,9 +3,9 @@
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { CRTWrapper, GlowText, TerminalButton, TerminalCard } from '@/components/crt';
 import { Suspense } from 'react';
 import { useTranslations } from 'next-intl';
+import { ModernWrapper, BlobBackground, ModernCard, ModernButton, Heading } from '@/components/modern';
 
 function ErrorContent() {
   const searchParams = useSearchParams();
@@ -30,7 +30,19 @@ function ErrorContent() {
   const message = getErrorMessage(error);
 
   return (
-    <CRTWrapper>
+    <ModernWrapper>
+      {/* Background decorations */}
+      <BlobBackground
+        color="pink"
+        position="top-right"
+        size="lg"
+      />
+      <BlobBackground
+        color="purple"
+        position="bottom-left"
+        size="xl"
+      />
+
       <div className="flex min-h-screen items-center justify-center px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -38,60 +50,73 @@ function ErrorContent() {
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          <TerminalCard title="system.error">
+          <ModernCard className="shadow-soft-lg">
             <div className="space-y-6">
               <div className="text-center">
-                <h1 className="font-terminal text-3xl">
-                  <GlowText color="magenta">{t('title')}</GlowText>
-                </h1>
-                <p className="mt-2 text-sm text-[#ff4444]">{error}</p>
+                <div className="mb-4 text-5xl">😵</div>
+                <Heading level={3} className="text-destructive">
+                  {t('title')}
+                </Heading>
+                <p className="mt-2 text-sm text-muted-foreground">{error}</p>
               </div>
 
-              <div className="rounded border border-[rgba(255,68,68,0.3)] bg-[rgba(255,68,68,0.1)] p-4">
-                <p className="font-mono text-sm text-[#e0e0e0]">{message}</p>
+              <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4">
+                <p className="text-sm text-foreground">{message}</p>
               </div>
 
               <div className="space-y-2 text-sm">
-                <div className="font-mono">
-                  <span className="text-[#00ff41]">&gt;</span>{' '}
-                  <span className="text-[#888888]">{t('troubleshooting')}</span>
+                <div>
+                  <span className="text-primary font-medium">→</span>{' '}
+                  <span className="text-muted-foreground">{t('troubleshooting')}</span>
                 </div>
-                <ul className="ml-4 space-y-1 font-mono text-xs text-[#00f5ff]">
-                  <li>• {t('tips.account')}</li>
-                  <li>• {t('tips.cookies')}</li>
-                  <li>• {t('tips.cache')}</li>
-                  <li>• {t('tips.wait')}</li>
+                <ul className="ml-4 space-y-1 text-xs text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <span className="text-primary">•</span>
+                    {t('tips.account')}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-primary">•</span>
+                    {t('tips.cookies')}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-primary">•</span>
+                    {t('tips.cache')}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-primary">•</span>
+                    {t('tips.wait')}
+                  </li>
                 </ul>
               </div>
 
               <div className="flex gap-3">
                 <Link href="/auth/login" className="flex-1">
-                  <TerminalButton variant="secondary" className="w-full">
-                    {tCommon('tryAgain').toUpperCase()}
-                  </TerminalButton>
+                  <ModernButton variant="secondary" className="w-full">
+                    {tCommon('tryAgain')}
+                  </ModernButton>
                 </Link>
                 <Link href="/" className="flex-1">
-                  <TerminalButton variant="ghost" className="w-full">
-                    {tCommon('goHome').toUpperCase()}
-                  </TerminalButton>
+                  <ModernButton variant="ghost" className="w-full">
+                    {tCommon('goHome')}
+                  </ModernButton>
                 </Link>
               </div>
             </div>
-          </TerminalCard>
+          </ModernCard>
         </motion.div>
       </div>
-    </CRTWrapper>
+    </ModernWrapper>
   );
 }
 
 export default function ErrorPage() {
   return (
     <Suspense fallback={
-      <CRTWrapper>
+      <ModernWrapper>
         <div className="flex min-h-screen items-center justify-center">
-          <div className="font-terminal text-2xl text-[#00ff41]">Loading...</div>
+          <div className="text-2xl font-bold text-primary">Loading...</div>
         </div>
-      </CRTWrapper>
+      </ModernWrapper>
     }>
       <ErrorContent />
     </Suspense>

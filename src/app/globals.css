@@ -6,9 +6,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-ibm-plex-mono);
-  --font-terminal: var(--font-vt323);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -46,156 +45,96 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
 
-  /* CRT Color Palette */
-  --color-phosphor: var(--phosphor);
-  --color-cyan: var(--crt-cyan);
-  --color-magenta: var(--crt-magenta);
-  --color-amber: var(--crt-amber);
-  --color-terminal-bg: var(--terminal-bg);
+  /* Modern Color Palette */
+  --color-spotify: var(--spotify);
+  --color-purple: var(--purple);
+  --color-pink: var(--pink);
+  --color-blue: var(--blue);
+  --color-amber: var(--amber);
 }
 
 :root {
-  /* CRT Terminal Color Palette */
-  --phosphor: #00ff41;
-  --crt-cyan: #00f5ff;
-  --crt-magenta: #ff00ff;
-  --crt-amber: #ffb000;
-  --terminal-bg: #0a0a0a;
-  --terminal-text: #e0e0e0;
+  /* Modern Clean Color Palette */
+  --spotify: #1DB954;
+  --purple: #8B5CF6;
+  --pink: #EC4899;
+  --blue: #3B82F6;
+  --amber: #F59E0B;
 
   /* Font Families */
-  --font-vt323: 'VT323', monospace;
+  --font-inter: 'Inter', sans-serif;
   --font-ibm-plex-mono: 'IBM Plex Mono', monospace;
 
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 
-  /* Dark theme as default for CRT aesthetic */
-  --background: #0a0a0a;
-  --foreground: #e0e0e0;
-  --card: #111111;
-  --card-foreground: #e0e0e0;
-  --popover: #111111;
-  --popover-foreground: #e0e0e0;
-  --primary: #00ff41;
-  --primary-foreground: #0a0a0a;
-  --secondary: #1a1a1a;
-  --secondary-foreground: #e0e0e0;
-  --muted: #1a1a1a;
-  --muted-foreground: #888888;
-  --accent: #00f5ff;
-  --accent-foreground: #0a0a0a;
-  --destructive: #ff4444;
-  --border: rgba(0, 255, 65, 0.2);
-  --input: rgba(0, 255, 65, 0.1);
-  --ring: #00ff41;
+  /* Light/Clean theme as default */
+  --background: #FFFFFF;
+  --foreground: #1A1A1A;
+  --card: #FFFFFF;
+  --card-foreground: #1A1A1A;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1A1A;
+  --primary: #1DB954;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F3F4F6;
+  --secondary-foreground: #1A1A1A;
+  --muted: #FAFAFA;
+  --muted-foreground: #6B7280;
+  --accent: #8B5CF6;
+  --accent-foreground: #FFFFFF;
+  --destructive: #EF4444;
+  --border: #E5E7EB;
+  --input: #E5E7EB;
+  --ring: #1DB954;
 
-  /* Chart colors using CRT palette */
-  --chart-1: #00ff41;
-  --chart-2: #00f5ff;
-  --chart-3: #ff00ff;
-  --chart-4: #ffb000;
-  --chart-5: #ff4444;
-
-  /* Sidebar */
-  --sidebar: #0d0d0d;
-  --sidebar-foreground: #e0e0e0;
-  --sidebar-primary: #00ff41;
-  --sidebar-primary-foreground: #0a0a0a;
-  --sidebar-accent: #1a1a1a;
-  --sidebar-accent-foreground: #e0e0e0;
-  --sidebar-border: rgba(0, 255, 65, 0.15);
-  --sidebar-ring: #00ff41;
-}
-
-/* Light mode - Paper Terminal theme */
-[data-theme="light"] {
-  /* Paper Terminal Color Palette */
-  --phosphor: #00994d;
-  --crt-cyan: #0088a3;
-  --crt-magenta: #bb00bb;
-  --crt-amber: #cc7700;
-  --terminal-bg: #f8f8f5;
-  --terminal-text: #1a1a18;
-
-  /* Core colors */
-  --background: #f8f8f5;
-  --foreground: #1a1a18;
-  --card: #f0f0eb;
-  --card-foreground: #1a1a18;
-  --popover: #f0f0eb;
-  --popover-foreground: #1a1a18;
-  --primary: #00994d;
-  --primary-foreground: #ffffff;
-  --secondary: #e8e8e3;
-  --secondary-foreground: #1a1a18;
-  --muted: #e8e8e3;
-  --muted-foreground: #5a5a58;
-  --accent: #0088a3;
-  --accent-foreground: #ffffff;
-  --destructive: #cc3333;
-  --border: rgba(0, 153, 77, 0.25);
-  --input: rgba(0, 153, 77, 0.1);
-  --ring: #00994d;
-
-  /* Chart colors adjusted for light */
-  --chart-1: #00994d;
-  --chart-2: #0088a3;
-  --chart-3: #bb00bb;
-  --chart-4: #cc7700;
-  --chart-5: #cc3333;
+  /* Chart colors using modern palette */
+  --chart-1: #1DB954;
+  --chart-2: #8B5CF6;
+  --chart-3: #EC4899;
+  --chart-4: #3B82F6;
+  --chart-5: #F59E0B;
 
   /* Sidebar */
-  --sidebar: #f0f0eb;
-  --sidebar-foreground: #1a1a18;
-  --sidebar-primary: #00994d;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e8e8e3;
-  --sidebar-accent-foreground: #1a1a18;
-  --sidebar-border: rgba(0, 153, 77, 0.2);
-  --sidebar-ring: #00994d;
+  --sidebar: #FAFAFA;
+  --sidebar-foreground: #1A1A1A;
+  --sidebar-primary: #1DB954;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F3F4F6;
+  --sidebar-accent-foreground: #1A1A1A;
+  --sidebar-border: #E5E7EB;
+  --sidebar-ring: #1DB954;
 }
 
-/* Light mode scrollbar */
-[data-theme="light"] ::-webkit-scrollbar-track {
-  background: #f0f0eb;
-  border-left: 1px solid rgba(0, 153, 77, 0.2);
-}
+/* Dark mode - can be enabled later */
+[data-theme="dark"] {
+  --background: #0F0F0F;
+  --foreground: #F9FAFB;
+  --card: #1A1A1A;
+  --card-foreground: #F9FAFB;
+  --popover: #1A1A1A;
+  --popover-foreground: #F9FAFB;
+  --primary: #1DB954;
+  --primary-foreground: #FFFFFF;
+  --secondary: #262626;
+  --secondary-foreground: #F9FAFB;
+  --muted: #262626;
+  --muted-foreground: #9CA3AF;
+  --accent: #8B5CF6;
+  --accent-foreground: #FFFFFF;
+  --destructive: #EF4444;
+  --border: #333333;
+  --input: #333333;
+  --ring: #1DB954;
 
-[data-theme="light"] ::-webkit-scrollbar-thumb {
-  background: #00994d;
-}
-
-[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
-  background: #0088a3;
-}
-
-/* Light mode selection */
-[data-theme="light"] ::selection {
-  background: #00994d;
-  color: #ffffff;
-}
-
-/* Light mode CRT effects adjustments */
-[data-theme="light"] .crt-scanlines::before {
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.03),
-    rgba(0, 0, 0, 0.03) 1px,
-    transparent 1px,
-    transparent 2px
-  );
-}
-
-[data-theme="light"] .text-glow,
-[data-theme="light"] .text-glow-sm,
-[data-theme="light"] .text-glow-lg {
-  text-shadow: none;
-}
-
-[data-theme="light"] .box-glow,
-[data-theme="light"] .box-glow-cyan,
-[data-theme="light"] .box-glow-magenta {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  /* Sidebar */
+  --sidebar: #1A1A1A;
+  --sidebar-foreground: #F9FAFB;
+  --sidebar-primary: #1DB954;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #262626;
+  --sidebar-accent-foreground: #F9FAFB;
+  --sidebar-border: #333333;
+  --sidebar-ring: #1DB954;
 }
 
 @layer base {
@@ -204,183 +143,326 @@
   }
 
   html {
-    font-family: var(--font-ibm-plex-mono);
+    font-family: var(--font-inter);
   }
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-ibm-plex-mono);
+    font-family: var(--font-inter);
   }
 }
 
-/* CRT Effect Utilities */
+/* Modern Design Utilities */
 @layer utilities {
-  /* Phosphor glow text effect */
-  .text-glow {
-    text-shadow:
-      0 0 5px currentColor,
-      0 0 10px currentColor,
-      0 0 15px currentColor,
-      0 0 20px currentColor;
+  /* Highlight text background effect */
+  .highlight-yellow {
+    background: linear-gradient(180deg, transparent 50%, #FEF08A 50%);
   }
 
-  .text-glow-sm {
-    text-shadow:
-      0 0 20px currentColor,
-      0 0 25px currentColor;
+  .highlight-green {
+    background: linear-gradient(180deg, transparent 50%, #BBF7D0 50%);
   }
 
-  .text-glow-lg {
-    text-shadow:
-      0 0 40px currentColor,
-      0 0 60px currentColor,
-      0 0 115px currentColor,
-      0 0 80px currentColor;
+  .highlight-pink {
+    background: linear-gradient(180deg, transparent 50%, #FBCFE8 50%);
   }
 
-  /* Box glow effect */
-  .box-glow {
-    box-shadow:
-      0 0 5px var(--phosphor),
-      0 0 10px var(--phosphor),
-      inset 0 0 5px rgba(0, 255, 65, 0.1);
+  .highlight-blue {
+    background: linear-gradient(180deg, transparent 50%, #BFDBFE 50%);
   }
 
-  .box-glow-cyan {
-    box-shadow:
-      0 0 5px var(--crt-cyan),
-      0 0 10px var(--crt-cyan),
-      inset 0 0 5px rgba(0, 245, 255, 0.1);
+  .highlight-purple {
+    background: linear-gradient(180deg, transparent 50%, #DDD6FE 50%);
   }
 
-  .box-glow-magenta {
-    box-shadow:
-      0 0 5px var(--crt-magenta),
-      0 0 10px var(--crt-magenta),
-      inset 0 0 5px rgba(255, 0, 255, 0.1);
+  /* Soft shadows */
+  .shadow-soft {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
   }
 
-  /* Terminal font */
-  .font-terminal {
-    font-family: var(--font-vt323);
-    letter-spacing: 0.05em;
+  .shadow-soft-md {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
 
-  /* Scanline overlay - apply to parent container */
-  .crt-scanlines::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 0.15),
-      rgba(0, 0, 0, 0.15) 1px,
-      transparent 1px,
-      transparent 2px
-    );
-    pointer-events: none;
-    z-index: 10;
+  .shadow-soft-lg {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
-  /* Screen flicker animation */
-  .crt-flicker {
-    animation: flicker 0.15s infinite;
+  .shadow-soft-xl {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   }
 
-  @keyframes flicker {
-    0% { opacity: 0.97; }
-    50% { opacity: 1; }
-    100% { opacity: 0.98; }
+  /* Gradient backgrounds for blobs */
+  .gradient-purple-indigo {
+    background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
   }
 
-  /* Respect reduced motion preference */
-  @media (prefers-reduced-motion: reduce) {
-    .crt-flicker {
-      animation: none;
-    }
+  .gradient-pink-rose {
+    background: linear-gradient(135deg, #EC4899 0%, #F43F5E 100%);
   }
 
-  /* CRT screen curvature effect */
-  .crt-curve {
-    border-radius: 12px;
-    box-shadow:
-      inset 0 0 60px rgba(0, 0, 0, 0.5),
-      inset 0 0 20px rgba(0, 0, 0, 0.3);
+  .gradient-teal-emerald {
+    background: linear-gradient(135deg, #14B8A6 0%, #10B981 100%);
   }
 
-  /* Barrel distortion effect (subtle) */
-  .crt-barrel {
-    transform: perspective(1000px) rotateX(0.5deg);
-    border-radius: 8px;
+  .gradient-blue-cyan {
+    background: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%);
   }
 
-  /* Terminal cursor blink */
-  .cursor-blink::after {
-    content: '█';
-    animation: blink 1s step-end infinite;
+  .gradient-amber-orange {
+    background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
   }
 
-  @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
-  }
-
-  /* Typing animation */
-  .typing {
-    overflow: hidden;
-    white-space: nowrap;
-    animation: typing 2s steps(30, end);
-  }
-
-  @keyframes typing {
-    from { width: 0; }
-    to { width: 100%; }
-  }
-
-  /* Gradient backgrounds */
-  .bg-gradient-radial {
-    background: radial-gradient(ellipse at center, var(--terminal-bg) 0%, #000000 100%);
-  }
-
-  /* Noise texture overlay */
-  .crt-noise::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 5;
+  .gradient-spotify {
+    background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
   }
 }
 
-/* Custom scrollbar for CRT aesthetic */
+/* Blob Animation Keyframes */
+@keyframes blob-float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+@keyframes blob-float-slow {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate(20px, -30px) scale(1.05) rotate(5deg);
+  }
+  50% {
+    transform: translate(-10px, 10px) scale(0.95) rotate(-5deg);
+  }
+  75% {
+    transform: translate(-30px, -20px) scale(1.02) rotate(3deg);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-blob-float {
+  animation: blob-float 20s ease-in-out infinite;
+}
+
+.animate-blob-float-slow {
+  animation: blob-float-slow 25s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 4s ease-in-out infinite;
+}
+
+/* Custom scrollbar for modern aesthetic */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--terminal-bg);
-  border-left: 1px solid rgba(0, 255, 65, 0.2);
+  background: #F3F4F6;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--phosphor);
+  background: #D1D5DB;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--crt-cyan);
+  background: #9CA3AF;
+}
+
+/* Dark mode scrollbar */
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #262626;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #404040;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #525252;
 }
 
 /* Selection color */
 ::selection {
-  background: var(--phosphor);
-  color: var(--terminal-bg);
+  background: #1DB954;
+  color: #FFFFFF;
 }
 
 /* Focus styles */
 :focus-visible {
-  outline: 2px solid var(--phosphor);
+  outline: 2px solid #1DB954;
   outline-offset: 2px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .animate-blob-float,
+  .animate-blob-float-slow,
+  .animate-pulse-soft {
+    animation: none;
+  }
+}
+
+/* =================================
+   Wrapped Experience Utilities
+   ================================= */
+
+/* Safe area padding for notch/dynamic island */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Glow effects for wrapped */
+@layer utilities {
+  .glow-spotify {
+    box-shadow:
+      0 0 20px rgba(29, 185, 84, 0.4),
+      0 0 60px rgba(29, 185, 84, 0.2),
+      0 0 100px rgba(29, 185, 84, 0.1);
+  }
+
+  .glow-purple {
+    box-shadow:
+      0 0 20px rgba(139, 92, 246, 0.4),
+      0 0 60px rgba(139, 92, 246, 0.2),
+      0 0 100px rgba(139, 92, 246, 0.1);
+  }
+
+  .glow-pink {
+    box-shadow:
+      0 0 20px rgba(236, 72, 153, 0.4),
+      0 0 60px rgba(236, 72, 153, 0.2),
+      0 0 100px rgba(236, 72, 153, 0.1);
+  }
+
+  .glow-amber {
+    box-shadow:
+      0 0 20px rgba(245, 158, 11, 0.4),
+      0 0 60px rgba(245, 158, 11, 0.2),
+      0 0 100px rgba(245, 158, 11, 0.1);
+  }
+
+  .glow-blue {
+    box-shadow:
+      0 0 20px rgba(59, 130, 246, 0.4),
+      0 0 60px rgba(59, 130, 246, 0.2),
+      0 0 100px rgba(59, 130, 246, 0.1);
+  }
+
+  .glow-teal {
+    box-shadow:
+      0 0 20px rgba(20, 184, 166, 0.4),
+      0 0 60px rgba(20, 184, 166, 0.2),
+      0 0 100px rgba(20, 184, 166, 0.1);
+  }
+}
+
+/* Mood gradient backgrounds */
+.gradient-energetic {
+  background: linear-gradient(135deg, #EC4899 0%, #F59E0B 100%);
+}
+
+.gradient-chill {
+  background: linear-gradient(135deg, #3B82F6 0%, #14B8A6 100%);
+}
+
+.gradient-melancholic {
+  background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+}
+
+.gradient-nostalgic {
+  background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+}
+
+.gradient-experimental {
+  background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+}
+
+/* Wrapped slide-specific gradients */
+.gradient-intro {
+  background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+}
+
+.gradient-top-artist {
+  background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+}
+
+.gradient-top-track {
+  background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+}
+
+.gradient-genres {
+  background: linear-gradient(135deg, #EC4899 0%, #F43F5E 100%);
+}
+
+.gradient-time {
+  background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+}
+
+.gradient-patterns {
+  background: linear-gradient(135deg, #14B8A6 0%, #10B981 100%);
+}
+
+.gradient-summary {
+  background: linear-gradient(135deg, #1DB954 0%, #059669 100%);
+}
+
+/* Confetti animation keyframes */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.animate-confetti {
+  animation: confetti-fall 3s ease-out forwards;
+}
+
+/* Music note float animation */
+@keyframes note-float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100px) rotate(20deg);
+    opacity: 0;
+  }
+}
+
+.animate-note-float {
+  animation: note-float 4s ease-out forwards;
 }

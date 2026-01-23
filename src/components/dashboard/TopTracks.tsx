@@ -1,9 +1,18 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
-import { TerminalCard } from '@/components/crt';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ImageSkeleton } from '@/components/ui/ImageSkeleton';
+import {
+  containerVariants,
+  heroVariants,
+  featuredTrackVariants,
+  listItemVariants,
+  skeletonVariants,
+  calculateExitDuration,
+} from '@/lib/animations';
 
 interface Track {
   id: string;
@@ -17,10 +26,42 @@ interface Track {
   external_urls: { spotify: string };
 }
 
+interface EnrichedTrack {
+  id: string;
+  name: string;
+  artist: string;
+  albumArt?: string;
+  spotifyUrl: string;
+  durationMs: number;
+  count: number;
+}
+
 async function fetchTopTracks(
   timeRange: string,
   limit: number
 ): Promise<{ items: Track[] }> {
+  // For short_term (4 weeks), use enriched stats endpoint (listening history)
+  if (timeRange === 'short_term') {
+    const res = await fetch(`/api/stats/enriched?track_limit=${limit}`);
+    if (!res.ok) throw new Error('Failed to fetch');
+    const data = await res.json();
+    // Map enriched data to Track interface
+    return {
+      items: (data.top_tracks || []).map((t: EnrichedTrack) => ({
+        id: t.id,
+        name: t.name,
+        artists: [{ name: t.artist }],
+        album: {
+          name: '',
+          images: t.albumArt ? [{ url: t.albumArt }] : [],
+        },
+        duration_ms: t.durationMs,
+        external_urls: { spotify: t.spotifyUrl },
+      })),
+    };
+  }
+
+  // For medium_term and long_term, use Spotify API
   const res = await fetch(
     `/api/spotify/top-tracks?time_range=${timeRange}&limit=${limit}`
   );
@@ -34,173 +75,351 @@ interface TopTracksProps {
   showTitle?: boolean;
 }
 
+function formatDuration(ms: number): string {
+  const minutes = Math.floor(ms / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// Skeleton component for loading state
+function TopTracksSkeleton() {
+  return (
+    <motion.div
+      key="skeleton"
+      variants={skeletonVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className="space-y-8"
+    >
+      {/* Hero skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+        <div className="aspect-square rounded-3xl bg-white/50 dark:bg-white/5 animate-pulse" />
+        <div className="flex flex-col gap-3">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-[88px] rounded-2xl bg-white/50 dark:bg-white/5 animate-pulse" />
+          ))}
+        </div>
+      </div>
+      {/* List skeleton */}
+      <div className="space-y-2">
+        {[...Array(15)].map((_, i) => (
+          <div key={i} className="h-16 rounded-xl bg-white/50 dark:bg-white/5 animate-pulse" />
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+// Content component
+function TopTracksContent({ tracks }: { tracks: Track[] }) {
+  const heroTrack = tracks[0];
+  const featuredTracks = tracks.slice(1, 5);
+  const listTracks = tracks.slice(5);
+
+  return (
+    <motion.div
+      key="content"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className="space-y-12"
+    >
+      {/* Hero Section - #1 Track + Featured 2-5 */}
+      {heroTrack && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          {/* #1 Track - Hero Card */}
+          <motion.a
+            href={heroTrack.external_urls.spotify}
+            target="_blank"
+            rel="noopener noreferrer"
+            variants={heroVariants}
+            className="group relative aspect-square rounded-3xl overflow-hidden"
+          >
+            {/* Album Art */}
+            {heroTrack.album.images[0]?.url ? (
+              <ImageSkeleton
+                src={heroTrack.album.images[0].url}
+                alt={heroTrack.album.name}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                priority
+                fallback={
+                  <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/20 to-[#8B5CF6]/20 flex items-center justify-center">
+                    <span className="text-6xl opacity-30">🎵</span>
+                  </div>
+                }
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/20 to-[#8B5CF6]/20 flex items-center justify-center">
+                <span className="text-6xl opacity-30">🎵</span>
+              </div>
+            )}
+
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+            {/* #1 Badge */}
+            <div className="absolute top-6 left-6">
+              <div className="px-4 py-2 rounded-full bg-[#1DB954] text-white font-bold text-lg shadow-xl shadow-[#1DB954]/30">
+                #1
+              </div>
+            </div>
+
+            {/* Duration Badge */}
+            <div className="absolute top-6 right-6">
+              <div className="px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium">
+                {formatDuration(heroTrack.duration_ms)}
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+              <h2 className="text-3xl md:text-5xl font-black text-white mb-2 group-hover:text-[#1DB954] transition-colors">
+                {heroTrack.name}
+              </h2>
+              <p className="text-white/70 text-lg">
+                {heroTrack.artists.map((a) => a.name).join(', ')}
+              </p>
+              <p className="text-white/50 text-sm mt-1">
+                {heroTrack.album.name}
+              </p>
+            </div>
+
+            {/* Hover border */}
+            <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-[#1DB954]/50 transition-colors" />
+          </motion.a>
+
+          {/* Featured Tracks 2-5 */}
+          <div className="flex flex-col gap-3">
+            {featuredTracks.map((track, index) => (
+              <motion.a
+                key={track.id}
+                href={track.external_urls.spotify}
+                target="_blank"
+                rel="noopener noreferrer"
+                variants={featuredTrackVariants}
+                className="group relative flex items-center gap-4 p-4 rounded-2xl bg-white/50 dark:bg-white/5 backdrop-blur-sm border border-white/20 dark:border-white/10 transition-all duration-300 hover:bg-white/70 dark:hover:bg-white/10 hover:shadow-xl hover:shadow-[#1DB954]/10 hover:border-[#1DB954]/30"
+              >
+                {/* Rank */}
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-foreground/10 flex items-center justify-center">
+                  <span className="text-lg font-bold text-foreground">{index + 2}</span>
+                </div>
+
+                {/* Album Art */}
+                <div className="relative w-14 h-14 flex-shrink-0 rounded-xl overflow-hidden">
+                  {track.album.images[0]?.url ? (
+                    <ImageSkeleton
+                      src={track.album.images[0].url}
+                      alt={track.album.name}
+                      fill
+                      sizes="56px"
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      fallback={
+                        <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/20 to-[#8B5CF6]/20 flex items-center justify-center">
+                          <span className="text-lg opacity-30">🎵</span>
+                        </div>
+                      }
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/20 to-[#8B5CF6]/20 flex items-center justify-center">
+                      <span className="text-lg opacity-30">🎵</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Track Info */}
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-foreground truncate group-hover:text-[#1DB954] transition-colors">
+                    {track.name}
+                  </p>
+                  <p className="text-sm text-muted-foreground truncate">
+                    {track.artists.map((a) => a.name).join(', ')}
+                  </p>
+                </div>
+
+                {/* Duration */}
+                <div className="flex-shrink-0 text-sm text-muted-foreground">
+                  {formatDuration(track.duration_ms)}
+                </div>
+
+                {/* Play indicator */}
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#1DB954] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-white text-sm ml-0.5">▶</span>
+                </div>
+              </motion.a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Remaining Tracks - Elegant List */}
+      {listTracks.length > 0 && (
+        <div>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-px bg-gradient-to-r from-[#1DB954] to-transparent" />
+            <span className="text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase">
+              More Tracks
+            </span>
+            <div className="flex-1 h-px bg-gradient-to-r from-border to-transparent" />
+          </div>
+
+          <div className="space-y-2">
+            {listTracks.map((track, index) => {
+              const actualRank = index + 6;
+              return (
+                <motion.a
+                  key={track.id}
+                  href={track.external_urls.spotify}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variants={listItemVariants}
+                  className="group flex items-center gap-4 p-3 rounded-xl bg-white/30 dark:bg-white/5 backdrop-blur-sm border border-transparent hover:border-[#1DB954]/30 hover:bg-white/50 dark:hover:bg-white/10 transition-all duration-300"
+                >
+                  {/* Rank */}
+                  <div className="w-8 h-8 rounded-full bg-foreground/80 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold text-background">{actualRank}</span>
+                  </div>
+
+                  {/* Album Art */}
+                  <div className="relative w-10 h-10 flex-shrink-0 rounded-lg overflow-hidden">
+                    {track.album.images[0]?.url ? (
+                      <ImageSkeleton
+                        src={track.album.images[0].url}
+                        alt={track.album.name}
+                        fill
+                        sizes="40px"
+                        className="object-cover"
+                        fallback={
+                          <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/10 to-[#8B5CF6]/10 flex items-center justify-center">
+                            <span className="text-sm opacity-30">🎵</span>
+                          </div>
+                        }
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#1DB954]/10 to-[#8B5CF6]/10 flex items-center justify-center">
+                        <span className="text-sm opacity-30">🎵</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Track Info */}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-foreground truncate group-hover:text-[#1DB954] transition-colors">
+                      {track.name}
+                    </p>
+                    <p className="text-sm text-muted-foreground truncate">
+                      {track.artists.map((a) => a.name).join(', ')}
+                    </p>
+                  </div>
+
+                  {/* Duration */}
+                  <div className="text-sm text-muted-foreground flex-shrink-0 hidden sm:block">
+                    {formatDuration(track.duration_ms)}
+                  </div>
+                </motion.a>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
 export function TopTracks({
   limit = 10,
   timeRange = 'medium_term',
-  showTitle = true,
 }: TopTracksProps) {
-  const { data, isLoading, error } = useQuery({
+  // Track what we're currently displaying vs what's requested
+  const [displayedTimeRange, setDisplayedTimeRange] = useState(timeRange);
+  const [showContent, setShowContent] = useState(true);
+  const isFirstMount = useRef(true);
+  const exitTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const { data, isLoading, error, isFetching } = useQuery({
     queryKey: ['top-tracks', timeRange, limit],
     queryFn: () => fetchTopTracks(timeRange, limit),
   });
 
-  if (isLoading) {
+  // Handle timeRange changes - trigger exit animation
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
+    if (timeRange !== displayedTimeRange) {
+      // Clear any pending timeout
+      if (exitTimeoutRef.current) {
+        clearTimeout(exitTimeoutRef.current);
+      }
+
+      // Start exit animation by hiding content
+      setShowContent(false);
+
+      // After exit animation completes, update displayed timeRange
+      const exitDuration = calculateExitDuration(data?.items?.length || 20);
+      exitTimeoutRef.current = setTimeout(() => {
+        setDisplayedTimeRange(timeRange);
+      }, exitDuration * 1000);
+    }
+
+    return () => {
+      if (exitTimeoutRef.current) {
+        clearTimeout(exitTimeoutRef.current);
+      }
+    };
+  }, [timeRange, displayedTimeRange, data?.items?.length]);
+
+  // Show content when data for the new timeRange arrives
+  useEffect(() => {
+    if (!showContent && displayedTimeRange === timeRange && data && !isFetching) {
+      setShowContent(true);
+    }
+  }, [showContent, displayedTimeRange, timeRange, data, isFetching]);
+
+  // Initial loading state (first load only)
+  if (isLoading && isFirstMount.current) {
     return (
-      <TerminalCard title={showTitle ? "top_tracks.data" : undefined} animate={false}>
-        <div className="space-y-3">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="flex animate-pulse items-center gap-3 p-2">
-              <div className="h-8 w-12 rounded bg-secondary" />
-              <div className="h-11 w-11 rounded-md bg-secondary" />
-              <div className="flex-1 space-y-2">
-                <div className="h-4 w-3/4 rounded bg-secondary" />
-                <div className="h-3 w-1/2 rounded bg-secondary" />
-              </div>
-              <div className="h-5 w-12 rounded bg-secondary" />
-            </div>
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          <div className="aspect-square rounded-3xl bg-white/50 dark:bg-white/5 animate-pulse" />
+          <div className="flex flex-col gap-3">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-[88px] rounded-2xl bg-white/50 dark:bg-white/5 animate-pulse" />
+            ))}
+          </div>
+        </div>
+        <div className="space-y-2">
+          {[...Array(15)].map((_, i) => (
+            <div key={i} className="h-16 rounded-xl bg-white/50 dark:bg-white/5 animate-pulse" />
           ))}
         </div>
-      </TerminalCard>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <TerminalCard title={showTitle ? "top_tracks.data" : undefined} animate={false}>
-        <div className="py-4 text-center">
-          <p className="font-terminal text-sm text-destructive">Error loading tracks</p>
-        </div>
-      </TerminalCard>
+      <div className="py-12 text-center">
+        <p className="text-muted-foreground">Error loading tracks</p>
+      </div>
     );
   }
 
   const tracks = data?.items || [];
 
   return (
-    <TerminalCard title={showTitle ? "top_tracks.data" : undefined} animate={false}>
-      <div>
-        {tracks.map((track, index) => {
-          const isTop3 = index < 3;
-          const glowIntensity = index === 0 ? 1 : index === 1 ? 0.6 : index === 2 ? 0.3 : 0;
-
-          return (
-            <motion.div
-              key={track.id}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.03 }}
-            >
-              <a
-                href={track.external_urls.spotify}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative flex items-center gap-3 p-3 pl-5 transition-colors hover:bg-primary/5 border-b border-primary/10 last:border-b-0"
-              >
-                {/* Left accent border for top 3 */}
-                {isTop3 && (
-                  <motion.div
-                    className="absolute left-0 top-0 bottom-0 w-1 bg-primary"
-                    initial={{ scaleY: 0 }}
-                    animate={{ scaleY: 1 }}
-                    transition={{ delay: index * 0.03 + 0.1, duration: 0.3 }}
-                    style={{ opacity: 0.3 + glowIntensity * 0.7 }}
-                  />
-                )}
-
-                {/* Rank badge - Terminal style */}
-                <div className="relative z-10 flex-shrink-0">
-                  <motion.div
-                    className={`min-w-[42px] h-8 rounded flex items-center justify-center font-terminal text-sm font-bold transition-all duration-300 ${
-                      index === 0
-                        ? 'bg-primary text-background shadow-[0_0_20px_var(--primary)]'
-                        : index === 1
-                        ? 'bg-primary/60 text-background shadow-[0_0_12px_var(--primary)]'
-                        : index === 2
-                        ? 'bg-primary/40 text-background shadow-[0_0_6px_var(--primary)]'
-                        : 'bg-primary/10 text-primary/70'
-                    }`}
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: index * 0.03 + 0.05, type: "spring", stiffness: 200 }}
-                  >
-                    <span className="opacity-50">[</span>
-                    {String(index + 1).padStart(2, '0')}
-                    <span className="opacity-50">]</span>
-                  </motion.div>
-                </div>
-
-                {/* Album art */}
-                <div className={`relative z-10 flex-shrink-0 rounded-md overflow-hidden transition-all duration-300 ${isTop3 ? 'w-12 h-12 border-2' : 'w-10 h-10 border'} ${index === 0 ? 'border-primary/60' : index === 1 ? 'border-primary/40' : index === 2 ? 'border-primary/30' : 'border-primary/20'} group-hover:border-primary/80`}>
-                  {track.album.images[0]?.url ? (
-                    <Image
-                      src={track.album.images[0].url}
-                      alt={track.album.name}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-primary/10 flex items-center justify-center text-primary/50">
-                      ♪
-                    </div>
-                  )}
-                  {/* Shine effect on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-
-                {/* Track info */}
-                <div className="relative z-10 min-w-0 flex-1">
-                  <p className={`truncate font-terminal transition-colors ${isTop3 ? 'text-sm text-foreground' : 'text-sm text-foreground/80'} group-hover:text-primary`}>
-                    {track.name}
-                  </p>
-                  <p className="truncate font-mono text-xs text-muted-foreground">
-                    {track.artists.map((a) => a.name).join(', ')}
-                  </p>
-                </div>
-
-                {/* Frequency bars - decorative */}
-                <div className="relative z-10 flex-shrink-0 flex items-center gap-3">
-                  <div className="hidden sm:flex items-end gap-0.5 h-5">
-                    {[0.3, 0.6, 1, 0.5, 0.8].map((height, i) => (
-                      <motion.div
-                        key={i}
-                        className={`w-1 rounded-sm ${isTop3 ? 'bg-primary/60' : 'bg-primary/30'}`}
-                        initial={{ height: 0 }}
-                        animate={{ height: `${height * 100}%` }}
-                        transition={{
-                          delay: index * 0.03 + 0.2 + i * 0.05,
-                          duration: 0.4,
-                          repeat: Infinity,
-                          repeatType: "reverse",
-                          repeatDelay: 2 + i * 0.5
-                        }}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Play indicator on hover */}
-                  <motion.div
-                    className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    whileHover={{ scale: 1.1 }}
-                  >
-                    <span className="text-primary text-lg">▶</span>
-                  </motion.div>
-                </div>
-
-                {/* Scanline hover effect */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none overflow-hidden">
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/5"
-                    initial={{ y: '-100%' }}
-                    whileHover={{ y: '100%' }}
-                    transition={{ duration: 0.6, ease: "linear" }}
-                  />
-                </div>
-              </a>
-            </motion.div>
-          );
-        })}
-      </div>
-    </TerminalCard>
+    <AnimatePresence mode="wait">
+      {!showContent || isFetching ? (
+        <TopTracksSkeleton />
+      ) : (
+        <TopTracksContent tracks={tracks} />
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -220,10 +439,9 @@ export function TopTracksList({
   const tracks = data.items.slice(0, 5);
 
   return (
-    <div>
+    <div className="divide-y divide-border">
       {tracks.map((track, index) => {
         const isTop3 = index < 3;
-        const glowIntensity = index === 0 ? 1 : index === 1 ? 0.6 : index === 2 ? 0.3 : 0;
 
         return (
           <motion.div
@@ -236,37 +454,35 @@ export function TopTracksList({
               href={track.external_urls.spotify}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex items-center gap-3 p-2 transition-colors hover:bg-primary/5 border-b border-primary/10 last:border-b-0"
+              className="group relative flex items-center gap-3 p-2 transition-colors hover:bg-secondary/30"
             >
               {/* Left accent for top 3 */}
               {isTop3 && (
                 <div
                   className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary"
-                  style={{ opacity: 0.3 + glowIntensity * 0.7 }}
+                  style={{ opacity: index === 0 ? 1 : index === 1 ? 0.7 : 0.4 }}
                 />
               )}
 
               {/* Rank */}
-              <div className="relative z-10 flex-shrink-0">
+              <div className="flex-shrink-0">
                 <div
-                  className={`min-w-[36px] h-7 rounded flex items-center justify-center font-terminal text-xs font-bold ${
+                  className={`min-w-[36px] h-7 rounded-lg flex items-center justify-center text-xs font-bold ${
                     index === 0
-                      ? 'bg-primary text-background'
+                      ? 'bg-primary text-primary-foreground'
                       : index === 1
-                      ? 'bg-primary/60 text-background'
+                      ? 'bg-primary/60 text-primary-foreground'
                       : index === 2
-                      ? 'bg-primary/40 text-background'
-                      : 'bg-primary/10 text-primary/70'
+                      ? 'bg-primary/40 text-primary-foreground'
+                      : 'bg-secondary text-muted-foreground'
                   }`}
                 >
-                  <span className="opacity-50">[</span>
                   {String(index + 1).padStart(2, '0')}
-                  <span className="opacity-50">]</span>
                 </div>
               </div>
 
               {/* Album art */}
-              <div className={`relative z-10 flex-shrink-0 overflow-hidden rounded ${isTop3 ? 'w-10 h-10' : 'w-9 h-9'} border border-primary/20`}>
+              <div className={`relative flex-shrink-0 overflow-hidden rounded-lg ${isTop3 ? 'w-10 h-10' : 'w-9 h-9'}`}>
                 {track.album.images[0]?.url && (
                   <Image
                     src={track.album.images[0].url}
@@ -278,32 +494,13 @@ export function TopTracksList({
               </div>
 
               {/* Track info */}
-              <div className="relative z-10 min-w-0 flex-1">
-                <p className={`truncate font-terminal text-sm ${isTop3 ? 'text-foreground' : 'text-foreground/80'} group-hover:text-primary`}>
+              <div className="min-w-0 flex-1">
+                <p className={`truncate text-sm font-medium ${isTop3 ? 'text-foreground' : 'text-foreground/80'} group-hover:text-primary`}>
                   {track.name}
                 </p>
-                <p className="truncate font-mono text-xs text-muted-foreground">
+                <p className="truncate text-xs text-muted-foreground">
                   {track.artists.map((a) => a.name).join(', ')}
                 </p>
-              </div>
-
-              {/* Frequency bars */}
-              <div className="relative z-10 flex items-end gap-0.5 h-4">
-                {[0.3, 0.6, 1, 0.5, 0.8].map((height, i) => (
-                  <motion.div
-                    key={i}
-                    className={`w-0.5 rounded-sm ${isTop3 ? 'bg-primary/50' : 'bg-primary/30'}`}
-                    initial={{ height: 0 }}
-                    animate={{ height: `${height * 100}%` }}
-                    transition={{
-                      delay: index * 0.05 + 0.2 + i * 0.05,
-                      duration: 0.4,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                      repeatDelay: 2 + i * 0.5
-                    }}
-                  />
-                ))}
               </div>
             </a>
           </motion.div>
