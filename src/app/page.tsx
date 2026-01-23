@@ -849,21 +849,20 @@ function TeaserPage() {
                 transition={{ duration: 0.6, delay: 0.7 }}
                 className="mb-8 md:mb-12"
               >
-                {/* Mobile: Compact icon strip */}
+                {/* Mobile: Compact icon strip - clean, no backgrounds */}
                 <div className="md:hidden flex justify-center">
-                  <div className="inline-flex items-center gap-4 px-5 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-full border border-border/50">
+                  <div className="inline-flex items-center gap-5 px-6 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-full border border-border/50">
                     {[
                       { key: 'stats', color: '#1DB954' },
                       { key: 'ai', color: '#8B5CF6' },
                       { key: 'concerts', color: '#EC4899' },
                       { key: 'share', color: '#F59E0B' },
-                    ].map((feature, index) => (
-                      <div key={feature.key} className="flex items-center gap-4">
-                        <div className="p-1.5 rounded-full\" style={{ backgroundColor: `${feature.color}15` }}>
-                          <FeaturePillIcon type={feature.key as 'stats' | 'ai' | 'concerts' | 'share'} color={feature.color} />
-                        </div>
-                        {index < 3 && <div className="w-px h-4 bg-border/50" />}
-                      </div>
+                    ].map((feature) => (
+                      <FeaturePillIcon
+                        key={feature.key}
+                        type={feature.key as 'stats' | 'ai' | 'concerts' | 'share'}
+                        color={feature.color}
+                      />
                     ))}
                   </div>
                 </div>
