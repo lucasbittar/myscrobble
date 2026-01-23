@@ -377,8 +377,8 @@ export default function WaitlistPage() {
         {isSuccess && <Confetti />}
       </AnimatePresence>
 
-      {/* Main content - full viewport height */}
-      <div className="relative z-10 h-[100dvh] flex flex-col items-center justify-center px-4 md:px-6 py-8 md:py-12">
+      {/* Main content - minimum full viewport height, can grow on mobile */}
+      <div className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-center px-4 md:px-6 py-8 md:py-12">
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
