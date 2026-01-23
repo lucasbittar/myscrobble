@@ -6,6 +6,7 @@ import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { OnTourBadge } from '@/components/ui/OnTourBadge';
+import { PlayCountBadge } from '@/components/ui/PlayCountBadge';
 import { UpcomingConcerts } from '@/components/dashboard/UpcomingConcerts';
 import { MoodAnalysis } from '@/components/dashboard/MoodAnalysis';
 import { useTourStatusBatch } from '@/hooks/useTourStatus';
@@ -39,6 +40,8 @@ interface TopArtist {
   name: string;
   image?: string;
   genres: string[];
+  count: number;
+  minutes: number;
 }
 
 interface TopTrack {
@@ -47,13 +50,18 @@ interface TopTrack {
   artist: string;
   albumArt?: string;
   spotifyUrl: string;
+  count: number;
 }
 
-interface ListeningStats {
+interface EnrichedStats {
   listeningByHour: Array<{ hour: number; count: number }>;
   peakHour: number;
   totalTracks: number;
   totalMinutes: number;
+  uniqueArtists: number;
+  uniqueTracks: number;
+  topArtists: TopArtist[];
+  topTracks: TopTrack[];
 }
 
 // Fetch functions
@@ -94,37 +102,23 @@ async function fetchRecentTracks(): Promise<RecentTrack[]> {
   })) || [];
 }
 
-async function fetchTopArtists(): Promise<TopArtist[]> {
-  const res = await fetch('/api/spotify/top-artists?time_range=short_term&limit=6');
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.items?.map((artist: { id: string; name: string; images: { url: string }[]; genres: string[] }) => ({
-    id: artist.id,
-    name: artist.name,
-    image: artist.images[0]?.url,
-    genres: artist.genres.slice(0, 2),
-  })) || [];
-}
-
-async function fetchTopTracks(): Promise<TopTrack[]> {
-  const res = await fetch('/api/spotify/top-tracks?time_range=short_term&limit=5');
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.items?.map((track: { id: string; name: string; artists: { name: string }[]; album: { images: { url: string }[] }; external_urls: { spotify: string } }) => ({
-    id: track.id,
-    name: track.name,
-    artist: track.artists.map(a => a.name).join(', '),
-    albumArt: track.album.images[0]?.url,
-    spotifyUrl: track.external_urls.spotify,
-  })) || [];
-}
-
-async function fetchListeningStats(): Promise<ListeningStats> {
+async function fetchEnrichedStats(): Promise<EnrichedStats> {
   const endDate = new Date().toISOString();
   const startDate = new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toISOString();
 
-  const res = await fetch(`/api/stats?start_date=${startDate}&end_date=${endDate}`);
-  if (!res.ok) return { listeningByHour: [], peakHour: 0, totalTracks: 0, totalMinutes: 0 };
+  const res = await fetch(`/api/stats/enriched?start_date=${startDate}&end_date=${endDate}&artist_limit=6&track_limit=5`);
+  if (!res.ok) {
+    return {
+      listeningByHour: [],
+      peakHour: 0,
+      totalTracks: 0,
+      totalMinutes: 0,
+      uniqueArtists: 0,
+      uniqueTracks: 0,
+      topArtists: [],
+      topTracks: [],
+    };
+  }
   const data = await res.json();
 
   const byHour = data.listening_by_hour || [];
@@ -138,6 +132,10 @@ async function fetchListeningStats(): Promise<ListeningStats> {
     peakHour,
     totalTracks: data.total_tracks || 0,
     totalMinutes: data.total_minutes || 0,
+    uniqueArtists: data.unique_artists || 0,
+    uniqueTracks: data.unique_tracks || 0,
+    topArtists: data.top_artists || [],
+    topTracks: data.top_tracks || [],
   };
 }
 
@@ -222,20 +220,15 @@ export default function DashboardPage() {
     queryFn: fetchRecentTracks,
   });
 
-  const { data: topArtists } = useQuery({
-    queryKey: ['top-artists'],
-    queryFn: fetchTopArtists,
+  // Fetch enriched stats (combines top artists, top tracks, and listening stats from actual history)
+  const { data: enrichedStats } = useQuery({
+    queryKey: ['enriched-stats'],
+    queryFn: fetchEnrichedStats,
   });
 
-  const { data: topTracks } = useQuery({
-    queryKey: ['top-tracks-home'],
-    queryFn: fetchTopTracks,
-  });
-
-  const { data: listeningStats } = useQuery({
-    queryKey: ['listening-stats'],
-    queryFn: fetchListeningStats,
-  });
+  // Extract top artists and tracks from enriched stats
+  const topArtists = enrichedStats?.topArtists;
+  const topTracks = enrichedStats?.topTracks;
 
   const { location } = useGeolocation();
   const artistNames = topArtists?.map((a) => a.name) || [];
@@ -373,26 +366,26 @@ export default function DashboardPage() {
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
             <StatItem
-              value={listeningStats?.totalMinutes || 0}
+              value={enrichedStats?.totalMinutes || 0}
               label={t('stats.minutesListened')}
               color="#1DB954"
               delay={0}
             />
             <StatItem
-              value={listeningStats?.totalTracks || 0}
+              value={enrichedStats?.totalTracks || 0}
               label={t('stats.tracksPlayed')}
               color="#8B5CF6"
               delay={0.1}
             />
             <StatItem
-              value={listeningStats?.peakHour !== undefined ? formatHourNumber(listeningStats.peakHour) : 0}
+              value={enrichedStats?.peakHour !== undefined ? formatHourNumber(enrichedStats.peakHour) : 0}
               label={t('stats.peakHour')}
-              suffix={listeningStats?.peakHour !== undefined ? (listeningStats.peakHour >= 12 ? 'PM' : 'AM') : ''}
+              suffix={enrichedStats?.peakHour !== undefined ? (enrichedStats.peakHour >= 12 ? 'PM' : 'AM') : ''}
               color="#F59E0B"
               delay={0.2}
             />
             <StatItem
-              value={Math.round((listeningStats?.totalMinutes || 0) / 28)}
+              value={Math.round((enrichedStats?.totalMinutes || 0) / 28)}
               label={t('stats.avgPerDay')}
               suffix="min"
               color="#EC4899"
@@ -416,6 +409,16 @@ export default function DashboardPage() {
               <h2 className="text-4xl md:text-6xl font-black text-foreground">
                 {t('sections.topArtists')}
               </h2>
+              {enrichedStats && enrichedStats.uniqueArtists > 0 && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="mt-3 text-sm text-muted-foreground"
+                >
+                  {t('stats.uniqueArtistsContext', { count: enrichedStats.uniqueArtists })}
+                </motion.p>
+              )}
             </div>
             <Link
               href="/dashboard/top?view=artists"
@@ -440,6 +443,7 @@ export default function DashboardPage() {
                   artist={artist}
                   rank={index + 1}
                   onTour={tourStatus?.[artist.name]?.onTour}
+                  playCount={artist.count}
                   delay={index * 0.1}
                 />
               ))}
@@ -461,6 +465,16 @@ export default function DashboardPage() {
               <h2 className="text-4xl md:text-6xl font-black text-foreground mb-4">
                 {t('sections.topTracks')}
               </h2>
+              {enrichedStats && enrichedStats.uniqueTracks > 0 && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-sm text-[#1DB954] font-medium mb-4"
+                >
+                  {t('stats.uniqueTracksContext', { count: enrichedStats.uniqueTracks })}
+                </motion.p>
+              )}
               <p className="text-lg text-muted-foreground mb-8">
                 {t('sections.topTracksDescription')}
               </p>
@@ -486,6 +500,7 @@ export default function DashboardPage() {
                     key={track.id}
                     track={track}
                     rank={index + 1}
+                    playCount={track.count}
                     delay={index * 0.1}
                   />
                 ))
@@ -662,11 +677,13 @@ function ArtistCard({
   artist,
   rank,
   onTour,
+  playCount,
   delay
 }: {
   artist: TopArtist;
   rank: number;
   onTour?: boolean;
+  playCount?: number;
   delay: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -704,6 +721,12 @@ function ArtistCard({
             <OnTourBadge variant="compact" />
           </div>
         )}
+        {/* Play count badge */}
+        {playCount !== undefined && playCount > 0 && (
+          <div className="absolute bottom-3 left-3">
+            <PlayCountBadge count={playCount} variant="overlay" />
+          </div>
+        )}
       </div>
       <h3 className="text-xl font-bold text-foreground group-hover:text-[#1DB954] transition-colors">
         {artist.name}
@@ -721,10 +744,12 @@ function ArtistCard({
 function TrackRow({
   track,
   rank,
+  playCount,
   delay
 }: {
   track: TopTrack;
   rank: number;
+  playCount?: number;
   delay: number;
 }) {
   const ref = useRef<HTMLAnchorElement>(null);
@@ -767,6 +792,10 @@ function TrackRow({
           {track.artist}
         </p>
       </div>
+      {/* Play count badge */}
+      {playCount !== undefined && playCount > 0 && (
+        <PlayCountBadge count={playCount} variant="inline" />
+      )}
       <span className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
         →
       </span>
