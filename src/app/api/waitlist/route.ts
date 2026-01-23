@@ -93,13 +93,19 @@ export async function POST(request: Request) {
 
     const position = count || 1;
 
-    // Send welcome email (don't await to not block the response)
-    sendWelcomeEmail({
-      to: email.toLowerCase(),
-      name: spotifyName || undefined,
-      position,
-      locale,
-    }).catch((err) => console.error('Failed to send welcome email:', err));
+    // Send welcome email - must await in serverless to prevent function termination
+    try {
+      await sendWelcomeEmail({
+        to: email.toLowerCase(),
+        name: spotifyName || undefined,
+        position,
+        locale,
+      });
+      console.log('[Waitlist] Welcome email sent successfully');
+    } catch (emailErr) {
+      // Log but don't fail the request if email fails
+      console.error('[Waitlist] Failed to send welcome email:', emailErr);
+    }
 
     return NextResponse.json({
       success: true,
