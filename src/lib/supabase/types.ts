@@ -18,6 +18,8 @@ export interface Database {
           avatar_url: string | null;
           country: string | null;
           last_synced_at: string | null;
+          last_active_at: string | null;
+          is_active: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -29,6 +31,8 @@ export interface Database {
           avatar_url?: string | null;
           country?: string | null;
           last_synced_at?: string | null;
+          last_active_at?: string | null;
+          is_active?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -40,6 +44,8 @@ export interface Database {
           avatar_url?: string | null;
           country?: string | null;
           last_synced_at?: string | null;
+          last_active_at?: string | null;
+          is_active?: boolean;
           created_at?: string;
           updated_at?: string;
         };

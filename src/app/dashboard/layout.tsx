@@ -158,6 +158,28 @@ export default function DashboardLayout({
             return;
           }
 
+          // Check if user has been "bounced" (is_active = false)
+          const statusRes = await fetch('/api/user/status');
+          if (statusRes.ok) {
+            const statusData = await statusRes.json();
+            if (!statusData.isActive) {
+              // User has been bounced - redirect to waitlist with bounced message
+              const params = new URLSearchParams({
+                bounced: 'true',
+                spotifyId: data.user.id || '',
+                spotifyName: data.user.name || '',
+                spotifyImage: data.user.image || '',
+              });
+              router.push(`/waitlist?${params.toString()}`);
+              return;
+            }
+          }
+
+          // Track user activity (fire and forget - don't await)
+          fetch('/api/user/activity', { method: 'POST' }).catch(() => {
+            // Silently ignore activity tracking errors
+          });
+
           setSession(data);
         } else {
           router.push('/auth/login');
