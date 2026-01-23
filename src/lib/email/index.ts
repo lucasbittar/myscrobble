@@ -5,7 +5,10 @@ let resendClient: Resend | null = null;
 
 function getResendClient(): Resend | null {
   if (!resendClient && process.env.RESEND_API_KEY) {
-    resendClient = new Resend(process.env.RESEND_API_KEY);
+    const apiKey = process.env.RESEND_API_KEY.trim();
+    console.log('[Email] API key length:', apiKey.length);
+    console.log('[Email] API key prefix:', apiKey.substring(0, 6));
+    resendClient = new Resend(apiKey);
   }
   return resendClient;
 }
@@ -135,7 +138,9 @@ export async function sendWelcomeEmail({ to, name, position, locale = 'en' }: Se
     });
 
     if (error) {
-      console.error('[Email] Resend API error:', error);
+      console.error('[Email] Resend API error:', JSON.stringify(error, null, 2));
+      console.error('[Email] Error name:', error.name);
+      console.error('[Email] Error message:', error.message);
       throw error;
     }
 
