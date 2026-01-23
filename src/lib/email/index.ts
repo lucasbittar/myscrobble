@@ -2,8 +2,7 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Use test domain for development, replace with your domain in production
-const FROM_EMAIL = 'MyScrobble <onboarding@resend.dev>';
+const FROM_EMAIL = 'MyScrobble <hello@myscrobble.fm>';
 
 type Locale = 'en' | 'pt-BR';
 
