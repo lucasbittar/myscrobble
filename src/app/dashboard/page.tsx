@@ -243,7 +243,7 @@ export default function DashboardPage() {
       <>
         <div className="relative">
           {/* Hero Section - Now Playing */}
-      <section className="min-h-[70vh] flex items-center px-6 md:px-12 py-24">
+      <section className="min-h-[70vh] flex items-center px-4 md:px-12 py-12 md:py-24">
         <div className="max-w-7xl mx-auto w-full">
           {nowPlaying?.isPlaying && nowPlaying.track ? (
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -292,7 +292,7 @@ export default function DashboardPage() {
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
                   {greeting}{userName && `, ${userName}`}
                 </h2>
-                <p className="text-sm uppercase tracking-[0.3em] text-[#1DB954] mb-6 flex items-center gap-2">
+                <p className="text-sm uppercase tracking-[1.5px] text-[#1DB954] mb-6 flex items-center gap-2">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1DB954] opacity-75" />
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-[#1DB954]" />
@@ -338,7 +338,7 @@ export default function DashboardPage() {
               transition={{ duration: 0.8 }}
               className="text-center max-w-4xl mx-auto"
             >
-              <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-6">
+              <p className="text-sm uppercase tracking-[1.5px] text-muted-foreground mb-6">
                 {t('nowPlaying.notPlaying')}
               </p>
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tight text-foreground mb-8">
@@ -359,9 +359,9 @@ export default function DashboardPage() {
       </section>
 
       {/* Stats Section - Large numbers */}
-      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-border/30">
+      <RevealSection className="py-12 md:py-32 px-4 md:px-12 border-border/30">
         <div className="max-w-7xl mx-auto">
-          <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-4">
+          <p className="text-sm uppercase tracking-[1.5px] text-muted-foreground mb-4">
             {t('stats.dataFrom')}
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
@@ -399,30 +399,28 @@ export default function DashboardPage() {
       <MoodAnalysis />
 
       {/* Top Artists Section - Editorial grid */}
-      <RevealSection className="py-24 md:py-32 px-6 md:px-12">
+      <RevealSection className="py-12 md:py-32 px-4 md:px-12">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-2">
-                {t('timeRanges.short')}
-              </p>
-              <h2 className="text-4xl md:text-6xl font-black text-foreground">
-                {t('sections.topArtists')}
-              </h2>
-              {enrichedStats && enrichedStats.uniqueArtists > 0 && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="mt-3 text-sm text-muted-foreground"
-                >
-                  {t('stats.uniqueArtistsContext', { count: enrichedStats.uniqueArtists })}
-                </motion.p>
-              )}
-            </div>
+          <div className="mb-8 md:mb-12">
+            <p className="text-sm uppercase tracking-[1.5px] text-muted-foreground mb-2">
+              {t('timeRanges.short')}
+            </p>
+            <h2 className="text-3xl md:text-6xl font-black text-foreground">
+              {t('sections.topArtists')}
+            </h2>
+            {enrichedStats && enrichedStats.uniqueArtists > 0 && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="mt-2 text-sm text-muted-foreground"
+              >
+                {t('stats.uniqueArtistsContext', { count: enrichedStats.uniqueArtists })}
+              </motion.p>
+            )}
             <Link
               href="/dashboard/top?view=artists"
-              className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-[#1DB954] transition-colors"
+              className="group inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-[#1DB954] transition-colors mt-4"
             >
               <span>{tCommon('viewAll')}</span>
               <motion.span
@@ -455,11 +453,11 @@ export default function DashboardPage() {
       </RevealSection>
 
       {/* Top Tracks Section - List style */}
-      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-border/30">
+      <RevealSection className="py-12 md:py-32 px-4 md:px-12 border-border/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-2">
+              <p className="text-sm uppercase tracking-[1.5px] text-muted-foreground mb-2">
                 {t('timeRanges.short')}
               </p>
               <h2 className="text-4xl md:text-6xl font-black text-foreground mb-4">
@@ -514,7 +512,7 @@ export default function DashboardPage() {
 
       {/* Concerts Section */}
       {topArtists && topArtists.length > 0 && (
-        <RevealSection className="py-24 md:py-32 px-6 md:px-12">
+        <RevealSection className="py-12 md:py-32 px-4 md:px-12">
           <div className="max-w-7xl mx-auto">
             <UpcomingConcerts topArtists={topArtists} />
           </div>
@@ -522,20 +520,18 @@ export default function DashboardPage() {
       )}
 
       {/* Recent Activity - Bento Grid */}
-      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-border/30">
+      <RevealSection className="py-12 md:py-32 px-4 md:px-12 border-border/30">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-2">
-                {t('sections.justPlayed')}
-              </p>
-              <h2 className="text-4xl md:text-5xl font-black text-foreground">
-                {t('sections.recentActivity')}
-              </h2>
-            </div>
+          <div className="mb-8 md:mb-12">
+            <p className="text-sm uppercase tracking-[1.5px] text-muted-foreground mb-2">
+              {t('sections.justPlayed')}
+            </p>
+            <h2 className="text-3xl md:text-5xl font-black text-foreground">
+              {t('sections.recentActivity')}
+            </h2>
             <Link
               href="/dashboard/history"
-              className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-[#1DB954] transition-colors"
+              className="group inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-[#1DB954] transition-colors mt-4"
             >
               <span>{tCommon('viewAll')}</span>
               <motion.span
@@ -575,18 +571,18 @@ export default function DashboardPage() {
       </RevealSection>
 
       {/* Quick Links - Feature cards */}
-      <RevealSection className="py-24 md:py-32 px-6 md:px-12 border-border/30">
+      <RevealSection className="py-12 md:py-32 px-4 md:px-12 border-border/30">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-foreground mb-3 md:mb-4">
               {t('sections.exploreMore')}
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
               {t('sections.exploreMoreDescription')}
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             <FeatureLink
               href="/dashboard/discover"
               title={t('featureCards.aiDiscover.title')}
@@ -938,22 +934,22 @@ function FeatureLink({
   return (
     <Link
       href={href}
-      className="group block p-8 rounded-2xl bg-white dark:bg-white/5 border border-border/30 hover:border-transparent hover:shadow-xl hover:shadow-black/5 transition-all duration-300"
+      className="group block p-5 md:p-8 rounded-2xl bg-white dark:bg-white/5 border border-border/30 hover:border-transparent hover:shadow-xl hover:shadow-black/5 transition-all duration-300"
       style={{ '--accent-color': color } as React.CSSProperties}
     >
       <div
-        className="w-16 h-16 rounded-2xl mb-6 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
+        className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl mb-4 md:mb-6 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
         style={{ backgroundColor: `${color}15` }}
       >
         <FeatureIcon type={icon} color={color} />
       </div>
-      <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-[var(--accent-color)] transition-colors">
+      <h3 className="text-lg md:text-xl font-bold text-foreground mb-1.5 md:mb-2 group-hover:text-[var(--accent-color)] transition-colors">
         {title}
       </h3>
-      <p className="text-muted-foreground leading-relaxed">
+      <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
         {description}
       </p>
-      <div className="mt-4 flex items-center gap-2 text-sm font-medium text-muted-foreground group-hover:text-[var(--accent-color)] transition-colors">
+      <div className="mt-3 md:mt-4 flex items-center gap-2 text-sm font-medium text-muted-foreground group-hover:text-[var(--accent-color)] transition-colors">
         <span>{exploreLabel}</span>
         <motion.span
           className="inline-block"

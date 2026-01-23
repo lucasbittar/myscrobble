@@ -192,19 +192,19 @@ function FeatureItem({
       initial={{ opacity: 0, x: -60 }}
       animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -60 }}
       transition={{ duration: 0.6, delay, ease: 'easeOut' }}
-      className="flex flex-col md:flex-row items-start gap-8 py-12 group"
+      className="flex flex-col md:flex-row items-start gap-4 md:gap-8 py-8 md:py-12 group"
     >
       <span
-        className="text-[100px] md:text-[180px] font-black leading-none -mt-4 md:-mt-8 transition-all duration-500 group-hover:scale-110"
+        className="text-[64px] md:text-[180px] font-black leading-none -mt-2 md:-mt-8 transition-all duration-500 group-hover:scale-110"
         style={{ color, opacity: 0.15 }}
       >
         {number}
       </span>
       <div className="pt-0 md:pt-8 flex-1">
-        <h3 className="text-3xl md:text-5xl font-bold text-foreground mb-4 group-hover:text-[var(--accent)] transition-colors" style={{ '--accent': color } as React.CSSProperties}>
+        <h3 className="text-2xl md:text-5xl font-bold text-foreground mb-3 md:mb-4 group-hover:text-[var(--accent)] transition-colors" style={{ '--accent': color } as React.CSSProperties}>
           {title}
         </h3>
-        <p className="text-lg md:text-xl text-muted-foreground max-w-md leading-relaxed mb-6">{description}</p>
+        <p className="text-base md:text-xl text-muted-foreground max-w-md leading-relaxed mb-4 md:mb-6">{description}</p>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.98 }}
@@ -438,11 +438,11 @@ function StatItem({
       transition={{ duration: 0.6, delay, ease: 'easeOut' }}
       className="flex flex-col items-center group"
     >
-      <div className="w-20 h-20 md:w-24 md:h-24 mb-4 transition-transform duration-300 group-hover:scale-110">
+      <div className="w-16 h-16 md:w-24 md:h-24 mb-3 md:mb-4 transition-transform duration-300 group-hover:scale-110">
         <StatsIcon type={icon} color={color} />
       </div>
-      <p className="text-4xl md:text-6xl font-black mb-2" style={{ color }}>{value}</p>
-      <p className="text-sm md:text-base text-muted-foreground uppercase tracking-wider">{label}</p>
+      <p className="text-3xl md:text-6xl font-black mb-1 md:mb-2" style={{ color }}>{value}</p>
+      <p className="text-xs md:text-base text-muted-foreground uppercase tracking-wider text-center">{label}</p>
     </motion.div>
   );
 }
@@ -733,32 +733,32 @@ function TeaserPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="bg-background relative overflow-hidden">
       {/* Organic flowing shapes - matching main landing page */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <FlowingShape
-          className="absolute -top-48 -right-48 w-[700px] h-[700px] opacity-30"
+          className="absolute -top-16 md:-top-48 -right-16 md:-right-48 w-[180px] md:w-[700px] h-[180px] md:h-[700px] opacity-15 md:opacity-30"
           gradient="purple-pink"
           delay={0}
           blur={20}
           floatDirection="up"
         />
         <FlowingShape
-          className="absolute -bottom-32 -left-32 w-[500px] h-[500px] opacity-25"
+          className="absolute -bottom-12 md:-bottom-32 -left-12 md:-left-32 w-[150px] md:w-[500px] h-[150px] md:h-[500px] opacity-12 md:opacity-25"
           gradient="warm"
           delay={0.2}
           blur={0}
           floatDirection="right"
         />
         <FlowingShape
-          className="absolute top-1/3 -right-24 w-[400px] h-[400px] opacity-35"
+          className="absolute top-1/3 -right-8 md:-right-24 w-[120px] md:w-[400px] h-[120px] md:h-[400px] opacity-18 md:opacity-35"
           gradient="spotify"
           delay={0.4}
           blur={0}
           floatDirection="left"
         />
         <FlowingShape
-          className="absolute bottom-1/4 left-1/4 w-[300px] h-[300px] opacity-20"
+          className="absolute bottom-1/4 left-1/6 md:left-1/4 w-[100px] md:w-[300px] h-[100px] md:h-[300px] opacity-10 md:opacity-20"
           gradient="teal-blue"
           delay={0.3}
           blur={0}
@@ -771,10 +771,10 @@ function TeaserPage() {
         {isSuccess && <Confetti />}
       </AnimatePresence>
 
-      {/* Main content */}
-      <div className="relative z-10 min-h-screen flex flex-col">
+      {/* Main content - full viewport height, footer below fold */}
+      <div className="relative z-10 h-[100dvh] flex flex-col">
         {/* Header */}
-        <header className="py-6 px-6 md:px-12">
+        <header className="py-4 md:py-6 px-4 md:px-12">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -782,35 +782,35 @@ function TeaserPage() {
             className="flex items-center justify-between max-w-7xl mx-auto"
           >
             <div className="flex items-baseline gap-1">
-              <span className="text-xl md:text-2xl font-black tracking-tight text-foreground">MyScrobble</span>
-              <span className="text-sm text-muted-foreground">.fm</span>
+              <span className="text-lg md:text-2xl font-black tracking-tight text-foreground">MyScrobble</span>
+              <span className="text-xs md:text-sm text-muted-foreground">.fm</span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-full border border-border/50">
+            <div className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-full border border-border/50">
               <motion.span
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="w-2 h-2 rounded-full bg-[#EC4899]"
+                className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#EC4899]"
               />
-              <span className="text-xs uppercase tracking-wider text-muted-foreground">{t('comingSoon')}</span>
+              <span className="text-[10px] md:text-xs uppercase tracking-wider text-muted-foreground">{t('comingSoon')}</span>
             </div>
           </motion.div>
         </header>
 
         {/* Hero section */}
-        <main className="flex-1 flex items-center justify-center px-6 py-12">
+        <main className="flex-1 flex items-center justify-center px-4 md:px-6 py-8 md:py-12">
           <div className="max-w-4xl mx-auto text-center">
             {/* Tagline with sound waves */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex items-center justify-center gap-4 mb-10"
+              className="flex items-center justify-center gap-3 md:gap-4 mb-6 md:mb-10"
             >
-              <SoundWave />
-              <span className="text-sm md:text-base uppercase tracking-[0.3em] text-muted-foreground">
+              <SoundWave className="hidden sm:flex" />
+              <span className="text-xs md:text-base uppercase tracking-[1.5px] md:tracking-[0.3em] text-muted-foreground">
                 {t('tagline')}
               </span>
-              <SoundWave />
+              <SoundWave className="hidden sm:flex" />
             </motion.div>
 
             {/* Headline - all at once to prevent jumping */}
@@ -818,9 +818,9 @@ function TeaserPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="mb-10"
+              className="mb-6 md:mb-10"
             >
-              <h1 className="text-[clamp(3rem,12vw,9rem)] font-black leading-[0.9] tracking-tight">
+              <h1 className="text-[clamp(2.5rem,11vw,9rem)] font-black leading-[0.9] tracking-tight">
                 <span className="text-foreground block">{t('headline1')}</span>
                 <span className="bg-gradient-to-r from-[#EC4899] via-[#8B5CF6] to-[#1DB954] bg-clip-text text-transparent block">
                   {t('headline2')}
@@ -834,7 +834,7 @@ function TeaserPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
+              className="text-base md:text-xl text-muted-foreground max-w-2xl mx-auto mb-6 md:mb-10 leading-relaxed px-2 md:px-0"
             >
               {t('description')}
             </motion.p>
@@ -844,7 +844,7 @@ function TeaserPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.7 }}
-              className="flex flex-wrap justify-center gap-3 mb-12"
+              className="flex flex-wrap justify-center gap-2 md:gap-3 mb-8 md:mb-12"
             >
               {[
                 { key: 'stats', color: '#1DB954' },
@@ -854,10 +854,10 @@ function TeaserPage() {
               ].map((feature) => (
                 <div
                   key={feature.key}
-                  className="flex items-center gap-2.5 px-4 py-2.5 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-full border border-border/50 hover:border-border transition-colors"
+                  className="flex items-center gap-2 md:gap-2.5 px-3 md:px-4 py-2 md:py-2.5 bg-white/60 dark:bg-white/10 backdrop-blur-sm rounded-full border border-border/50 hover:border-border transition-colors"
                 >
                   <FeaturePillIcon type={feature.key as 'stats' | 'ai' | 'concerts' | 'share'} color={feature.color} />
-                  <span className="text-sm font-medium text-foreground/80">{t(`features.${feature.key}`)}</span>
+                  <span className="text-xs md:text-sm font-medium text-foreground/80">{t(`features.${feature.key}`)}</span>
                 </div>
               ))}
             </motion.div>
@@ -999,7 +999,10 @@ function TeaserPage() {
           </div>
         </main>
 
-        {/* Footer */}
+      </div>
+
+      {/* Footer - below the fold, only visible on scroll */}
+      <div className="relative z-10">
         <Footer />
       </div>
     </div>
@@ -1065,7 +1068,7 @@ export default function HomePage() {
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         {/* Background - slight blur for depth */}
         <FlowingShape
-          className="absolute -top-48 -right-48 w-[700px] h-[700px] opacity-25"
+          className="absolute -top-16 md:-top-48 -right-16 md:-right-48 w-[200px] md:w-[700px] h-[200px] md:h-[700px] opacity-15 md:opacity-25"
           gradient="purple-pink"
           delay={0}
           blur={20}
@@ -1074,21 +1077,21 @@ export default function HomePage() {
 
         {/* Sharp foreground blobs */}
         <FlowingShape
-          className="absolute -bottom-32 right-1/4 w-[450px] h-[450px] opacity-25"
+          className="absolute -bottom-12 md:-bottom-32 right-1/4 w-[140px] md:w-[450px] h-[140px] md:h-[450px] opacity-15 md:opacity-25"
           gradient="warm"
           delay={0.3}
           blur={0}
           floatDirection="left"
         />
         <FlowingShape
-          className="absolute top-1/2 -right-24 w-[350px] h-[350px] opacity-35"
+          className="absolute top-1/2 -right-8 md:-right-24 w-[120px] md:w-[350px] h-[120px] md:h-[350px] opacity-20 md:opacity-35"
           gradient="spotify"
           delay={0.4}
           blur={0}
           floatDirection="up"
         />
         <FlowingShape
-          className="absolute top-20 left-1/3 w-[280px] h-[280px] opacity-20"
+          className="absolute top-20 left-1/4 md:left-1/3 w-[100px] md:w-[280px] h-[100px] md:h-[280px] opacity-12 md:opacity-20"
           gradient="teal-blue"
           delay={0.5}
           blur={0}
@@ -1104,7 +1107,7 @@ export default function HomePage() {
             : 'bg-transparent border-transparent'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-12 py-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-12 py-4">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1118,13 +1121,13 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section - Full viewport */}
-      <section className="min-h-screen flex flex-col items-center justify-center px-6 md:px-12 relative">
+      <section className="min-h-screen flex flex-col items-center justify-center px-4 md:px-12 pt-20 md:pt-0 relative">
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-sm md:text-base uppercase tracking-[0.3em] text-muted-foreground mb-8"
+            className="text-xs md:text-base uppercase tracking-[1.5px] md:tracking-[0.3em] text-muted-foreground mb-6 md:mb-8"
           >
             {t('hero.tagline')}
           </motion.p>
@@ -1133,7 +1136,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-[clamp(3rem,12vw,10rem)] font-black leading-[0.85] tracking-tight text-foreground mb-12"
+            className="text-[clamp(2.5rem,10vw,10rem)] font-black leading-[0.9] tracking-tight text-foreground mb-8 md:mb-12"
           >
             {t('hero.titlePart1')}
             <br />
@@ -1144,7 +1147,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-16 leading-relaxed"
+            className="text-base md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10 md:mb-16 leading-relaxed px-2 md:px-0"
           >
             {t('subtitle')}
           </motion.p>
@@ -1187,11 +1190,11 @@ export default function HomePage() {
       </section>
 
       {/* Features Section - Staggered reveals */}
-      <section className="py-32 md:py-48 px-6 md:px-12">
+      <section className="py-16 md:py-48 px-4 md:px-12">
         <div className="max-w-6xl mx-auto">
-          <RevealSection className="mb-24 md:mb-40">
-            <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-4">{t('sections.whatYouGet')}</p>
-            <h2 className="text-4xl md:text-7xl font-black text-foreground leading-tight">
+          <RevealSection className="mb-12 md:mb-40">
+            <p className="text-xs md:text-sm uppercase tracking-[1.5px] md:tracking-[0.3em] text-muted-foreground mb-3 md:mb-4">{t('sections.whatYouGet')}</p>
+            <h2 className="text-3xl md:text-7xl font-black text-foreground leading-tight">
               {t('sections.everythingAbout')}<br />
               <Highlight color="purple">{t('sections.listeningHabits')}</Highlight>
             </h2>
@@ -1239,9 +1242,9 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section with cool visuals */}
-      <section className="py-32 md:py-48 px-6 md:px-12 relative">
+      <section className="py-16 md:py-48 px-4 md:px-12 relative">
         <div className="max-w-6xl mx-auto relative z-10">
-          <RevealSection className="grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8">
+          <RevealSection className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-8">
             <StatItem value="50+" label={t('stats.topTracks')} delay={0} icon="tracks" color="#1DB954" />
             <StatItem value="50+" label={t('stats.topArtists')} delay={0.1} icon="artists" color="#8B5CF6" />
             <StatItem value="∞" label={t('stats.history')} delay={0.2} icon="history" color="#EC4899" />
@@ -1251,23 +1254,23 @@ export default function HomePage() {
       </section>
 
       {/* Quote Section */}
-      <section className="py-32 md:py-48 px-6 md:px-12">
+      <section className="py-16 md:py-48 px-4 md:px-12">
         <RevealSection className="max-w-5xl mx-auto text-center">
-          <blockquote className="text-3xl md:text-6xl font-bold text-foreground leading-tight mb-8">
+          <blockquote className="text-2xl md:text-6xl font-bold text-foreground leading-tight mb-6 md:mb-8">
             &ldquo;{t('sections.quote1')} <Highlight color="pink">{t('sections.quote2')}</Highlight> {t('sections.quote3')} <Highlight color="blue">{t('sections.quote4')}</Highlight>.&rdquo;
           </blockquote>
-          <p className="text-muted-foreground text-lg">{t('sections.quoteSubtitle')}</p>
+          <p className="text-muted-foreground text-base md:text-lg">{t('sections.quoteSubtitle')}</p>
         </RevealSection>
       </section>
 
       {/* CTA Section */}
-      <section className="py-32 md:py-48 px-6 md:px-12 relative">
+      <section className="py-16 md:py-48 px-4 md:px-12 relative">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <RevealSection>
-            <h2 className="text-4xl md:text-7xl font-black text-foreground mb-8">
+            <h2 className="text-3xl md:text-7xl font-black text-foreground mb-6 md:mb-8">
               {t('sections.readyToExplore')}
             </h2>
-            <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
+            <p className="text-base md:text-xl text-muted-foreground mb-8 md:mb-12 max-w-2xl mx-auto">
               {t('sections.readyDescription')}
             </p>
             <motion.button

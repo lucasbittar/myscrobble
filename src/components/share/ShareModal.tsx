@@ -89,7 +89,7 @@ export function ShareModal() {
     <AnimatePresence>
       {isModalOpen && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4"
           variants={overlayVariants}
           initial="hidden"
           animate="visible"
@@ -97,24 +97,24 @@ export function ShareModal() {
         >
           {/* Backdrop */}
           <motion.div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/70 backdrop-blur-md"
             onClick={handleBackdropClick}
           />
 
-          {/* Modal */}
+          {/* Modal - compact, no scroll */}
           <motion.div
-            className="relative w-full max-w-lg bg-white/80 dark:bg-black/80 backdrop-blur-2xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden"
+            className="relative w-full max-w-lg bg-white/90 dark:bg-black/90 backdrop-blur-2xl rounded-2xl sm:rounded-3xl border border-white/20 shadow-2xl overflow-hidden"
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <h2 className="text-xl font-bold text-foreground">{t('title')}</h2>
+            {/* Header - compact */}
+            <div className="flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 border-b border-white/10">
+              <h2 className="text-lg sm:text-xl font-bold text-foreground">{t('title')}</h2>
               <button
                 onClick={closeModal}
-                className="p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
+                className="p-1.5 sm:p-2 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
               >
                 <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -122,29 +122,37 @@ export function ShareModal() {
               </button>
             </div>
 
-            {/* Card Preview */}
-            <div className="p-6">
+            {/* Card Preview - tighter padding, negative margin to pull scaled card up */}
+            <div className="px-4 py-3 sm:px-6 sm:py-4">
               <div className="flex justify-center">
                 <div
-                  className="relative rounded-2xl overflow-hidden shadow-lg"
+                  className="origin-top"
                   style={{
-                    width: 360,
-                    height: 640,
+                    transform: 'scale(0.65)',
+                    marginBottom: '-224px', // Compensate for scaled height (640 * 0.35 = 224)
                   }}
                 >
-                  {renderCard()}
+                  <div
+                    className="relative rounded-2xl overflow-hidden shadow-lg"
+                    style={{
+                      width: 360,
+                      height: 640,
+                    }}
+                  >
+                    {renderCard()}
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="p-6 pt-0 space-y-4">
+            {/* Actions - compact */}
+            <div className="px-4 pb-4 sm:px-6 sm:pb-5 space-y-3">
               <motion.button
                 onClick={downloadImage}
                 disabled={isDownloading}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full py-4 rounded-2xl font-semibold text-white transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold text-white transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
                 style={{
                   background: `linear-gradient(135deg, ${colors.from} 0%, ${colors.to} 100%)`,
                   boxShadow: `0 4px 20px ${colors.glow}`,
@@ -155,13 +163,13 @@ export function ShareModal() {
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                      className="w-5 h-5 rounded-full border-2 border-white border-t-transparent"
+                      className="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 border-white border-t-transparent"
                     />
                     {t('generating')}
                   </>
                 ) : (
                   <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
                     {t('downloadButton')}
@@ -169,7 +177,7 @@ export function ShareModal() {
                 )}
               </motion.button>
 
-              <p className="text-xs text-center text-muted-foreground">
+              <p className="text-[10px] sm:text-xs text-center text-muted-foreground">
                 {t('optimizedFor')}
               </p>
             </div>

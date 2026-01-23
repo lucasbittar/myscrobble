@@ -339,32 +339,32 @@ export default function WaitlistPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
+    <div className="bg-background relative overflow-hidden">
       {/* Flowing organic shapes (matching landing page) */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <FlowingShape
-          className="absolute -top-48 -right-48 w-[700px] h-[700px] opacity-25"
+          className="absolute -top-16 md:-top-48 -right-16 md:-right-48 w-[180px] md:w-[700px] h-[180px] md:h-[700px] opacity-15 md:opacity-25"
           gradient="purple-pink"
           delay={0}
           blur={20}
           floatDirection="up"
         />
         <FlowingShape
-          className="absolute -bottom-32 -left-32 w-[500px] h-[500px] opacity-25"
+          className="absolute -bottom-12 md:-bottom-32 -left-12 md:-left-32 w-[140px] md:w-[500px] h-[140px] md:h-[500px] opacity-12 md:opacity-25"
           gradient="warm"
           delay={0.2}
           blur={0}
           floatDirection="right"
         />
         <FlowingShape
-          className="absolute top-1/3 -right-24 w-[350px] h-[350px] opacity-30"
+          className="absolute top-1/3 -right-8 md:-right-24 w-[120px] md:w-[350px] h-[120px] md:h-[350px] opacity-15 md:opacity-30"
           gradient="spotify"
           delay={0.4}
           blur={0}
           floatDirection="left"
         />
         <FlowingShape
-          className="absolute bottom-1/4 left-1/4 w-[280px] h-[280px] opacity-20"
+          className="absolute bottom-1/4 left-1/6 md:left-1/4 w-[100px] md:w-[280px] h-[100px] md:h-[280px] opacity-10 md:opacity-20"
           gradient="teal-blue"
           delay={0.3}
           blur={0}
@@ -377,18 +377,18 @@ export default function WaitlistPage() {
         {isSuccess && <Confetti />}
       </AnimatePresence>
 
-      {/* Main content */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12">
+      {/* Main content - full viewport height */}
+      <div className="relative z-10 h-[100dvh] flex flex-col items-center justify-center px-4 md:px-6 py-8 md:py-12">
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-8"
+          className="mb-6 md:mb-8"
         >
           <Link href="/" className="flex items-baseline gap-1">
-            <span className="text-2xl font-black tracking-tight text-foreground">MyScrobble</span>
-            <span className="text-base text-muted-foreground">.fm</span>
+            <span className="text-xl md:text-2xl font-black tracking-tight text-foreground">MyScrobble</span>
+            <span className="text-sm md:text-base text-muted-foreground">.fm</span>
           </Link>
         </motion.div>
 
@@ -397,7 +397,7 @@ export default function WaitlistPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-10"
+          className="mb-6 md:mb-10 scale-90 md:scale-100"
         >
           <TicketStub isSuccess={isSuccess} />
         </motion.div>
@@ -407,9 +407,9 @@ export default function WaitlistPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-center mb-10 max-w-lg"
+          className="text-center mb-6 md:mb-10 max-w-lg px-2"
         >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-4 leading-tight">
+          <h1 className="text-2xl md:text-5xl lg:text-6xl font-black text-foreground mb-3 md:mb-4 leading-tight">
             {isSuccess ? (
               <>
                 {t('successPart1')} <Highlight color="green">{t('successHighlight')}</Highlight>
@@ -420,7 +420,7 @@ export default function WaitlistPage() {
               </>
             )}
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground">
+          <p className="text-base md:text-xl text-muted-foreground">
             {isSuccess
               ? (alreadyExists ? t('alreadyOnList') : t('successSubtext'))
               : t('subheadline')
@@ -435,12 +435,12 @@ export default function WaitlistPage() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              className="mb-8"
+              className="mb-6 md:mb-8"
             >
-              <div className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl px-8 py-4 border border-border/50">
+              <div className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl px-6 md:px-8 py-3 md:py-4 border border-border/50">
                 <div className="text-center">
-                  <div className="text-sm text-muted-foreground uppercase tracking-wider mb-1">{t('yourPosition')}</div>
-                  <div className="text-4xl font-black text-[#EC4899]">
+                  <div className="text-xs md:text-sm text-muted-foreground uppercase tracking-wider mb-1">{t('yourPosition')}</div>
+                  <div className="text-3xl md:text-4xl font-black text-[#EC4899]">
                     {t('position', { position })}
                   </div>
                 </div>
@@ -459,26 +459,26 @@ export default function WaitlistPage() {
           {!isSuccess ? (
             <>
               {/* Email form */}
-              <form onSubmit={handleSubmit} className="mb-6">
-                <div className="flex gap-3">
+              <form onSubmit={handleSubmit} className="mb-4 md:mb-6">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder={t('emailPlaceholder')}
-                    className="flex-1 px-5 py-4 bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-xl border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#EC4899]/50 focus:border-[#EC4899] transition-all"
+                    className="flex-1 px-4 md:px-5 py-3 md:py-4 bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-xl border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#EC4899]/50 focus:border-[#EC4899] transition-all text-sm md:text-base"
                     disabled={isSubmitting}
                   />
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-6 py-4 bg-gradient-to-r from-[#EC4899] to-[#8B5CF6] text-white font-semibold rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap cursor-pointer"
+                    className="px-5 md:px-6 py-3 md:py-4 bg-gradient-to-r from-[#EC4899] to-[#8B5CF6] text-white font-semibold rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap cursor-pointer text-sm md:text-base"
                   >
                     {isSubmitting ? (
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                        className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                        className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mx-auto"
                       />
                     ) : (
                       t('cta')
@@ -497,7 +497,7 @@ export default function WaitlistPage() {
               </form>
 
               {/* Explanation */}
-              <p className="text-center text-sm text-muted-foreground">
+              <p className="text-center text-xs md:text-sm text-muted-foreground">
                 {t('explanation')}
               </p>
 
@@ -523,11 +523,11 @@ export default function WaitlistPage() {
           ) : (
             <>
               {/* Share section */}
-              <div className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-border/50">
-                <h3 className="text-center font-semibold text-foreground mb-2">
+              <div className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-border/50">
+                <h3 className="text-center font-semibold text-foreground mb-1 md:mb-2 text-sm md:text-base">
                   {t('shareTitle')}
                 </h3>
-                <p className="text-center text-sm text-muted-foreground mb-4">
+                <p className="text-center text-xs md:text-sm text-muted-foreground mb-3 md:mb-4">
                   {t('shareDescription')}
                 </p>
                 <div className="flex gap-3 justify-center">
@@ -596,8 +596,10 @@ export default function WaitlistPage() {
         </motion.div>
       </div>
 
-      {/* Footer */}
-      <Footer />
+      {/* Footer - below the fold, only visible on scroll */}
+      <div className="relative z-10">
+        <Footer />
+      </div>
     </div>
   );
 }

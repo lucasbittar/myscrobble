@@ -216,7 +216,7 @@ export default function PodcastsPage() {
             {/* Hero Section - Featured Show */}
             {featuredShow && (
               <motion.section variants={itemVariants}>
-                <p className="text-xs font-medium tracking-[0.3em] text-[#8B5CF6] uppercase mb-6">
+                <p className="text-xs font-medium tracking-[1.5px] text-[#8B5CF6] uppercase mb-6">
                   {t('hero.featured')}
                 </p>
                 <a

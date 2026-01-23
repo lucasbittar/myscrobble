@@ -73,7 +73,7 @@ export default function DiscoverPage() {
   const remainingRecs = data?.recommendations?.slice(1) || [];
 
   return (
-    <div className="relative z-10 min-h-screen py-12 md:py-24 px-6 md:px-12">
+    <div className="relative z-10 min-h-screen py-8 md:py-24 px-4 md:px-12">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <PageHeader
@@ -198,7 +198,7 @@ export default function DiscoverPage() {
               {/* Hero Section - Featured Recommendation */}
               {featuredRec && (
                 <motion.section variants={heroVariants}>
-                  <p className="text-xs font-medium tracking-[0.3em] text-[#8B5CF6] uppercase mb-6">
+                  <p className="text-xs font-medium tracking-[1.5px] text-[#8B5CF6] uppercase mb-6">
                     {t('featured')}
                   </p>
                   <div className="relative flex flex-col md:flex-row gap-8 items-start">

@@ -40,7 +40,7 @@ export function ConcertHero({ concert }: ConcertHeroProps) {
 
   return (
     <motion.section variants={heroVariants} initial="hidden" animate="visible" className="mb-16">
-      <p className="text-xs font-medium tracking-[0.3em] text-[#EC4899] uppercase mb-6">
+      <p className="text-xs font-medium tracking-[1.5px] text-[#EC4899] uppercase mb-6">
         {t('nextShow')}
       </p>
 

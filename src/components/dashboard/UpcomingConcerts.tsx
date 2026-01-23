@@ -59,13 +59,13 @@ export function UpcomingConcerts({ topArtists }: UpcomingConcertsProps) {
     return (
       <section className="relative">
         {/* Section header */}
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center gap-3 mb-2"
           >
-            <span className="text-xs font-medium tracking-[0.2em] text-[#EC4899] uppercase">
+            <span className="text-xs font-medium tracking-[1.5px] text-[#EC4899] uppercase">
               {tDashboard('sections.liveEvents')}
             </span>
             <div className="h-px flex-1 bg-gradient-to-r from-[#EC4899]/30 to-transparent" />
@@ -74,7 +74,7 @@ export function UpcomingConcerts({ topArtists }: UpcomingConcertsProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-3xl md:text-4xl font-black text-foreground"
+            className="text-2xl md:text-4xl font-black text-foreground"
           >
             {t('upcoming')}
           </motion.h3>
@@ -114,47 +114,46 @@ export function UpcomingConcerts({ topArtists }: UpcomingConcertsProps) {
       {/* Decorative background element */}
       <div className="absolute -right-20 top-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-gradient-to-br from-[#EC4899]/10 via-[#8B5CF6]/5 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-      {/* Section header */}
-      <div className="mb-8">
+      {/* Section header - stacked on mobile */}
+      <div className="mb-6 md:mb-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3 mb-2"
         >
-          <span className="text-xs font-medium tracking-[0.2em] text-[#EC4899] uppercase">
+          <span className="text-xs font-medium tracking-[1.5px] text-[#EC4899] uppercase">
             {tDashboard('sections.liveEvents')}
           </span>
           <div className="h-px flex-1 bg-gradient-to-r from-[#EC4899]/30 to-transparent" />
         </motion.div>
-        <div className="flex items-end justify-between">
-          <motion.h3
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-4xl font-black text-foreground"
+        <motion.h3
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-2xl md:text-4xl font-black text-foreground"
+        >
+          {t('upcoming')}
+        </motion.h3>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mt-3"
+        >
+          <Link
+            href="/dashboard/concerts"
+            className="group inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-[#EC4899] transition-colors"
           >
-            {t('upcoming')}
-          </motion.h3>
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Link
-              href="/dashboard/concerts"
-              className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-[#EC4899] transition-colors"
+            <span>{tCommon('viewAll')}</span>
+            <motion.span
+              className="inline-block"
+              animate={{ x: [0, 4, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
             >
-              <span>{tCommon('viewAll')}</span>
-              <motion.span
-                className="inline-block"
-                animate={{ x: [0, 4, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                →
-              </motion.span>
-            </Link>
-          </motion.div>
-        </div>
+              →
+            </motion.span>
+          </Link>
+        </motion.div>
       </div>
 
       {/* Location permission prompt */}

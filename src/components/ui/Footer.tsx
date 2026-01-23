@@ -2,11 +2,15 @@
 
 import { useTranslations } from 'next-intl';
 
-export function Footer() {
+interface FooterProps {
+  className?: string;
+}
+
+export function Footer({ className = '' }: FooterProps) {
   const t = useTranslations('footer');
 
   return (
-    <footer className="mt-auto py-8 px-6 md:px-12 bg-white/60 dark:bg-white/5 backdrop-blur-xl border-t border-border/50">
+    <footer className={`mt-auto py-8 px-6 md:px-12 bg-white/60 dark:bg-white/5 backdrop-blur-xl border-t border-border/50 ${className}`}>
       <div className="max-w-7xl mx-auto">
         {/* Primary row - Branding and creator credit */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 pb-6 border-b border-border/30">

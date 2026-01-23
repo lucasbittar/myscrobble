@@ -198,17 +198,17 @@ export default function DashboardLayout({
       {/* Fixed organic shapes in background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <FlowingShape
-          className="absolute -top-32 -right-32 w-[600px] h-[600px] opacity-30"
+          className="absolute -top-8 md:-top-32 -right-8 md:-right-32 w-[180px] md:w-[600px] h-[180px] md:h-[600px] opacity-15 md:opacity-30"
           gradient="purple-pink"
           floatDirection="up"
         />
         <FlowingShape
-          className="absolute top-1/3 -left-48 w-[500px] h-[500px] opacity-25"
+          className="absolute top-1/3 -left-16 md:-left-48 w-[150px] md:w-[500px] h-[150px] md:h-[500px] opacity-12 md:opacity-25"
           gradient="teal-blue"
           floatDirection="right"
         />
         <FlowingShape
-          className="absolute -bottom-24 right-1/4 w-[450px] h-[450px] opacity-20"
+          className="absolute -bottom-8 md:-bottom-24 right-1/4 w-[140px] md:w-[450px] h-[140px] md:h-[450px] opacity-10 md:opacity-20"
           gradient="spotify"
           floatDirection="left"
         />
@@ -222,7 +222,7 @@ export default function DashboardLayout({
             : 'bg-transparent border-transparent'
         }`}
       >
-        <div className="mx-auto max-w-7xl px-6 md:px-12">
+        <div className="mx-auto max-w-7xl px-4 md:px-12">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
             <Link href="/dashboard" className="flex items-baseline gap-1">
@@ -375,8 +375,8 @@ export default function DashboardLayout({
         {children}
       </main>
 
-      {/* Footer with disclaimer */}
-      <Footer />
+      {/* Footer with disclaimer - hidden on Wrapped page (mobile only) */}
+      <Footer className={pathname?.includes('/dashboard/wrapped') ? 'hidden md:block' : ''} />
     </div>
   );
 }

@@ -254,11 +254,11 @@ export function MoodAnalysis() {
       initial={{ opacity: 0, y: 60 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
       transition={{ duration: 0.7, ease: 'easeOut' }}
-      className="py-16 md:py-24 px-6 md:px-12"
+      className="py-12 md:py-24 px-4 md:px-12"
     >
       <div className="max-w-7xl mx-auto">
         {/* Glass card container */}
-        <div className="relative bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-8 md:p-12 overflow-hidden">
+        <div className="relative bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-white/20 p-5 md:p-12 overflow-hidden">
           {/* Decorative gradient blur in background */}
           <div
             className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-3xl opacity-20 pointer-events-none"
@@ -268,21 +268,19 @@ export function MoodAnalysis() {
           />
 
           {/* Header */}
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-2">
-                {t('subtitle')}
-              </p>
-              <h2 className="text-3xl md:text-4xl font-black text-foreground">
-                {t('title')}
-              </h2>
-            </div>
+          <div className="mb-6 md:mb-10">
+            <p className="text-sm uppercase tracking-[1.5px] text-muted-foreground mb-2">
+              {t('subtitle')}
+            </p>
+            <h2 className="text-2xl md:text-4xl font-black text-foreground">
+              {t('title')}
+            </h2>
             <motion.button
               onClick={handleRefresh}
               disabled={showLoading}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[#8B5CF6]/10 text-[#8B5CF6] hover:bg-[#8B5CF6]/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[#8B5CF6]/10 text-[#8B5CF6] hover:bg-[#8B5CF6]/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-4"
             >
               <motion.span
                 animate={showLoading ? { rotate: 360 } : { rotate: 0 }}

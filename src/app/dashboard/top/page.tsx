@@ -132,75 +132,65 @@ export default function TopChartsPage() {
   return (
     <ShareProvider userName={userName}>
       <>
-        <div className="min-h-screen py-12 md:py-24 px-6 md:px-12">
+        <div className="min-h-screen py-8 md:py-24 px-4 md:px-12">
           <div className="max-w-7xl mx-auto">
-        {/* Header Section - Matching History page style */}
+        {/* Header Section - Stacked on mobile */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-12"
+          className="mb-8 md:mb-12"
         >
           {/* Title Row */}
-          <div className="flex flex-wrap items-start justify-between gap-6 mb-8">
-            <div>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="text-xs font-medium tracking-[0.3em] text-[#8B5CF6] uppercase mb-2"
-              >
-                {t('subtitle')}
-              </motion.p>
-              <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tight">
-                {t('title')}
-              </h1>
-            </div>
+          <div className="mb-6 md:mb-8">
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-xs font-medium tracking-[1.5px] text-[#8B5CF6] uppercase mb-2"
+            >
+              {t('subtitle')}
+            </motion.p>
+            <h1 className="text-3xl md:text-6xl font-black text-foreground tracking-tight">
+              {t('title')}
+            </h1>
 
-            {/* Action buttons */}
-            <div className="flex items-center gap-3">
-              {/* Share Button */}
-              {shareData && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+            {/* Time Range Pills - inline on mobile */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+              className="flex flex-wrap gap-2 relative z-10 mt-4"
+            >
+              {(Object.keys(timeRangeLabels) as TimeRange[]).map((range, index) => (
+                <motion.button
+                  key={range}
+                  initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.25 }}
+                  transition={{ delay: 0.3 + index * 0.05 }}
+                  onClick={() => handleTimeChange(range)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                    timeRange === range
+                      ? 'relative z-10 bg-[#8B5CF6] text-white shadow-lg shadow-[#8B5CF6]/25'
+                      : 'bg-white/60 dark:bg-white/10 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-white/80 dark:hover:bg-white/20'
+                  }`}
                 >
-                  <FloatingShareButton
-                    shareData={shareData}
-                    theme="purple"
-                    position="relative"
-                    size="lg"
-                    showLabel
-                  />
-                </motion.div>
-              )}
+                  {timeRangeLabels[range]}
+                </motion.button>
+              ))}
+            </motion.div>
 
-              {/* Time Range Pills */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 }}
-                className="flex gap-2"
-              >
-                {(Object.keys(timeRangeLabels) as TimeRange[]).map((range, index) => (
-                  <motion.button
-                    key={range}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.3 + index * 0.05 }}
-                    onClick={() => handleTimeChange(range)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
-                      timeRange === range
-                        ? 'relative z-10 bg-[#8B5CF6] text-white shadow-lg shadow-[#8B5CF6]/25'
-                        : 'bg-white/60 dark:bg-white/10 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-white/80 dark:hover:bg-white/20'
-                    }`}
-                  >
-                    {timeRangeLabels[range]}
-                  </motion.button>
-                ))}
-              </motion.div>
-            </div>
+            {/* Share Button - floating on mobile via mobileFixed prop */}
+            {shareData && (
+              <FloatingShareButton
+                shareData={shareData}
+                theme="purple"
+                position="relative"
+                size="lg"
+                showLabel
+                mobileFixed
+              />
+            )}
           </div>
 
           {/* View Mode Toggle */}
@@ -208,7 +198,7 @@ export default function TopChartsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="flex gap-2"
+            className="flex gap-2 relative z-10"
           >
             {(['artists', 'tracks', 'albums'] as ViewMode[]).map((view, index) => (
               <motion.button

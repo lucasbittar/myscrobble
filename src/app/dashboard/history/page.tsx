@@ -187,88 +187,78 @@ export default function HistoryPage() {
   return (
     <ShareProvider userName={userName}>
       <>
-        <div className="min-h-screen py-12 md:py-24 px-6 md:px-12">
+        <div className="min-h-screen py-8 md:py-24 px-4 md:px-12">
           <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-12"
+          className="mb-8 md:mb-12"
         >
-          {/* Title Row */}
-          <div className="flex flex-wrap items-start justify-between gap-6 mb-8">
-            <div>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="text-xs font-medium tracking-[0.3em] text-[#1DB954] uppercase mb-2"
-              >
-                {t('subtitle')}
-              </motion.p>
-              <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tight">
-                {t('title')}
-              </h1>
-              <p className="mt-3 text-muted-foreground">
-                {t('tracksSynced', { count: syncStatus?.history_count || 0 })}
-                {syncStatus?.user?.last_synced_at && (
-                  <span className="ml-3 text-sm opacity-60">
-                    • {t('lastSync', { date: new Date(syncStatus.user.last_synced_at).toLocaleDateString(locale) })}
-                  </span>
-                )}
-              </p>
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex items-center gap-3">
-              {/* Share Button */}
-              {shareData && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.25 }}
-                >
-                  <FloatingShareButton
-                    shareData={shareData}
-                    theme="green"
-                    position="relative"
-                    size="lg"
-                    showLabel
-                  />
-                </motion.div>
-              )}
-
-              {/* Sync Button */}
-              <motion.button
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 }}
-                onClick={() => syncMutation.mutate()}
-                disabled={syncMutation.isPending}
-                className="group relative px-6 py-3 rounded-full bg-[#1DB954] text-white font-semibold overflow-hidden transition-all hover:shadow-lg hover:shadow-[#1DB954]/25 disabled:opacity-50 cursor-pointer"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  {syncMutation.isPending ? (
-                    <>
-                      <motion.span
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                        className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                      />
-                      {tCommon('syncing')}
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                      {tCommon('syncNow')}
-                    </>
-                  )}
+          {/* Title Row - Stacked on mobile */}
+          <div className="mb-6 md:mb-8">
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-xs font-medium tracking-[1.5px] text-[#1DB954] uppercase mb-2"
+            >
+              {t('subtitle')}
+            </motion.p>
+            <h1 className="text-3xl md:text-6xl font-black text-foreground tracking-tight">
+              {t('title')}
+            </h1>
+            <p className="mt-2 md:mt-3 text-sm md:text-base text-muted-foreground">
+              {t('tracksSynced', { count: syncStatus?.history_count || 0 })}
+              {syncStatus?.user?.last_synced_at && (
+                <span className="ml-2 md:ml-3 text-xs md:text-sm opacity-60">
+                  • {t('lastSync', { date: new Date(syncStatus.user.last_synced_at).toLocaleDateString(locale) })}
                 </span>
-              </motion.button>
-            </div>
+              )}
+            </p>
+
+            {/* Sync Button - inline on mobile */}
+            <motion.button
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+              onClick={() => syncMutation.mutate()}
+              disabled={syncMutation.isPending}
+              className="group relative mt-4 px-5 md:px-6 py-2.5 md:py-3 rounded-full bg-[#1DB954] text-white font-semibold overflow-hidden transition-all hover:shadow-lg hover:shadow-[#1DB954]/25 disabled:opacity-50 cursor-pointer text-sm md:text-base"
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                {syncMutation.isPending ? (
+                  <>
+                    <motion.span
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                      className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                    />
+                    {tCommon('syncing')}
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    {tCommon('syncNow')}
+                  </>
+                )}
+              </span>
+            </motion.button>
+
+            {/* Share Button - floating on mobile via mobileFixed prop */}
+            {shareData && (
+              <FloatingShareButton
+                shareData={shareData}
+                theme="green"
+                position="relative"
+                size="lg"
+                showLabel
+                mobileFixed
+              />
+            )}
           </div>
 
           {/* Filter Pills */}
@@ -276,7 +266,7 @@ export default function HistoryPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="flex flex-wrap gap-2"
+            className="flex flex-wrap gap-2 relative z-10"
           >
             {(['all', 'today', 'week', 'month'] as const).map((range, index) => (
               <motion.button
@@ -290,7 +280,7 @@ export default function HistoryPage() {
                 }}
                 className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer ${
                   dateRange === range
-                    ? 'bg-foreground text-background shadow-lg'
+                    ? 'relative z-10 bg-foreground text-background shadow-lg'
                     : 'bg-white/60 dark:bg-white/10 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-white/80 dark:hover:bg-white/20'
                 }`}
               >

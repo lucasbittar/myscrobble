@@ -181,7 +181,7 @@ export default function ConcertsPage() {
       <>
         <div className="relative z-10 min-h-screen">
       {/* Section 1: Concerts */}
-      <div className="py-12 md:py-24 px-6 md:px-12">
+      <div className="py-8 md:py-24 px-4 md:px-12">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <PageHeader
@@ -215,6 +215,7 @@ export default function ConcertsPage() {
                       position="relative"
                       size="lg"
                       showLabel
+                      mobileFixed
                     />
                   </motion.div>
                 )}
@@ -370,13 +371,13 @@ export default function ConcertsPage() {
           className="relative border-t border-border"
         >
           {/* Section Header */}
-          <div className="px-6 md:px-12 py-8 bg-white/60 dark:bg-black/40 backdrop-blur-xl border-b border-white/20 dark:border-white/10">
+          <div className="px-4 md:px-12 py-6 md:py-8 bg-white/60 dark:bg-black/40 backdrop-blur-xl border-b border-white/20 dark:border-white/10">
             <div className="max-w-7xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <p className="text-xs font-semibold tracking-[0.3em] text-[#EC4899] uppercase mb-2">
+                <p className="text-xs font-semibold tracking-[1.5px] text-[#EC4899] uppercase mb-2">
                   {t('discoverNearby')}
                 </p>
                 <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
@@ -412,7 +413,7 @@ export default function ConcertsPage() {
 
             {/* Floating Venue Panel - aligned to page content */}
             <div className="absolute inset-0 pointer-events-none z-[600]">
-              <div className="h-full max-w-7xl mx-auto px-6 md:px-12 py-6 flex items-start">
+              <div className="h-full max-w-7xl mx-auto px-4 md:px-12 py-4 md:py-6 flex items-start">
                 <motion.div
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}

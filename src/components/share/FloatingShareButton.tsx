@@ -12,6 +12,7 @@ interface FloatingShareButtonProps {
   className?: string;
   showLabel?: boolean; // Whether to show label on hover
   size?: 'sm' | 'md' | 'lg';
+  mobileFixed?: boolean; // When true: fixed on mobile, relative on md+
 }
 
 const sizeConfig = {
@@ -27,6 +28,7 @@ export function FloatingShareButton({
   className = '',
   showLabel = true,
   size = 'md',
+  mobileFixed = false,
 }: FloatingShareButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
   const shareContext = useShareSafe();
@@ -42,8 +44,10 @@ export function FloatingShareButton({
 
   const handleClick = () => openModal(shareData, theme);
 
-  const positionClasses =
-    position === 'fixed'
+  // When mobileFixed is true, use fixed positioning on mobile, relative on md+
+  const positionClasses = mobileFixed
+    ? 'fixed bottom-4 right-4 z-50 md:relative md:bottom-auto md:right-auto md:z-auto'
+    : position === 'fixed'
       ? 'fixed bottom-6 right-6 z-50'
       : position === 'absolute'
         ? 'absolute'
