@@ -60,8 +60,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // TEASER MODE: Block all routes except landing page
-  if (IS_TEASER_MODE && pathname !== '/') {
+  // TEASER MODE: Block all routes except landing page and privacy policy
+  if (IS_TEASER_MODE && pathname !== '/' && pathname !== '/privacy') {
     const url = request.nextUrl.clone();
     url.pathname = '/';
     return NextResponse.redirect(url);
