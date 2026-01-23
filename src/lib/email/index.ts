@@ -1,20 +1,61 @@
-import { Resend } from 'resend';
-
-// Lazy initialization to avoid build-time errors when env var is missing
-let resendClient: Resend | null = null;
-
-function getResendClient(): Resend | null {
-  if (!resendClient && process.env.RESEND_API_KEY) {
-    const apiKey = process.env.RESEND_API_KEY.trim();
-    console.log('[Email] API key length:', apiKey.length);
-    console.log('[Email] API key prefix:', apiKey.substring(0, 6));
-    resendClient = new Resend(apiKey);
-  }
-  return resendClient;
-}
+// Using fetch directly instead of Resend SDK to avoid Vercel serverless issues
+const RESEND_API_URL = 'https://api.resend.com/emails';
 
 // TODO: Change back to 'MyScrobble <hello@myscrobble.fm>' after debugging
 const FROM_EMAIL = 'MyScrobble <onboarding@resend.dev>';
+
+interface ResendEmailPayload {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+}
+
+async function sendEmailViaResend(payload: ResendEmailPayload) {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY is not configured');
+  }
+
+  console.log('[Email] Using direct fetch to Resend API');
+  console.log('[Email] API key length:', apiKey.length);
+  console.log('[Email] API key prefix:', apiKey.substring(0, 6));
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+  try {
+    const response = await fetch(RESEND_API_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    const data = await response.json();
+    console.log('[Email] Resend response status:', response.status);
+    console.log('[Email] Resend response body:', JSON.stringify(data));
+
+    if (!response.ok) {
+      throw new Error(data.message || `Resend API error: ${response.status}`);
+    }
+
+    return data;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.error('[Email] Request timed out after 10s');
+      throw new Error('Email request timed out');
+    }
+    throw error;
+  }
+}
 
 type Locale = 'en' | 'pt-BR';
 
@@ -119,31 +160,14 @@ export async function sendWelcomeEmail({ to, name, position, locale = 'en' }: Se
   const t = translations.welcome[locale] || translations.welcome.en;
 
   console.log('[Email] Attempting to send welcome email to:', to);
-  console.log('[Email] RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
-
-  const resend = getResendClient();
-
-  if (!resend) {
-    const errorMsg = 'Resend client not initialized - missing API key';
-    console.error('[Email]', errorMsg);
-    throw new Error(errorMsg);
-  }
 
   try {
-    console.log('[Email] Sending email via Resend...');
-    const { data, error } = await resend.emails.send({
+    const data = await sendEmailViaResend({
       from: FROM_EMAIL,
       to,
       subject: t.subject,
       html: getWelcomeEmailHtml({ name, position, locale }),
     });
-
-    if (error) {
-      console.error('[Email] Resend API error:', JSON.stringify(error, null, 2));
-      console.error('[Email] Error name:', error.name);
-      console.error('[Email] Error message:', error.message);
-      throw error;
-    }
 
     console.log('[Email] Welcome email sent successfully:', data);
     return { success: true, data };
@@ -157,29 +181,14 @@ export async function sendAccessGrantedEmail({ to, name, locale = 'en' }: SendAc
   const t = translations.accessGranted[locale] || translations.accessGranted.en;
 
   console.log('[Email] Attempting to send access granted email to:', to);
-  console.log('[Email] RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
-
-  const resend = getResendClient();
-
-  if (!resend) {
-    const errorMsg = 'Resend client not initialized - missing API key';
-    console.error('[Email]', errorMsg);
-    throw new Error(errorMsg);
-  }
 
   try {
-    console.log('[Email] Sending email via Resend...');
-    const { data, error } = await resend.emails.send({
+    const data = await sendEmailViaResend({
       from: FROM_EMAIL,
       to,
       subject: t.subject,
       html: getAccessGrantedEmailHtml({ name, locale }),
     });
-
-    if (error) {
-      console.error('[Email] Resend API error:', error);
-      throw error;
-    }
 
     console.log('[Email] Access granted email sent successfully:', data);
     return { success: true, data };
