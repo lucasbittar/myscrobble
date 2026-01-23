@@ -1,8 +1,7 @@
 // Using fetch directly instead of Resend SDK to avoid Vercel serverless issues
 const RESEND_API_URL = 'https://api.resend.com/emails';
 
-// TODO: Change back to 'MyScrobble <hello@myscrobble.fm>' after debugging
-const FROM_EMAIL = 'MyScrobble <onboarding@resend.dev>';
+const FROM_EMAIL = 'MyScrobble <hello@myscrobble.fm>';
 
 interface ResendEmailPayload {
   from: string;
