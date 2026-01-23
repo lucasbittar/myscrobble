@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 interface FooterProps {
   className?: string;
@@ -18,17 +19,26 @@ export function Footer({ className = '' }: FooterProps) {
             <span className="text-lg font-bold text-foreground">MyScrobble</span>
             <span className="text-sm text-muted-foreground">.fm</span>
           </div>
-          <p className="text-sm text-muted-foreground">
-            {t('madeWith')} <span className="text-red-500">&#10084;</span> {t('by')}{' '}
-            <a
-              href="https://lucasbittar.dev"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground hover:text-primary transition-colors"
+          <div className="flex items-center gap-4">
+            <Link
+              href="/privacy"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Lucas
-            </a>
-          </p>
+              {t('privacy')}
+            </Link>
+            <span className="text-muted-foreground/30">|</span>
+            <p className="text-sm text-muted-foreground">
+              {t('madeWith')} <span className="text-red-500">&#10084;</span> {t('by')}{' '}
+              <a
+                href="https://lucasbittar.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-foreground hover:text-primary transition-colors"
+              >
+                Lucas
+              </a>
+            </p>
+          </div>
         </div>
 
         {/* Disclaimer section */}
