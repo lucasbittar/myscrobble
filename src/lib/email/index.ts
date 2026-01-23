@@ -13,7 +13,8 @@ function getResendClient(): Resend | null {
   return resendClient;
 }
 
-const FROM_EMAIL = 'MyScrobble <hello@myscrobble.fm>';
+// TODO: Change back to 'MyScrobble <hello@myscrobble.fm>' after debugging
+const FROM_EMAIL = 'MyScrobble <onboarding@resend.dev>';
 
 type Locale = 'en' | 'pt-BR';
 
