@@ -69,7 +69,7 @@ const translations = {
       waitlist: "Waitlist",
       yourPosition: "Your Position",
       admitOne: "Admit One",
-      greeting: (name: string) => `Hey ${name}!`,
+      greeting: (name?: string) => name ? `Hey ${name}!` : 'Hey!',
       message1: `You're officially on the <span style="color: #EC4899; font-weight: 600;">guest list</span>. We're at capacity right now, but your spot is saved.`,
       message2: "When doors open, you'll be first in line. Keep an eye on your inbox.",
       whatsWaiting: "What's waiting for you",
@@ -87,7 +87,7 @@ const translations = {
       waitlist: "Aguardando",
       yourPosition: "Sua Posição",
       admitOne: "Entrada Individual",
-      greeting: (name: string) => `E aí, ${name}!`,
+      greeting: (name?: string) => name ? `E aí, ${name}!` : 'E aí!',
       message1: `Você está oficialmente na <span style="color: #EC4899; font-weight: 600;">lista de espera</span>. Estamos no limite agora, mas seu lugar está garantido.`,
       message2: "Quando as portas abrirem, você será o primeiro da fila. Fique de olho no seu e-mail.",
       whatsWaiting: "O que te espera",
@@ -108,7 +108,7 @@ const translations = {
       accessGranted: "ACCESS GRANTED",
       fullAccess: "Full Access • All Areas",
       enterButton: "Enter MyScrobble →",
-      greeting: (name: string) => `Hey ${name}!`,
+      greeting: (name?: string) => name ? `Hey ${name}!` : 'Hey!',
       message1: `The wait is over. <span style="color: #1DB954; font-weight: 600;">Your spot is ready.</span>`,
       message2: "Log in with Spotify and start exploring your music story — top artists, personalized recommendations, upcoming concerts, and more.",
       nowUnlocked: "Now unlocked",
@@ -128,7 +128,7 @@ const translations = {
       accessGranted: "ACESSO LIBERADO",
       fullAccess: "Acesso Total • Todas as Áreas",
       enterButton: "Entrar no MyScrobble →",
-      greeting: (name: string) => `E aí, ${name}!`,
+      greeting: (name?: string) => name ? `E aí, ${name}!` : 'E aí!',
       message1: `A espera acabou. <span style="color: #1DB954; font-weight: 600;">Seu lugar está pronto.</span>`,
       message2: "Faça login com o Spotify e comece a explorar sua história musical — artistas favoritos, recomendações personalizadas, shows e muito mais.",
       nowUnlocked: "Agora desbloqueado",
@@ -199,7 +199,7 @@ export async function sendAccessGrantedEmail({ to, name, locale = 'en' }: SendAc
 
 function getWelcomeEmailHtml({ name, position, locale = 'en' }: { name?: string; position: number; locale?: Locale }) {
   const t = translations.welcome[locale] || translations.welcome.en;
-  const greeting = name ? name : 'there';
+  const greeting = name;
   const paddedPosition = String(position).padStart(3, '0');
 
   return `
@@ -402,7 +402,7 @@ function getWelcomeEmailHtml({ name, position, locale = 'en' }: { name?: string;
 
 function getAccessGrantedEmailHtml({ name, locale = 'en' }: { name?: string; locale?: Locale }) {
   const t = translations.accessGranted[locale] || translations.accessGranted.en;
-  const greeting = name ? name : 'there';
+  const greeting = name;
 
   return `
 <!DOCTYPE html>
