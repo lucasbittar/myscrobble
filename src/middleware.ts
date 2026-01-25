@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { checkRateLimit, getRateLimitForPath } from '@/lib/rate-limit';
 
 const locales = ['en', 'pt-BR'];
 const defaultLocale = 'en';
@@ -60,42 +59,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Apply rate limiting to API routes
+  // Skip API routes from locale processing
   if (pathname.startsWith('/api')) {
-    // Skip auth endpoints from rate limiting
-    if (pathname.startsWith('/api/auth')) {
-      return NextResponse.next();
-    }
-
-    // Get client identifier (prefer forwarded IP for proxied requests)
-    const forwarded = request.headers.get('x-forwarded-for');
-    const ip = forwarded?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
-    const identifier = `${ip}:${pathname}`;
-
-    const config = getRateLimitForPath(pathname);
-    const result = checkRateLimit(identifier, config);
-
-    if (!result.success) {
-      return NextResponse.json(
-        { error: 'Too many requests. Please try again later.' },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': String(Math.ceil((result.resetAt - Date.now()) / 1000)),
-            'X-RateLimit-Limit': String(config.maxRequests),
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': String(result.resetAt),
-          },
-        }
-      );
-    }
-
-    // Add rate limit headers to successful requests
-    const response = NextResponse.next();
-    response.headers.set('X-RateLimit-Limit', String(config.maxRequests));
-    response.headers.set('X-RateLimit-Remaining', String(result.remaining));
-    response.headers.set('X-RateLimit-Reset', String(result.resetAt));
-    return response;
+    return NextResponse.next();
   }
 
   // TEASER MODE: Block all routes except landing page and privacy policy
