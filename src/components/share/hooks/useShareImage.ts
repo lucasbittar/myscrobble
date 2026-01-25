@@ -23,10 +23,29 @@ interface UseShareImageParams {
 }
 
 /**
+ * Check if the device is mobile (for native share)
+ */
+function isMobileDevice(): boolean {
+  if (typeof window === 'undefined') return false;
+
+  // Check for touch capability and mobile user agent
+  const hasTouchScreen = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+  const isMobileUA = mobileRegex.test(navigator.userAgent);
+
+  return hasTouchScreen && isMobileUA;
+}
+
+/**
  * Check if the device supports native sharing with files
+ * Only returns true on mobile devices to avoid user gesture issues on desktop
  */
 function checkNativeShareSupport(): boolean {
   if (typeof navigator === 'undefined') return false;
+
+  // Only use native share on mobile devices
+  if (!isMobileDevice()) return false;
+
   if (!navigator.share) return false;
   if (!navigator.canShare) return false;
 
