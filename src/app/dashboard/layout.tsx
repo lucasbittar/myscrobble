@@ -397,8 +397,8 @@ export default function DashboardLayout({
         {children}
       </main>
 
-      {/* Footer with disclaimer - hidden on Wrapped page (mobile only) */}
-      <Footer className={pathname?.includes('/dashboard/wrapped') ? 'hidden md:block' : ''} />
+      {/* Footer with disclaimer - hidden on Wrapped page */}
+      <Footer className={pathname?.includes('/dashboard/wrapped') ? 'hidden' : ''} />
     </div>
   );
 }

@@ -45,6 +45,30 @@ export async function POST() {
     } else if (userError) {
       console.error('Error fetching user:', userError);
       return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 });
+    } else if (user) {
+      // User exists - update their profile info (important for waitlist users who connected later)
+      const typedExistingUser = user as { id: string; display_name: string | null; avatar_url: string | null };
+      const needsUpdate =
+        typedExistingUser.display_name !== session.user.name ||
+        typedExistingUser.avatar_url !== session.user.image;
+
+      if (needsUpdate) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: updatedUser } = await (supabase as any)
+          .from('users')
+          .update({
+            display_name: session.user.name,
+            email: session.user.email,
+            avatar_url: session.user.image,
+          })
+          .eq('id', typedExistingUser.id)
+          .select()
+          .single();
+
+        if (updatedUser) {
+          user = updatedUser;
+        }
+      }
     }
 
     if (!user) {
