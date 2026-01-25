@@ -10,6 +10,7 @@ interface UseShareImageOptions {
 interface UseShareImageReturn {
   isDownloading: boolean;
   canNativeShare: boolean;
+  error: string | null;
   downloadImage: () => Promise<void>;
   shareImage: () => Promise<void>;
 }
@@ -22,10 +23,29 @@ interface UseShareImageParams {
 }
 
 /**
+ * Check if the device is mobile (for native share)
+ */
+function isMobileDevice(): boolean {
+  if (typeof window === 'undefined') return false;
+
+  // Check for touch capability and mobile user agent
+  const hasTouchScreen = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+  const isMobileUA = mobileRegex.test(navigator.userAgent);
+
+  return hasTouchScreen && isMobileUA;
+}
+
+/**
  * Check if the device supports native sharing with files
+ * Only returns true on mobile devices to avoid user gesture issues on desktop
  */
 function checkNativeShareSupport(): boolean {
   if (typeof navigator === 'undefined') return false;
+
+  // Only use native share on mobile devices
+  if (!isMobileDevice()) return false;
+
   if (!navigator.share) return false;
   if (!navigator.canShare) return false;
 
@@ -45,6 +65,7 @@ export function useShareImage(
   const { fileName = 'myscrobble-share' } = options;
   const [isDownloading, setIsDownloading] = useState(false);
   const [canNativeShare, setCanNativeShare] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Check for native share support on mount (client-side only)
   useEffect(() => {
@@ -76,6 +97,7 @@ export function useShareImage(
   // Download image (fallback for desktop)
   const downloadImage = useCallback(async () => {
     setIsDownloading(true);
+    setError(null);
     try {
       const blob = await generateImageBlob();
 
@@ -88,8 +110,9 @@ export function useShareImage(
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Failed to generate image:', error);
+    } catch (err) {
+      console.error('Failed to generate image:', err);
+      setError('Failed to generate image. Please try again.');
     } finally {
       setIsDownloading(false);
     }
@@ -98,6 +121,7 @@ export function useShareImage(
   // Share image using native Web Share API (mobile)
   const shareImage = useCallback(async () => {
     setIsDownloading(true);
+    setError(null);
     try {
       const blob = await generateImageBlob();
 
@@ -112,10 +136,11 @@ export function useShareImage(
         title: 'MyScrobble',
         text: 'Check out my music stats!',
       });
-    } catch (error) {
+    } catch (err) {
       // User cancelled or share failed - don't log cancel errors
-      if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('Failed to share image:', error);
+      if (err instanceof Error && err.name !== 'AbortError') {
+        console.error('Failed to share image:', err);
+        setError('Failed to share image. Please try again.');
       }
     } finally {
       setIsDownloading(false);
@@ -125,6 +150,7 @@ export function useShareImage(
   return {
     isDownloading,
     canNativeShare,
+    error,
     downloadImage,
     shareImage,
   };

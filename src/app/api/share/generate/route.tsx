@@ -1,6 +1,5 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
-import { cookies } from 'next/headers';
 import { ReactElement } from 'react';
 import {
   ShareCardType,
@@ -165,16 +164,9 @@ interface GenerateRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    // Edge-compatible auth check: verify session cookie exists
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('spotify-session');
-    if (!sessionCookie?.value) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
+    // Note: No auth check here - this endpoint only renders images from
+    // data the user already has in their browser, and doesn't make
+    // expensive external API calls. User interaction is required to trigger it.
     const body: GenerateRequest = await request.json();
     console.log('[share/generate] Request received:', { type: body.type, theme: body.theme, locale: body.locale });
 

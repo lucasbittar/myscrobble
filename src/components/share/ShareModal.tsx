@@ -46,7 +46,7 @@ export function ShareModal() {
   const locale = useLocale();
   const colors = shareColorThemes[currentTheme];
 
-  const { isDownloading, canNativeShare, downloadImage, shareImage } = useShareImage(
+  const { isDownloading, canNativeShare, error, downloadImage, shareImage } = useShareImage(
     {
       type: currentData?.type || 'dashboard',
       data: currentData?.data || {},
@@ -186,6 +186,12 @@ export function ShareModal() {
                   </>
                 )}
               </motion.button>
+
+              {error && (
+                <p className="text-[10px] sm:text-xs text-center text-red-500">
+                  {error}
+                </p>
+              )}
 
               <p className="text-[10px] sm:text-xs text-center text-muted-foreground">
                 {t('optimizedFor')}
