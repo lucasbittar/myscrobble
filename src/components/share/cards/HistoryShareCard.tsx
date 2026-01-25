@@ -45,7 +45,7 @@ export function HistoryShareCard({ data, theme = 'green' }: HistoryShareCardProp
               color: '#8a8a8a',
             }}
           >
-            {data.recentTracks.length} {t('cards.tracksRecently')}
+            {tracks.length} {t('cards.tracksRecently')}
           </p>
         </div>
 

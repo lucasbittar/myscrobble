@@ -49,7 +49,7 @@ export function SatoriHistoryCard({ data, colors, t }: SatoriHistoryCardProps) {
               color: '#8a8a8a',
             }}
           >
-            {data.recentTracks.length} {t.tracksRecently}
+            {tracks.length} {t.tracksRecently}
           </span>
         </div>
 

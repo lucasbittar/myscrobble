@@ -5,14 +5,23 @@ import { useQuery } from '@tanstack/react-query';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { OnTourBadge } from '@/components/ui/OnTourBadge';
 import { PlayCountBadge } from '@/components/ui/PlayCountBadge';
-import { UpcomingConcerts } from '@/components/dashboard/UpcomingConcerts';
-import { MoodAnalysis } from '@/components/dashboard/MoodAnalysis';
 import { useTourStatusBatch } from '@/hooks/useTourStatus';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useTranslations } from 'next-intl';
 import { ShareProvider, ShareModal } from '@/components/share';
+
+// Lazy load below-the-fold components for better initial load performance
+const UpcomingConcerts = dynamic(
+  () => import('@/components/dashboard/UpcomingConcerts').then(mod => ({ default: mod.UpcomingConcerts })),
+  { ssr: false }
+);
+const MoodAnalysis = dynamic(
+  () => import('@/components/dashboard/MoodAnalysis').then(mod => ({ default: mod.MoodAnalysis })),
+  { ssr: false }
+);
 
 interface NowPlayingData {
   isPlaying: boolean;
@@ -139,7 +148,7 @@ async function fetchEnrichedStats(): Promise<EnrichedStats> {
   };
 }
 
-// Scroll reveal section wrapper
+// Scroll reveal section wrapper - optimized for performance
 function RevealSection({
   children,
   className,
@@ -155,9 +164,9 @@ function RevealSection({
   return (
     <motion.section
       ref={ref}
-      initial={{ opacity: 0, y: 60 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
-      transition={{ duration: 0.7, delay, ease: 'easeOut' }}
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.5, delay, ease: 'easeOut' }}
       className={className}
     >
       {children}
@@ -375,21 +384,21 @@ export default function DashboardPage() {
               value={enrichedStats?.totalTracks || 0}
               label={t('stats.tracksPlayed')}
               color="#8B5CF6"
-              delay={0.1}
+              delay={0.05}
             />
             <StatItem
               value={enrichedStats?.peakHour !== undefined ? formatHourNumber(enrichedStats.peakHour) : 0}
               label={t('stats.peakHour')}
               suffix={enrichedStats?.peakHour !== undefined ? (enrichedStats.peakHour >= 12 ? 'PM' : 'AM') : ''}
               color="#F59E0B"
-              delay={0.2}
+              delay={0.1}
             />
             <StatItem
               value={Math.round((enrichedStats?.totalMinutes || 0) / 28)}
               label={t('stats.avgPerDay')}
               suffix="min"
               color="#EC4899"
-              delay={0.3}
+              delay={0.15}
             />
           </div>
         </div>
@@ -655,9 +664,9 @@ function StatItem({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ duration: 0.6, delay }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.4, delay }}
     >
       <p className="text-5xl md:text-7xl font-black mb-2" style={{ color }}>
         {displayValue.toLocaleString()}
@@ -688,9 +697,9 @@ function ArtistCard({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      transition={{ duration: 0.6, delay }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.4, delay }}
       className="group relative"
     >
       <div className="relative aspect-square rounded-2xl overflow-hidden mb-4">
@@ -757,9 +766,9 @@ function TrackRow({
       href={track.spotifyUrl}
       target="_blank"
       rel="noopener noreferrer"
-      initial={{ opacity: 0, x: 20 }}
-      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
-      transition={{ duration: 0.5, delay }}
+      initial={{ opacity: 0, x: 15 }}
+      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 15 }}
+      transition={{ duration: 0.35, delay }}
       className="group flex items-center gap-4 py-4 px-4 -mx-4 rounded-xl border-b border-transparent hover:border-transparent hover:bg-white/70 dark:hover:bg-white/10 hover:backdrop-blur-sm hover:shadow-sm transition-all"
     >
       <span className="text-3xl font-black text-muted-foreground/30 w-12 group-hover:text-[#1DB954] transition-colors">
