@@ -2,15 +2,14 @@ import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { getSession } from '@/lib/session';
 import { sendAccessGrantedEmail } from '@/lib/email';
-
-const ADMIN_EMAIL = 'lucasbittar.magnani@gmail.com';
+import { isAdmin } from '@/lib/admin';
 
 // GET: Fetch all waitlist entries (admin only)
 export async function GET() {
   try {
     const session = await getSession();
 
-    if (!session?.user?.email || session.user.email !== ADMIN_EMAIL) {
+    if (!isAdmin(session?.user?.email)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -52,7 +51,7 @@ export async function PATCH(request: Request) {
   try {
     const session = await getSession();
 
-    if (!session?.user?.email || session.user.email !== ADMIN_EMAIL) {
+    if (!isAdmin(session?.user?.email)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

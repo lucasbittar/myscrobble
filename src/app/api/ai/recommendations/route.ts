@@ -4,6 +4,7 @@ import { getSession } from '@/lib/session';
 import { createSpotifyClient } from '@/lib/spotify';
 import { createServerClient } from '@/lib/supabase/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { withTimeout } from '@/lib/fetch-with-timeout';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
@@ -129,7 +130,11 @@ Respond in JSON format exactly like this:
 
 Only respond with valid JSON, no additional text.`;
 
-    const result = await model.generateContent(prompt);
+    const result = await withTimeout(
+      model.generateContent(prompt),
+      30000, // 30 second timeout for AI generation
+      "Recommendations request timed out"
+    );
     const response = result.response;
     const text = response.text();
 
@@ -206,12 +211,19 @@ Only respond with valid JSON, no additional text.`;
       });
     }
 
-    return NextResponse.json({
-      recommendations: enrichedRecommendations,
-      basedOn: artistNames.slice(0, 5),
-      generatedAt,
-      cached: false,
-    });
+    return NextResponse.json(
+      {
+        recommendations: enrichedRecommendations,
+        basedOn: artistNames.slice(0, 5),
+        generatedAt,
+        cached: false,
+      },
+      {
+        headers: {
+          'Cache-Control': 'private, max-age=3600', // 1 hour
+        },
+      }
+    );
   } catch (error) {
     console.error('Error generating recommendations:', error);
     return NextResponse.json(

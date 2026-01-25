@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
+import dynamic from 'next/dynamic';
 import { getLargestImage } from '@/lib/spotify';
 import {
   WrappedContainer,
@@ -13,17 +14,19 @@ import {
   SlideLanding,
   SlideIntro,
   SlideTopArtist,
-  SlideTopArtists,
-  SlideTopTrack,
-  SlideTopTracks,
-  SlideSonicAura,
-  SlideGenres,
-  SlideTimeListened,
-  SlidePatterns,
-  SlideSummary,
   MoodColor,
   GradientConfig,
 } from '@/components/wrapped';
+
+// Lazy load slides that appear later in the presentation
+const SlideTopArtists = dynamic(() => import('@/components/wrapped/slides/SlideTopArtists').then(m => m.SlideTopArtists));
+const SlideTopTrack = dynamic(() => import('@/components/wrapped/slides/SlideTopTrack').then(m => m.SlideTopTrack));
+const SlideTopTracks = dynamic(() => import('@/components/wrapped/slides/SlideTopTracks').then(m => m.SlideTopTracks));
+const SlideSonicAura = dynamic(() => import('@/components/wrapped/slides/SlideSonicAura').then(m => m.SlideSonicAura));
+const SlideGenres = dynamic(() => import('@/components/wrapped/slides/SlideGenres').then(m => m.SlideGenres));
+const SlideTimeListened = dynamic(() => import('@/components/wrapped/slides/SlideTimeListened').then(m => m.SlideTimeListened));
+const SlidePatterns = dynamic(() => import('@/components/wrapped/slides/SlidePatterns').then(m => m.SlidePatterns));
+const SlideSummary = dynamic(() => import('@/components/wrapped/slides/SlideSummary').then(m => m.SlideSummary));
 
 type TimeRange = 'short_term' | 'medium_term' | 'long_term';
 

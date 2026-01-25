@@ -212,7 +212,7 @@ export default function DashboardPage() {
   const { data: nowPlaying } = useQuery({
     queryKey: ['now-playing'],
     queryFn: fetchNowPlaying,
-    refetchInterval: 10000,
+    refetchInterval: 30000, // Refresh every 30 seconds to reduce API load
   });
 
   const { data: recentTracks } = useQuery({

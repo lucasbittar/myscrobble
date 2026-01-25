@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { cookies, headers } from "next/headers";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getSession } from "@/lib/session";
+import { withTimeout } from "@/lib/fetch-with-timeout";
+import { sanitizeArtistNames } from "@/lib/sanitize";
 import {
   filterEventsByDistance,
   getDefaultLocation,
@@ -49,16 +52,30 @@ interface GeminiBatchResponse {
 
 export async function POST(request: Request) {
   try {
+    const session = await getSession();
+    if (!session?.accessToken) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
-    const { artists, lat, lng } = body as {
+    const { artists: rawArtists, lat, lng } = body as {
       artists: string[];
       lat?: number;
       lng?: number;
     };
 
-    if (!artists || !Array.isArray(artists) || artists.length === 0) {
+    if (!rawArtists || !Array.isArray(rawArtists) || rawArtists.length === 0) {
       return NextResponse.json(
         { error: "Artists array is required" },
+        { status: 400 }
+      );
+    }
+
+    // Sanitize artist names to prevent prompt injection
+    const artists = sanitizeArtistNames(rawArtists);
+    if (artists.length === 0) {
+      return NextResponse.json(
+        { error: "No valid artist names provided" },
         { status: 400 }
       );
     }
@@ -130,7 +147,11 @@ Return ONLY a valid JSON object with each artist as a key:
 Use the EXACT artist names provided as keys. If no tour dates found for an artist, return: {"onTour": false, "events": []}
 Only include events in 2026. Only respond with valid JSON, no additional text or markdown.`;
 
-    const result = await model.generateContent(prompt);
+    const result = await withTimeout(
+      model.generateContent(prompt),
+      30000, // 30 second timeout for AI generation
+      "Batch tour status request timed out"
+    );
     const response = result.response;
     const text = response.text();
 
@@ -200,7 +221,11 @@ Only include events in 2026. Only respond with valid JSON, no additional text or
       };
     }
 
-    return NextResponse.json(batchResponse);
+    return NextResponse.json(batchResponse, {
+      headers: {
+        'Cache-Control': 'private, max-age=21600', // 6 hours
+      },
+    });
   } catch (error) {
     console.error("Error fetching batch tour status:", error);
     // Return empty response on any error

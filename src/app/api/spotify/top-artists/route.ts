@@ -20,7 +20,11 @@ export async function GET(request: Request) {
     const spotify = createSpotifyClient(session.accessToken);
     const topArtists = await spotify.getTopArtists(timeRange, Math.min(limit, 50));
 
-    return NextResponse.json(topArtists);
+    return NextResponse.json(topArtists, {
+      headers: {
+        'Cache-Control': 'private, max-age=300', // 5 minutes
+      },
+    });
   } catch (error) {
     console.error('Error fetching top artists:', error);
     return NextResponse.json({ error: 'Failed to fetch top artists' }, { status: 500 });

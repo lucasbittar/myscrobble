@@ -72,7 +72,11 @@ export async function GET(request: Request) {
       }
     }
 
-    return NextResponse.json(topTracks);
+    return NextResponse.json(topTracks, {
+      headers: {
+        'Cache-Control': 'private, max-age=300', // 5 minutes
+      },
+    });
   } catch (error) {
     console.error('Error fetching top tracks:', error);
     return NextResponse.json({ error: 'Failed to fetch top tracks' }, { status: 500 });

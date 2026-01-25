@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { cookies, headers } from "next/headers";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getSession } from "@/lib/session";
+import { withTimeout } from "@/lib/fetch-with-timeout";
+import { sanitizeGenres } from "@/lib/sanitize";
 import { getDefaultLocation, calculateDistanceKm } from "@/lib/geo";
 import type { Venue, VenueResponse } from "@/types/venue";
 
@@ -71,6 +74,11 @@ interface GeminiResponse {
 
 export async function GET(request: Request) {
   try {
+    const session = await getSession();
+    if (!session?.accessToken) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const latParam = searchParams.get("lat");
     const lngParam = searchParams.get("lng");
@@ -92,10 +100,11 @@ export async function GET(request: Request) {
       lng: lngParam ? parseFloat(lngParam) : defaultLocation.lng,
     };
 
-    // Parse genres from param or use defaults
-    const genres = genresParam
+    // Parse and sanitize genres from param or use defaults
+    const rawGenres = genresParam
       ? genresParam.split(",").map((g) => g.trim())
       : ["pop", "rock", "electronic"];
+    const genres = sanitizeGenres(rawGenres);
 
     // First, get the city name from coordinates
     const cityName = await getCityFromCoordinates(userLocation.lat, userLocation.lng);
@@ -156,7 +165,11 @@ Guidelines:
 - type must be one of: ${venueTypeLabels}
 - Only respond with valid JSON, no additional text or markdown`;
 
-    const result = await model.generateContent(prompt);
+    const result = await withTimeout(
+      model.generateContent(prompt),
+      30000, // 30 second timeout for AI generation
+      "Venues request timed out"
+    );
     const response = result.response;
     const text = response.text();
 

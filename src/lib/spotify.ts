@@ -1,4 +1,9 @@
+import { fetchWithTimeout, FetchTimeoutError } from './fetch-with-timeout';
+
 const SPOTIFY_API_BASE = 'https://api.spotify.com/v1';
+const SPOTIFY_API_TIMEOUT = 10000; // 10 seconds
+
+export { FetchTimeoutError };
 
 // Custom error class for Spotify API errors
 export class SpotifyApiError extends Error {
@@ -124,8 +129,9 @@ class SpotifyClient {
   }
 
   private async fetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const response = await fetch(`${SPOTIFY_API_BASE}${endpoint}`, {
+    const response = await fetchWithTimeout(`${SPOTIFY_API_BASE}${endpoint}`, {
       ...options,
+      timeout: SPOTIFY_API_TIMEOUT,
       headers: {
         Authorization: `Bearer ${this.accessToken}`,
         'Content-Type': 'application/json',
