@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { cookies, headers } from "next/headers";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getSession } from "@/lib/session";
+import { withTimeout } from "@/lib/fetch-with-timeout";
+import { sanitizeArtistName } from "@/lib/sanitize";
 import {
   filterEventsByDistance,
   getDefaultLocation,
@@ -45,14 +48,28 @@ interface GeminiResponse {
 
 export async function GET(request: Request) {
   try {
+    const session = await getSession();
+    if (!session?.accessToken) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
-    const artist = searchParams.get("artist");
+    const rawArtist = searchParams.get("artist");
     const latParam = searchParams.get("lat");
     const lngParam = searchParams.get("lng");
 
-    if (!artist) {
+    if (!rawArtist) {
       return NextResponse.json(
         { error: "Artist name is required" },
+        { status: 400 }
+      );
+    }
+
+    // Sanitize artist name to prevent prompt injection
+    const artist = sanitizeArtistName(rawArtist);
+    if (!artist) {
+      return NextResponse.json(
+        { error: "Invalid artist name" },
         { status: 400 }
       );
     }
@@ -112,7 +129,11 @@ Return ONLY a valid JSON object:
 If no tour dates found, return: {"onTour": false, "events": []}
 Only include events in 2026. Only respond with valid JSON, no additional text or markdown.`;
 
-    const result = await model.generateContent(prompt);
+    const result = await withTimeout(
+      model.generateContent(prompt),
+      30000, // 30 second timeout for AI generation
+      "Tour status request timed out"
+    );
     const response = result.response;
     const text = response.text();
 
@@ -162,7 +183,11 @@ Only include events in 2026. Only respond with valid JSON, no additional text or
       events: filteredEvents,
     };
 
-    return NextResponse.json(tourResponse);
+    return NextResponse.json(tourResponse, {
+      headers: {
+        'Cache-Control': 'private, max-age=21600', // 6 hours
+      },
+    });
   } catch (error) {
     console.error("Error fetching tour status:", error);
     // Return empty response on any error

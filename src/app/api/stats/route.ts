@@ -36,18 +36,9 @@ export async function GET(request: Request) {
       });
     }
 
-    // Build base query filter
     const userId = (user as { id: string }).id;
-    let dateFilter = '';
-    if (startDate && endDate) {
-      dateFilter = `and played_at >= '${startDate}' and played_at <= '${endDate}'`;
-    } else if (startDate) {
-      dateFilter = `and played_at >= '${startDate}'`;
-    } else if (endDate) {
-      dateFilter = `and played_at <= '${endDate}'`;
-    }
 
-    // Get basic stats using raw query for aggregations
+    // Get basic stats using RPC function for aggregations
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: basicStats } = await (supabase as any).rpc('get_user_stats', {
       p_user_id: userId,

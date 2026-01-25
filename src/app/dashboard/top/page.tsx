@@ -155,42 +155,45 @@ export default function TopChartsPage() {
               {t('title')}
             </h1>
 
-            {/* Time Range Pills - inline on mobile */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              className="flex flex-wrap gap-2 relative z-10 mt-4"
-            >
-              {(Object.keys(timeRangeLabels) as TimeRange[]).map((range, index) => (
-                <motion.button
-                  key={range}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3 + index * 0.05 }}
-                  onClick={() => handleTimeChange(range)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
-                    timeRange === range
-                      ? 'relative z-10 bg-[#8B5CF6] text-white shadow-lg shadow-[#8B5CF6]/25'
-                      : 'bg-white/60 dark:bg-white/10 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-white/80 dark:hover:bg-white/20'
-                  }`}
-                >
-                  {timeRangeLabels[range]}
-                </motion.button>
-              ))}
-            </motion.div>
+            {/* Controls Row - Time Range left, Share right on desktop */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4">
+              {/* Time Range Pills */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 }}
+                className="flex flex-wrap gap-2 relative z-10"
+              >
+                {(Object.keys(timeRangeLabels) as TimeRange[]).map((range, index) => (
+                  <motion.button
+                    key={range}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.3 + index * 0.05 }}
+                    onClick={() => handleTimeChange(range)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                      timeRange === range
+                        ? 'relative z-10 bg-[#8B5CF6] text-white shadow-lg shadow-[#8B5CF6]/25'
+                        : 'bg-white/60 dark:bg-white/10 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-white/80 dark:hover:bg-white/20'
+                    }`}
+                  >
+                    {timeRangeLabels[range]}
+                  </motion.button>
+                ))}
+              </motion.div>
 
-            {/* Share Button - floating on mobile via mobileFixed prop */}
-            {shareData && (
-              <FloatingShareButton
-                shareData={shareData}
-                theme="purple"
-                position="relative"
-                size="lg"
-                showLabel
-                mobileFixed
-              />
-            )}
+              {/* Share Button - floating on mobile, aligned right on desktop */}
+              {shareData && (
+                <FloatingShareButton
+                  shareData={shareData}
+                  theme="purple"
+                  position="relative"
+                  size="lg"
+                  showLabel
+                  mobileFixed
+                />
+              )}
+            </div>
           </div>
 
           {/* View Mode Toggle */}

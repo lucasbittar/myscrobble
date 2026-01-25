@@ -43,7 +43,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       clientId: process.env.SPOTIFY_CLIENT_ID!,
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET!,
-      checks: ['state'], // Disable PKCE, use only state check
+      checks: ['pkce', 'state'],
       profile(profile) {
         return {
           id: profile.id,

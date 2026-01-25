@@ -218,47 +218,50 @@ export default function HistoryPage() {
               )}
             </p>
 
-            {/* Sync Button - inline on mobile */}
-            <motion.button
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              onClick={() => syncMutation.mutate()}
-              disabled={syncMutation.isPending}
-              className="group relative mt-4 px-5 md:px-6 py-2.5 md:py-3 rounded-full bg-[#1DB954] text-white font-semibold overflow-hidden transition-all hover:shadow-lg hover:shadow-[#1DB954]/25 disabled:opacity-50 cursor-pointer text-sm md:text-base"
-            >
-              <span className="relative z-10 flex items-center gap-2">
-                {syncMutation.isPending ? (
-                  <>
-                    <motion.span
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                      className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                    />
-                    {tCommon('syncing')}
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    {tCommon('syncNow')}
-                  </>
-                )}
-              </span>
-            </motion.button>
+            {/* Controls Row - Sync left, Share right on desktop */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4">
+              {/* Sync Button */}
+              <motion.button
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 }}
+                onClick={() => syncMutation.mutate()}
+                disabled={syncMutation.isPending}
+                className="group relative px-5 md:px-6 py-2.5 md:py-3 rounded-full bg-[#1DB954] text-white font-semibold overflow-hidden transition-all hover:shadow-lg hover:shadow-[#1DB954]/25 disabled:opacity-50 cursor-pointer text-sm md:text-base w-fit"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  {syncMutation.isPending ? (
+                    <>
+                      <motion.span
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                        className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                      />
+                      {tCommon('syncing')}
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      {tCommon('syncNow')}
+                    </>
+                  )}
+                </span>
+              </motion.button>
 
-            {/* Share Button - floating on mobile via mobileFixed prop */}
-            {shareData && (
-              <FloatingShareButton
-                shareData={shareData}
-                theme="green"
-                position="relative"
-                size="lg"
-                showLabel
-                mobileFixed
-              />
-            )}
+              {/* Share Button - floating on mobile, aligned right on desktop */}
+              {shareData && (
+                <FloatingShareButton
+                  shareData={shareData}
+                  theme="green"
+                  position="relative"
+                  size="lg"
+                  showLabel
+                  mobileFixed
+                />
+              )}
+            </div>
           </div>
 
           {/* Filter Pills */}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { ShareCardType, ShareColorTheme, ShareData } from '../share-types';
 
 interface UseShareImageOptions {
@@ -9,7 +9,9 @@ interface UseShareImageOptions {
 
 interface UseShareImageReturn {
   isDownloading: boolean;
+  canNativeShare: boolean;
   downloadImage: () => Promise<void>;
+  shareImage: () => Promise<void>;
 }
 
 interface UseShareImageParams {
@@ -19,36 +21,63 @@ interface UseShareImageParams {
   locale?: string;
 }
 
+/**
+ * Check if the device supports native sharing with files
+ */
+function checkNativeShareSupport(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  if (!navigator.share) return false;
+  if (!navigator.canShare) return false;
+
+  // Check if file sharing is supported by testing with a dummy file
+  try {
+    const testFile = new File(['test'], 'test.png', { type: 'image/png' });
+    return navigator.canShare({ files: [testFile] });
+  } catch {
+    return false;
+  }
+}
+
 export function useShareImage(
   params: UseShareImageParams,
   options: UseShareImageOptions = {}
 ): UseShareImageReturn {
   const { fileName = 'myscrobble-share' } = options;
   const [isDownloading, setIsDownloading] = useState(false);
+  const [canNativeShare, setCanNativeShare] = useState(false);
 
+  // Check for native share support on mount (client-side only)
+  useEffect(() => {
+    setCanNativeShare(checkNativeShareSupport());
+  }, []);
+
+  // Generate image blob from API
+  const generateImageBlob = useCallback(async (): Promise<Blob> => {
+    const response = await fetch('/api/share/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        type: params.type,
+        data: params.data,
+        theme: params.theme,
+        locale: params.locale,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to generate image');
+    }
+
+    return response.blob();
+  }, [params.type, params.data, params.theme, params.locale]);
+
+  // Download image (fallback for desktop)
   const downloadImage = useCallback(async () => {
     setIsDownloading(true);
     try {
-      // Call the server-side API to generate the image using Satori
-      const response = await fetch('/api/share/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: params.type,
-          data: params.data,
-          theme: params.theme,
-          locale: params.locale,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate image');
-      }
-
-      // Get the image blob from the response
-      const blob = await response.blob();
+      const blob = await generateImageBlob();
 
       // Create download link
       const url = URL.createObjectURL(blob);
@@ -64,10 +93,39 @@ export function useShareImage(
     } finally {
       setIsDownloading(false);
     }
-  }, [params.type, params.data, params.theme, params.locale, fileName]);
+  }, [generateImageBlob, fileName]);
+
+  // Share image using native Web Share API (mobile)
+  const shareImage = useCallback(async () => {
+    setIsDownloading(true);
+    try {
+      const blob = await generateImageBlob();
+
+      // Create a File object from the blob
+      const file = new File([blob], `${fileName}-${Date.now()}.png`, {
+        type: 'image/png',
+      });
+
+      // Use the Web Share API
+      await navigator.share({
+        files: [file],
+        title: 'MyScrobble',
+        text: 'Check out my music stats!',
+      });
+    } catch (error) {
+      // User cancelled or share failed - don't log cancel errors
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('Failed to share image:', error);
+      }
+    } finally {
+      setIsDownloading(false);
+    }
+  }, [generateImageBlob, fileName]);
 
   return {
     isDownloading,
+    canNativeShare,
     downloadImage,
+    shareImage,
   };
 }

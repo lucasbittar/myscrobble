@@ -40,7 +40,7 @@ export function NowPlaying() {
   const { data, isLoading } = useQuery({
     queryKey: ['now-playing'],
     queryFn: fetchNowPlaying,
-    refetchInterval: 10000, // Refresh every 10 seconds
+    refetchInterval: 30000, // Refresh every 30 seconds to reduce API load
   });
 
   if (isLoading) {

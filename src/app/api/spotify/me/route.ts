@@ -23,7 +23,13 @@ export async function GET() {
     const spotify = createSpotifyClient(session.accessToken);
     const user = await spotify.getCurrentUser();
 
-    return NextResponse.json(user);
+    // Return only non-sensitive user data
+    return NextResponse.json({
+      id: user.id,
+      display_name: user.display_name,
+      images: user.images,
+      // Omit sensitive fields: email, country, product
+    });
   } catch (error) {
     console.error('Error fetching user:', error);
 

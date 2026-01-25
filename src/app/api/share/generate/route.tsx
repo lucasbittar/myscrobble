@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
+import { cookies } from 'next/headers';
 import { ReactElement } from 'react';
 import {
   ShareCardType,
@@ -164,6 +165,16 @@ interface GenerateRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    // Edge-compatible auth check: verify session cookie exists
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get('spotify-session');
+    if (!sessionCookie?.value) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const body: GenerateRequest = await request.json();
     console.log('[share/generate] Request received:', { type: body.type, theme: body.theme, locale: body.locale });
 

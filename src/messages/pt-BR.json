@@ -414,8 +414,21 @@
   },
   "podcasts": {
     "title": "Podcasts",
-    "subtitle": "Seus programas e episódios salvos",
+    "subtitle": "Sua Biblioteca de Áudio",
+    "loading": "Carregando podcasts...",
     "tabs": {
+      "shows": "Programas",
+      "episodes": "Episódios"
+    },
+    "hero": {
+      "featured": "Programa em Destaque",
+      "openInSpotify": "Abrir no Spotify"
+    },
+    "sections": {
+      "yourShows": "Seus Programas",
+      "savedEpisodes": "Episódios Salvos"
+    },
+    "stats": {
       "shows": "Programas",
       "episodes": "Episódios"
     },
