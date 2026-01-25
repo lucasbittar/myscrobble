@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { ShareCardType, ShareColorTheme, ShareData } from '../share-types';
 
 interface UseShareImageOptions {
@@ -9,6 +9,7 @@ interface UseShareImageOptions {
 
 interface UseShareImageReturn {
   isDownloading: boolean;
+  isPreGenerating: boolean;
   canNativeShare: boolean;
   error: string | null;
   downloadImage: () => Promise<void>;
@@ -64,16 +65,82 @@ export function useShareImage(
 ): UseShareImageReturn {
   const { fileName = 'myscrobble-share' } = options;
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isPreGenerating, setIsPreGenerating] = useState(false);
   const [canNativeShare, setCanNativeShare] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Cache for pre-generated blob
+  const cachedBlobRef = useRef<Blob | null>(null);
+  const cacheKeyRef = useRef<string>('');
 
   // Check for native share support on mount (client-side only)
   useEffect(() => {
     setCanNativeShare(checkNativeShareSupport());
   }, []);
 
-  // Generate image blob from API
+  // Create a cache key from params
+  const getCacheKey = useCallback(() => {
+    return JSON.stringify({
+      type: params.type,
+      data: params.data,
+      theme: params.theme,
+      locale: params.locale,
+    });
+  }, [params.type, params.data, params.theme, params.locale]);
+
+  // Pre-generate image when modal opens (params change)
+  useEffect(() => {
+    const currentKey = getCacheKey();
+
+    // Skip if already cached with same params
+    if (cacheKeyRef.current === currentKey && cachedBlobRef.current) {
+      return;
+    }
+
+    // Skip if no data
+    if (!params.data || Object.keys(params.data).length === 0) {
+      return;
+    }
+
+    const preGenerate = async () => {
+      setIsPreGenerating(true);
+      try {
+        const response = await fetch('/api/share/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type: params.type,
+            data: params.data,
+            theme: params.theme,
+            locale: params.locale,
+          }),
+        });
+
+        if (response.ok) {
+          cachedBlobRef.current = await response.blob();
+          cacheKeyRef.current = currentKey;
+        }
+      } catch (err) {
+        console.log('Pre-generation failed, will generate on demand:', err);
+      } finally {
+        setIsPreGenerating(false);
+      }
+    };
+
+    preGenerate();
+  }, [getCacheKey, params.type, params.data, params.theme, params.locale]);
+
+  // Generate image blob from API (uses cache if available)
   const generateImageBlob = useCallback(async (): Promise<Blob> => {
+    // Use cached blob if available and params match
+    const currentKey = getCacheKey();
+    if (cachedBlobRef.current && cacheKeyRef.current === currentKey) {
+      return cachedBlobRef.current;
+    }
+
+    // Otherwise generate fresh
     const response = await fetch('/api/share/generate', {
       method: 'POST',
       headers: {
@@ -91,8 +158,14 @@ export function useShareImage(
       throw new Error('Failed to generate image');
     }
 
-    return response.blob();
-  }, [params.type, params.data, params.theme, params.locale]);
+    const blob = await response.blob();
+
+    // Cache it for future use
+    cachedBlobRef.current = blob;
+    cacheKeyRef.current = currentKey;
+
+    return blob;
+  }, [params.type, params.data, params.theme, params.locale, getCacheKey]);
 
   // Download image (fallback for desktop)
   const downloadImage = useCallback(async () => {
@@ -165,6 +238,7 @@ export function useShareImage(
 
   return {
     isDownloading,
+    isPreGenerating,
     canNativeShare,
     error,
     downloadImage,
