@@ -46,7 +46,7 @@ export function ShareModal() {
   const locale = useLocale();
   const colors = shareColorThemes[currentTheme];
 
-  const { isDownloading, downloadImage } = useShareImage(
+  const { isDownloading, canNativeShare, downloadImage, shareImage } = useShareImage(
     {
       type: currentData?.type || 'dashboard',
       data: currentData?.data || {},
@@ -57,6 +57,9 @@ export function ShareModal() {
       fileName: currentData ? `myscrobble-${currentData.type}` : 'myscrobble-share',
     }
   );
+
+  // Use native share on mobile, download on desktop
+  const handleShare = canNativeShare ? shareImage : downloadImage;
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -148,7 +151,7 @@ export function ShareModal() {
             {/* Actions - compact */}
             <div className="px-4 pb-4 sm:px-6 sm:pb-5 space-y-3">
               <motion.button
-                onClick={downloadImage}
+                onClick={handleShare}
                 disabled={isDownloading}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -166,6 +169,13 @@ export function ShareModal() {
                       className="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 border-white border-t-transparent"
                     />
                     {t('generating')}
+                  </>
+                ) : canNativeShare ? (
+                  <>
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    {t('shareButton')}
                   </>
                 ) : (
                   <>
