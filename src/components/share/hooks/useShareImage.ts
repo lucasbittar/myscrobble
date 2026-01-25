@@ -119,6 +119,7 @@ export function useShareImage(
   }, [generateImageBlob, fileName]);
 
   // Share image using native Web Share API (mobile)
+  // Falls back to download if native share fails
   const shareImage = useCallback(async () => {
     setIsDownloading(true);
     setError(null);
@@ -130,18 +131,33 @@ export function useShareImage(
         type: 'image/png',
       });
 
-      // Use the Web Share API
-      await navigator.share({
-        files: [file],
-        title: 'MyScrobble',
-        text: 'Check out my music stats!',
-      });
-    } catch (err) {
-      // User cancelled or share failed - don't log cancel errors
-      if (err instanceof Error && err.name !== 'AbortError') {
-        console.error('Failed to share image:', err);
-        setError('Failed to share image. Please try again.');
+      try {
+        // Try native share first
+        await navigator.share({
+          files: [file],
+          title: 'MyScrobble',
+          text: 'Check out my music stats!',
+        });
+      } catch (shareErr) {
+        // If user cancelled, don't do anything
+        if (shareErr instanceof Error && shareErr.name === 'AbortError') {
+          return;
+        }
+
+        // For NotAllowedError or other share failures, fall back to download
+        console.log('Native share failed, falling back to download:', shareErr);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${fileName}-${Date.now()}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
       }
+    } catch (err) {
+      console.error('Failed to generate image:', err);
+      setError('Failed to generate image. Please try again.');
     } finally {
       setIsDownloading(false);
     }
