@@ -46,7 +46,7 @@ export function ShareModal() {
   const locale = useLocale();
   const colors = shareColorThemes[currentTheme];
 
-  const { isDownloading, canNativeShare, error, downloadImage, shareImage } = useShareImage(
+  const { isDownloading, isPreGenerating, canNativeShare, error, downloadImage, shareImage } = useShareImage(
     {
       type: currentData?.type || 'dashboard',
       data: currentData?.data || {},
@@ -152,7 +152,7 @@ export function ShareModal() {
             <div className="px-4 pb-4 sm:px-6 sm:pb-5 space-y-3">
               <motion.button
                 onClick={handleShare}
-                disabled={isDownloading}
+                disabled={isDownloading || isPreGenerating}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="w-full py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold text-white transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
@@ -161,14 +161,14 @@ export function ShareModal() {
                   boxShadow: `0 4px 20px ${colors.glow}`,
                 }}
               >
-                {isDownloading ? (
+                {isDownloading || isPreGenerating ? (
                   <>
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                       className="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 border-white border-t-transparent"
                     />
-                    {t('generating')}
+                    {isPreGenerating ? t('preparing') : t('generating')}
                   </>
                 ) : canNativeShare ? (
                   <>
