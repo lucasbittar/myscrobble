@@ -10,12 +10,13 @@ interface ColorTheme {
 interface SatoriTopChartsCardProps {
   data: TopChartsShareData;
   colors: ColorTheme;
+  backgroundImage?: string;
   t: {
     title: string;
   };
 }
 
-export function SatoriTopChartsCard({ data, colors, t }: SatoriTopChartsCardProps) {
+export function SatoriTopChartsCard({ data, colors, backgroundImage, t }: SatoriTopChartsCardProps) {
   const isCircular = data.type === 'artists';
   const isAlbums = data.type === 'albums';
   const items = data.items.slice(0, 5);
@@ -25,7 +26,7 @@ export function SatoriTopChartsCard({ data, colors, t }: SatoriTopChartsCardProp
   // For albums, use a special editorial layout
   if (isAlbums && heroItem) {
     return (
-      <SatoriCardWrapper colors={colors} variant="vibrant">
+      <SatoriCardWrapper colors={colors} variant="vibrant" backgroundImage={backgroundImage}>
         <div
           style={{
             flex: 1,
@@ -435,7 +436,7 @@ export function SatoriTopChartsCard({ data, colors, t }: SatoriTopChartsCardProp
 
   // Default layout for artists and tracks
   return (
-    <SatoriCardWrapper colors={colors} variant="vibrant">
+    <SatoriCardWrapper colors={colors} variant="vibrant" backgroundImage={backgroundImage}>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* Header */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 72 }}>

@@ -35,17 +35,18 @@ const moodGradients: Record<
 
 interface SatoriSonicAuraCardProps {
   data: SonicAuraShareData;
+  backgroundImage?: string;
   t: {
     sonicAura: string;
   };
 }
 
-export function SatoriSonicAuraCard({ data, t }: SatoriSonicAuraCardProps) {
+export function SatoriSonicAuraCard({ data, backgroundImage, t }: SatoriSonicAuraCardProps) {
   const colors = moodGradients[data.moodColor];
   const tags = data.moodTags.slice(0, 4);
 
   return (
-    <SatoriCardWrapper colors={colors} variant="vibrant">
+    <SatoriCardWrapper colors={colors} variant="vibrant" backgroundImage={backgroundImage}>
       <div
         style={{
           flex: 1,
@@ -69,62 +70,69 @@ export function SatoriSonicAuraCard({ data, t }: SatoriSonicAuraCardProps) {
           {t.sonicAura}
         </span>
 
-        {/* Aura Orb - smaller size for better balance */}
-        <div style={{ position: 'relative', width: 360, height: 360, marginBottom: 72, display: 'flex' }}>
-          {/* Outer glow - using radial gradient */}
-          <div
-            style={{
-              position: 'absolute',
-              top: -45,
-              left: -45,
-              width: 450,
-              height: 450,
-              borderRadius: 225,
-              background: `radial-gradient(circle, ${colors.from}40 0%, ${colors.to}20 40%, transparent 70%)`,
-            }}
-          />
+        {/* Aura Orb - only show if no background image (orb is in the background) */}
+        {!backgroundImage && (
+          <div style={{ position: 'relative', width: 360, height: 360, marginBottom: 72, display: 'flex' }}>
+            {/* Outer glow - using radial gradient */}
+            <div
+              style={{
+                position: 'absolute',
+                top: -45,
+                left: -45,
+                width: 450,
+                height: 450,
+                borderRadius: 225,
+                background: `radial-gradient(circle, ${colors.from}40 0%, ${colors.to}20 40%, transparent 70%)`,
+              }}
+            />
 
-          {/* Main orb gradient */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 18,
-              left: 18,
-              width: 324,
-              height: 324,
-              borderRadius: 162,
-              background: `linear-gradient(135deg, ${colors.from}90 0%, ${colors.to}90 50%, ${colors.from}90 100%)`,
-              opacity: 0.8,
-            }}
-          />
+            {/* Main orb gradient */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 18,
+                left: 18,
+                width: 324,
+                height: 324,
+                borderRadius: 162,
+                background: `linear-gradient(135deg, ${colors.from}90 0%, ${colors.to}90 50%, ${colors.from}90 100%)`,
+                opacity: 0.8,
+              }}
+            />
 
-          {/* Inner core - glossy */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 45,
-              left: 45,
-              width: 270,
-              height: 270,
-              borderRadius: 135,
-              background: `radial-gradient(circle at 35% 35%, #ffffff 0%, ${colors.from} 35%, ${colors.to} 100%)`,
-              boxShadow: `0 24px 96px ${colors.glow}`,
-            }}
-          />
+            {/* Inner core - glossy */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 45,
+                left: 45,
+                width: 270,
+                height: 270,
+                borderRadius: 135,
+                background: `radial-gradient(circle at 35% 35%, #ffffff 0%, ${colors.from} 35%, ${colors.to} 100%)`,
+                boxShadow: `0 24px 96px ${colors.glow}`,
+              }}
+            />
 
-          {/* Shine highlight */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 75,
-              left: 105,
-              width: 60,
-              height: 38,
-              borderRadius: 30,
-              background: 'rgba(255, 255, 255, 0.5)',
-            }}
-          />
-        </div>
+            {/* Shine highlight */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 75,
+                left: 105,
+                width: 60,
+                height: 38,
+                borderRadius: 30,
+                background: 'rgba(255, 255, 255, 0.5)',
+              }}
+            />
+          </div>
+        )}
+
+        {/* Spacer when using background image orb */}
+        {backgroundImage && (
+          <div style={{ height: 360, marginBottom: 72 }} />
+        )}
 
         {/* Emoji */}
         {data.emoji && (
