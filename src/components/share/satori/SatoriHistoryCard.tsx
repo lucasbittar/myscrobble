@@ -10,18 +10,19 @@ interface ColorTheme {
 interface SatoriHistoryCardProps {
   data: HistoryShareData;
   colors: ColorTheme;
+  backgroundImage?: string;
   t: {
     recentVibes: string;
     tracksRecently: string;
   };
 }
 
-export function SatoriHistoryCard({ data, colors, t }: SatoriHistoryCardProps) {
+export function SatoriHistoryCard({ data, colors, backgroundImage, t }: SatoriHistoryCardProps) {
   // Get first 5 tracks for the list
   const tracks = data.recentTracks.slice(0, 5);
 
   return (
-    <SatoriCardWrapper colors={colors} variant="subtle">
+    <SatoriCardWrapper colors={colors} variant="subtle" backgroundImage={backgroundImage}>
       <div
         style={{
           flex: 1,

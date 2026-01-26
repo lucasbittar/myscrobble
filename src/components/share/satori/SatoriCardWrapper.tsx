@@ -11,12 +11,14 @@ interface SatoriCardWrapperProps {
   children: ReactNode;
   colors: ColorTheme;
   variant?: 'default' | 'vibrant' | 'subtle';
+  backgroundImage?: string;
 }
 
 export function SatoriCardWrapper({
   children,
   colors,
   variant = 'default',
+  backgroundImage,
 }: SatoriCardWrapperProps) {
   return (
     <div
@@ -30,8 +32,25 @@ export function SatoriCardWrapper({
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}
     >
-      {/* Background with blobs */}
-      <SatoriBackground colors={colors} variant={variant} />
+      {/* Background - use pre-generated image if available, otherwise dynamic */}
+      {backgroundImage ? (
+        <img
+          src={backgroundImage}
+          alt=""
+          width={1080}
+          height={1920}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: 1080,
+            height: 1920,
+            objectFit: 'cover',
+          }}
+        />
+      ) : (
+        <SatoriBackground colors={colors} variant={variant} />
+      )}
 
       {/* Content */}
       <div
