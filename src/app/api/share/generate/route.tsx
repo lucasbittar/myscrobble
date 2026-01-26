@@ -22,6 +22,29 @@ import { SatoriPodcastsCard } from '@/components/share/satori/SatoriPodcastsCard
 
 export const runtime = 'edge';
 
+// Map card types to pre-generated background image filenames
+function getBackgroundImageFilename(type: ShareCardType, data?: SonicAuraShareData): string {
+  switch (type) {
+    case 'dashboard':
+      return 'bg-share-card-dashboard.png';
+    case 'history':
+      return 'bg-share-card-history.png';
+    case 'top-charts':
+      return 'bg-share-card-top.png';
+    case 'concerts':
+      return 'bg-share-card-concerts.png';
+    case 'podcasts':
+      return 'bg-share-card-podcasts.png';
+    case 'sonic-aura':
+      if (data?.moodColor) {
+        return `bg-share-card-aura-${data.moodColor}.png`;
+      }
+      return 'bg-share-card-aura-energetic.png';
+    default:
+      return 'bg-share-card-dashboard.png';
+  }
+}
+
 // Helper to convert ArrayBuffer to base64 (Edge-compatible, no Node.js Buffer)
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer);
@@ -175,6 +198,13 @@ export async function POST(request: NextRequest) {
     const colors = shareColorThemes[theme];
     const t = translations[locale] || translations.en;
 
+    // Fetch the pre-generated background image
+    const bgFilename = getBackgroundImageFilename(type, type === 'sonic-aura' ? body.data as SonicAuraShareData : undefined);
+    const origin = new URL(request.url).origin;
+    const bgImageUrl = `${origin}/share-images/${bgFilename}`;
+    const backgroundImage = await fetchImageAsDataUrl(bgImageUrl);
+    console.log('[share/generate] Background image:', { bgFilename, loaded: !!backgroundImage });
+
     // Process images - fetch and convert to base64 data URLs for reliable rendering
     const data = await processImagesInData(body.data);
 
@@ -197,6 +227,7 @@ export async function POST(request: NextRequest) {
           <SatoriDashboardCard
             data={data as DashboardShareData}
             colors={colors}
+            backgroundImage={backgroundImage || undefined}
             t={{
               nowPlaying: t.nowPlaying,
               myStats: t.myStats,
@@ -213,6 +244,7 @@ export async function POST(request: NextRequest) {
           <SatoriHistoryCard
             data={data as HistoryShareData}
             colors={colors}
+            backgroundImage={backgroundImage || undefined}
             t={{
               recentVibes: t.recentVibes,
               tracksRecently: t.tracksRecently,
@@ -233,6 +265,7 @@ export async function POST(request: NextRequest) {
           <SatoriTopChartsCard
             data={topData}
             colors={colors}
+            backgroundImage={backgroundImage || undefined}
             t={{
               title: t[titleKey as TranslationKey],
             }}
@@ -257,6 +290,7 @@ export async function POST(request: NextRequest) {
           <SatoriConcertsCard
             data={concertsData}
             colors={colors}
+            backgroundImage={backgroundImage || undefined}
             locale={locale}
             t={{
               nextShow: t.nextShow,
@@ -272,6 +306,7 @@ export async function POST(request: NextRequest) {
         cardElement = (
           <SatoriSonicAuraCard
             data={data as SonicAuraShareData}
+            backgroundImage={backgroundImage || undefined}
             t={{
               sonicAura: t.sonicAura,
             }}
@@ -284,6 +319,7 @@ export async function POST(request: NextRequest) {
           <SatoriPodcastsCard
             data={data as PodcastsShareData}
             colors={colors}
+            backgroundImage={backgroundImage || undefined}
             t={{
               myPodcasts: t.myPodcasts,
               episodes: t.episodes,

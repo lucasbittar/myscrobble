@@ -10,6 +10,7 @@ interface ColorTheme {
 interface SatoriDashboardCardProps {
   data: DashboardShareData;
   colors: ColorTheme;
+  backgroundImage?: string;
   t: {
     nowPlaying: string;
     myStats: string;
@@ -19,11 +20,11 @@ interface SatoriDashboardCardProps {
   };
 }
 
-export function SatoriDashboardCard({ data, colors, t }: SatoriDashboardCardProps) {
+export function SatoriDashboardCard({ data, colors, backgroundImage, t }: SatoriDashboardCardProps) {
   // Now Playing view
   if (data.nowPlaying) {
     return (
-      <SatoriCardWrapper colors={colors}>
+      <SatoriCardWrapper colors={colors} backgroundImage={backgroundImage}>
         <div
           style={{
             flex: 1,
@@ -111,7 +112,7 @@ export function SatoriDashboardCard({ data, colors, t }: SatoriDashboardCardProp
     const minutes = data.stats.totalMinutes % 60;
 
     return (
-      <SatoriCardWrapper colors={colors}>
+      <SatoriCardWrapper colors={colors} backgroundImage={backgroundImage}>
         <div
           style={{
             flex: 1,
@@ -226,7 +227,7 @@ export function SatoriDashboardCard({ data, colors, t }: SatoriDashboardCardProp
 
   // Fallback
   return (
-    <SatoriCardWrapper colors={colors}>
+    <SatoriCardWrapper colors={colors} backgroundImage={backgroundImage}>
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <span style={{ color: '#6a6a6a', fontSize: 48 }}>No data available</span>
       </div>

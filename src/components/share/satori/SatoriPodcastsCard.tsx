@@ -10,6 +10,7 @@ interface ColorTheme {
 interface SatoriPodcastsCardProps {
   data: PodcastsShareData;
   colors: ColorTheme;
+  backgroundImage?: string;
   t: {
     myPodcasts: string;
     episodes: string;
@@ -18,9 +19,9 @@ interface SatoriPodcastsCardProps {
   };
 }
 
-export function SatoriPodcastsCard({ data, colors, t }: SatoriPodcastsCardProps) {
+export function SatoriPodcastsCard({ data, colors, backgroundImage, t }: SatoriPodcastsCardProps) {
   return (
-    <SatoriCardWrapper colors={colors} variant="vibrant">
+    <SatoriCardWrapper colors={colors} variant="vibrant" backgroundImage={backgroundImage}>
       <div
         style={{
           flex: 1,

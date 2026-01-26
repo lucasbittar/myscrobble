@@ -10,6 +10,7 @@ interface ColorTheme {
 interface SatoriConcertsCardProps {
   data: ConcertsShareData;
   colors: ColorTheme;
+  backgroundImage?: string;
   locale: string;
   t: {
     nextShow: string;
@@ -19,10 +20,10 @@ interface SatoriConcertsCardProps {
   };
 }
 
-export function SatoriConcertsCard({ data, colors, locale, t }: SatoriConcertsCardProps) {
+export function SatoriConcertsCard({ data, colors, backgroundImage, locale, t }: SatoriConcertsCardProps) {
   if (!data.nextConcert) {
     return (
-      <SatoriCardWrapper colors={colors}>
+      <SatoriCardWrapper colors={colors} backgroundImage={backgroundImage}>
         <div
           style={{
             flex: 1,
@@ -48,7 +49,7 @@ export function SatoriConcertsCard({ data, colors, locale, t }: SatoriConcertsCa
   });
 
   return (
-    <SatoriCardWrapper colors={colors} variant="vibrant">
+    <SatoriCardWrapper colors={colors} variant="vibrant" backgroundImage={backgroundImage}>
       <div
         style={{
           flex: 1,
