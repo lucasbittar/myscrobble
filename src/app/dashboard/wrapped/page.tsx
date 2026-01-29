@@ -268,10 +268,6 @@ export default function WrappedPage() {
         podcastCount={data.topPodcasts.length}
         moodColor={moodColor}
         userName={session?.user?.name?.split(' ')[0]}
-        onShare={() => {
-          // Navigate to share page
-          window.location.href = '/dashboard/share';
-        }}
         onRestart={() => {
           setIsPlaying(false);
         }}
