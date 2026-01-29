@@ -17,7 +17,6 @@ interface SlideSummaryProps {
   podcastCount?: number;
   moodColor?: MoodColor;
   userName?: string;
-  onShare?: () => void;
   onRestart?: () => void;
 }
 
@@ -26,7 +25,6 @@ export function SlideSummary({
   podcastCount = 0,
   moodColor = 'experimental',
   userName,
-  onShare,
   onRestart,
 }: SlideSummaryProps) {
   const t = useTranslations('wrapped');
@@ -170,17 +168,6 @@ export function SlideSummary({
         transition={{ delay: 1.3 }}
         className="flex flex-col sm:flex-row gap-3 justify-center"
       >
-        {onShare && (
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onShare}
-            className="cursor-pointer px-6 py-3 bg-white text-black rounded-full font-bold text-lg hover:bg-white/90 transition-colors"
-          >
-            {t('slides.summary.share')}
-          </motion.button>
-        )}
-
         {onRestart && (
           <motion.button
             whileHover={{ scale: 1.05 }}
